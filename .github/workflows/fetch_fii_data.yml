@@ -2,7 +2,7 @@ name: Fetch FII Shareholding Data
 
 on:
   schedule:
-    - cron: '0 3 * * 1-5'  # 8:30 AM IST (3:00 AM UTC), Monday–Friday
+    - cron: '30 2 * * 1-5'  # 8:00 AM IST (2:30 AM UTC), Monday–Friday
   workflow_dispatch:         # Allow manual trigger from GitHub Actions tab
 
 jobs:
