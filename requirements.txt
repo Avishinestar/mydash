@@ -6,3 +6,4 @@ feedparser
 lxml
 html5lib
 requests
+nsepython
