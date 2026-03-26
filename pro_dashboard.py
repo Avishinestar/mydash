@@ -763,6 +763,7 @@ def get_nifty_sensex_levels():
 
 @st.cache_data(ttl=3600)
 def get_fiidii():
+    # First try nsepython (works locally with Indian IP)
     try:
         from nsepython import nse_fiidii
         df = nse_fiidii()
@@ -770,7 +771,39 @@ def get_fiidii():
         fii_net = float(df[df["category"] == "FII/FPI"]["netValue"].iloc[0])
         return {"FII": fii_net, "DII": dii_net}
     except Exception:
-        return {"FII": None, "DII": None}
+        pass
+
+    # Fallback: direct NSE API call with browser headers (for cloud deployments)
+    try:
+        import requests
+        session = requests.Session()
+        session.get("https://www.nseindia.com", timeout=10, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+        })
+        resp = session.get(
+            "https://www.nseindia.com/api/fiidiiTradeReact",
+            timeout=10,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+                "Referer": "https://www.nseindia.com/",
+                "Accept": "application/json",
+            }
+        )
+        data = resp.json()
+        fii_net, dii_net = None, None
+        for item in data:
+            cat = item.get("category", "")
+            if "FII" in cat or "FPI" in cat:
+                fii_net = float(item.get("netValue", 0))
+            elif cat == "DII":
+                dii_net = float(item.get("netValue", 0))
+        if fii_net is not None and dii_net is not None:
+            return {"FII": fii_net, "DII": dii_net}
+    except Exception:
+        pass
+
+    return {"FII": None, "DII": None}
 
 def run_dashboard():
     st.title("Advanced Investor Dashboard 📈")
