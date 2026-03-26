@@ -805,6 +805,71 @@ def get_fiidii():
 
     return {"FII": None, "DII": None}
 
+@st.cache_data(ttl=86400)  # quarterly data — refresh once a day
+def get_fii_stake_increases():
+    """Scan NIFTY_50 stocks for companies where FII/FPI increased stake in the latest quarter."""
+    import requests
+    results = []
+    session = requests.Session()
+    try:
+        session.get("https://www.nseindia.com", timeout=10, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+        })
+    except Exception:
+        pass
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+        "Referer": "https://www.nseindia.com/",
+        "Accept": "application/json",
+    }
+
+    scan_symbols = [t.replace(".NS", "") for t in NIFTY_50]
+
+    for symbol in scan_symbols:
+        try:
+            resp = session.get(
+                f"https://www.nseindia.com/api/corporate-shareholding-patterns?index=equities&symbol={symbol}",
+                timeout=10, headers=headers
+            )
+            data = resp.json()
+            records = data if isinstance(data, list) else data.get("data", [])
+            if len(records) < 2:
+                continue
+
+            def extract_fii(rec):
+                for key in ["fiiFpiHolding", "totalForeignPortfolioInvestors", "fii", "FII"]:
+                    if key in rec:
+                        try:
+                            return float(str(rec[key]).replace("%", "").strip())
+                        except Exception:
+                            pass
+                return None
+
+            latest_fii = extract_fii(records[0])
+            prev_fii   = extract_fii(records[1])
+
+            if latest_fii is None or prev_fii is None:
+                continue
+
+            change = round(latest_fii - prev_fii, 2)
+            if change > 0:
+                results.append({
+                    "sr. no.": 0,
+                    "company": symbol,
+                    "current FII %": round(latest_fii, 2),
+                    "prev quarter %": round(prev_fii, 2),
+                    "change (pp)": f"+{change}",
+                })
+        except Exception:
+            pass
+
+    results = sorted(results, key=lambda x: float(str(x["change (pp)"]).replace("+", "")), reverse=True)[:10]
+    for i, r in enumerate(results):
+        r["sr. no."] = i + 1
+    return results
+
 def run_dashboard():
     st.title("Advanced Investor Dashboard 📈")
     st.markdown("Developed as requested, utilizing real-time market data to achieve all 9 tasks.")
@@ -924,32 +989,48 @@ def run_dashboard():
                             st.info("No underperforming sectors this week.")
                             
                     st.divider()
-                    st.subheader("All Indian Indices Performance")
-                    all_indices_list = []
-                    for name, v in s_data.items():
-                        weekly_val = v["Weekly"]
-                        if weekly_val >= 3: idx_remark = "Strong bullish trend leading the market."
-                        elif weekly_val >= 0.5: idx_remark = "Steady positive momentum."
-                        elif weekly_val >= -1.0: idx_remark = "Flat/consolidating."
-                        elif weekly_val >= -3.0: idx_remark = "Healthy correction."
-                        else: idx_remark = "Heavy drawdown; structural damage."
-                        
-                        all_indices_list.append({
-                            "index name": name,
-                            "daily returns %": round(v["Daily"], 2),
-                            "weekly returns %": round(v["Weekly"], 2),
-                            "monthly returns %": round(v["Monthly"], 2),
-                            "quarterly returns %": round(v["Quarterly"], 2),
-                            "yearly returns %": round(v["Yearly"], 2),
-                            "remark for insights": idx_remark
-                        })
-                        
-                    all_indices_list = sorted(all_indices_list, key=lambda x: x["weekly returns %"], reverse=True)
-                    for i, r in enumerate(all_indices_list): r["sr. no."] = i + 1
-                    df_all_indices = pd.DataFrame(all_indices_list)
-                    cols_all = ["sr. no.", "index name", "daily returns %", "weekly returns %", 
-                                "monthly returns %", "quarterly returns %", "yearly returns %", "remark for insights"]
-                    st.dataframe(df_all_indices[cols_all], use_container_width=False, hide_index=True)
+                    col_indices, col_fii_stake = st.columns([3, 2])
+
+                    with col_indices:
+                        st.subheader("All Indian Indices Performance")
+                        all_indices_list = []
+                        for name, v in s_data.items():
+                            weekly_val = v["Weekly"]
+                            if weekly_val >= 3: idx_remark = "Strong bullish trend leading the market."
+                            elif weekly_val >= 0.5: idx_remark = "Steady positive momentum."
+                            elif weekly_val >= -1.0: idx_remark = "Flat/consolidating."
+                            elif weekly_val >= -3.0: idx_remark = "Healthy correction."
+                            else: idx_remark = "Heavy drawdown; structural damage."
+
+                            all_indices_list.append({
+                                "index name": name,
+                                "daily returns %": round(v["Daily"], 2),
+                                "weekly returns %": round(v["Weekly"], 2),
+                                "monthly returns %": round(v["Monthly"], 2),
+                                "quarterly returns %": round(v["Quarterly"], 2),
+                                "yearly returns %": round(v["Yearly"], 2),
+                                "remark for insights": idx_remark
+                            })
+
+                        all_indices_list = sorted(all_indices_list, key=lambda x: x["weekly returns %"], reverse=True)
+                        for i, r in enumerate(all_indices_list): r["sr. no."] = i + 1
+                        df_all_indices = pd.DataFrame(all_indices_list)
+                        cols_all = ["sr. no.", "index name", "daily returns %", "weekly returns %",
+                                    "monthly returns %", "quarterly returns %", "yearly returns %", "remark for insights"]
+                        st.dataframe(df_all_indices[cols_all], use_container_width=True, hide_index=True)
+
+                    with col_fii_stake:
+                        st.subheader("Top 10 FII Stake Increases (Latest Quarter)")
+                        with st.spinner("Fetching FII shareholding data..."):
+                            fii_stake_data = get_fii_stake_increases()
+                        if fii_stake_data:
+                            df_fii_stake = pd.DataFrame(fii_stake_data)
+                            st.dataframe(
+                                df_fii_stake[["sr. no.", "company", "current FII %", "prev quarter %", "change (pp)"]],
+                                use_container_width=True, hide_index=True
+                            )
+                        else:
+                            st.info("FII shareholding data unavailable (NSE geo-restricted on cloud).")
                     
                     st.divider()
                     st.subheader("Top 10 Weekly Performing Stocks (Indian Market)")
