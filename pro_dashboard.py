@@ -796,29 +796,30 @@ def run_dashboard():
         nifty_ath = levels.get("NIFTY % to ATH", "N/A")
         
         fiidii = get_fiidii()
-        if fiidii.get("FII") is not None:
-            fii_val = fiidii["FII"]
-            fii_text = f"FII Inflow: ₹{fii_val:,.2f} Cr" if fii_val >= 0 else f"FII Outflow: ₹{abs(fii_val):,.2f} Cr"
-        else:
-            fii_text = "FII: N/A"
 
-        if fiidii.get("DII") is not None:
-            dii_val = fiidii["DII"]
-            dii_text = f"DII Inflow: ₹{dii_val:,.2f} Cr" if dii_val >= 0 else f"DII Outflow: ₹{abs(dii_val):,.2f} Cr"
-        else:
-            dii_text = "DII: N/A"
+        fii_val = fiidii.get("FII")
+        dii_val = fiidii.get("DII")
+
+        fii_color  = "#1a7a1a" if (fii_val is not None and fii_val >= 0) else "#cc0000"
+        dii_color  = "#1a7a1a" if (dii_val is not None and dii_val >= 0) else "#cc0000"
+        fii_arrow  = "▲ Inflow" if (fii_val is not None and fii_val >= 0) else "▼ Outflow"
+        dii_arrow  = "▲ Inflow" if (dii_val is not None and dii_val >= 0) else "▼ Outflow"
+        fii_amount = f"₹{abs(fii_val):,.2f} Cr" if fii_val is not None else "N/A"
+        dii_amount = f"₹{abs(dii_val):,.2f} Cr" if dii_val is not None else "N/A"
 
         st.markdown(
             f"""
-            <div style="background-color: red; padding: 10px; border-radius: 5px; color: white; font-weight: bold; margin-bottom: 10px; text-align: center; font-size: 18px;">
-                NIFTY 50: {nifty_lvl} (RSI: {nifty_rsi} | ATH Dist: {nifty_ath}) &nbsp;|&nbsp; SENSEX: {sensex_lvl} &nbsp;|&nbsp; INDIA VIX: {vix_lvl}
+            <div style="background-color: #cc0000; padding: 10px; border-radius: 5px; color: white; font-weight: bold; margin-bottom: 12px; text-align: center; font-size: 18px;">
+                NIFTY 50: {nifty_lvl} &nbsp;|&nbsp; RSI: {nifty_rsi} &nbsp;|&nbsp; ATH Dist: {nifty_ath} &nbsp;|&nbsp; SENSEX: {sensex_lvl} &nbsp;|&nbsp; INDIA VIX: {vix_lvl}
             </div>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <div style="flex: 1; background-color: red; padding: 10px; border-radius: 5px; color: white; font-weight: bold; text-align: center; font-size: 18px;">
-                    {fii_text}
+            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                <div style="flex: 1; background-color: {fii_color}; padding: 14px 10px; border-radius: 8px; color: white; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                    <div style="font-size: 13px; font-weight: 600; letter-spacing: 1px; opacity: 0.85; margin-bottom: 4px;">FII / FPI &nbsp;{fii_arrow}</div>
+                    <div style="font-size: 26px; font-weight: 800;">{fii_amount}</div>
                 </div>
-                <div style="flex: 1; background-color: red; padding: 10px; border-radius: 5px; color: white; font-weight: bold; text-align: center; font-size: 18px;">
-                    {dii_text}
+                <div style="flex: 1; background-color: {dii_color}; padding: 14px 10px; border-radius: 8px; color: white; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                    <div style="font-size: 13px; font-weight: 600; letter-spacing: 1px; opacity: 0.85; margin-bottom: 4px;">DII &nbsp;{dii_arrow}</div>
+                    <div style="font-size: 26px; font-weight: 800;">{dii_amount}</div>
                 </div>
             </div>
             """,
