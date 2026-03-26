@@ -805,8 +805,13 @@ def get_fiidii():
 
     return {"FII": None, "DII": None}
 
+def _fii_json_mtime():
+    import os
+    p = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+    return os.path.getmtime(p) if os.path.exists(p) else 0
+
 @st.cache_data(ttl=86400)  # quarterly data — refresh once a day
-def get_fii_stake_increases():
+def get_fii_stake_increases(_mtime=None):
     """
     Returns top 10 NIFTY 50 stocks where FII/FPI increased stake last quarter.
     Primary source: fii_stake_data.json committed daily by GitHub Actions.
@@ -1037,7 +1042,7 @@ def run_dashboard():
                     with col_fii_stake:
                         st.subheader("Top 10 FII Stake Increases (Latest Quarter)")
                         with st.spinner("Fetching FII shareholding data..."):
-                            fii_stake_data = get_fii_stake_increases()
+                            fii_stake_data = get_fii_stake_increases(_mtime=_fii_json_mtime())
 
                         # Show last-updated timestamp from JSON if available
                         import json, os
