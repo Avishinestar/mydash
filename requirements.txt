@@ -1,0 +1,8 @@
+streamlit
+yfinance
+pandas
+ta
+feedparser
+lxml
+html5lib
+requests
