@@ -807,8 +807,26 @@ def get_fiidii():
 
 @st.cache_data(ttl=86400)  # quarterly data — refresh once a day
 def get_fii_stake_increases():
-    """Scan NIFTY_50 stocks for companies where FII/FPI increased stake in the latest quarter."""
-    import requests
+    """
+    Returns top 10 NIFTY 50 stocks where FII/FPI increased stake last quarter.
+    Primary source: fii_stake_data.json committed daily by GitHub Actions.
+    Fallback: live NSE API call (works on Indian IPs only).
+    """
+    import json, os, requests
+
+    # --- Primary: read from pre-fetched JSON (committed by GitHub Actions) ---
+    json_path = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+    if os.path.exists(json_path):
+        try:
+            with open(json_path) as f:
+                stored = json.load(f)
+            data = stored.get("data", [])
+            if data:
+                return data
+        except Exception:
+            pass
+
+    # --- Fallback: live NSE call (Indian IP only) ---
     results = []
     session = requests.Session()
     try:
@@ -819,27 +837,26 @@ def get_fii_stake_increases():
     except Exception:
         pass
 
-    headers = {
+    api_headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
         "Referer": "https://www.nseindia.com/",
         "Accept": "application/json",
     }
 
-    scan_symbols = [t.replace(".NS", "") for t in NIFTY_50]
-
-    for symbol in scan_symbols:
+    for symbol in [t.replace(".NS", "") for t in NIFTY_50]:
         try:
             resp = session.get(
                 f"https://www.nseindia.com/api/corporate-shareholding-patterns?index=equities&symbol={symbol}",
-                timeout=10, headers=headers
+                timeout=10, headers=api_headers
             )
-            data = resp.json()
-            records = data if isinstance(data, list) else data.get("data", [])
+            records = resp.json()
+            if isinstance(records, dict):
+                records = records.get("data", [])
             if len(records) < 2:
                 continue
 
             def extract_fii(rec):
-                for key in ["fiiFpiHolding", "totalForeignPortfolioInvestors", "fii", "FII"]:
+                for key in ["fiiFpiHolding", "totalForeignPortfolioInvestors", "fii", "FII", "fiiHolding"]:
                     if key in rec:
                         try:
                             return float(str(rec[key]).replace("%", "").strip())
@@ -849,10 +866,8 @@ def get_fii_stake_increases():
 
             latest_fii = extract_fii(records[0])
             prev_fii   = extract_fii(records[1])
-
             if latest_fii is None or prev_fii is None:
                 continue
-
             change = round(latest_fii - prev_fii, 2)
             if change > 0:
                 results.append({
@@ -1023,6 +1038,18 @@ def run_dashboard():
                         st.subheader("Top 10 FII Stake Increases (Latest Quarter)")
                         with st.spinner("Fetching FII shareholding data..."):
                             fii_stake_data = get_fii_stake_increases()
+
+                        # Show last-updated timestamp from JSON if available
+                        import json, os
+                        json_path = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+                        if os.path.exists(json_path):
+                            try:
+                                with open(json_path) as f:
+                                    meta = json.load(f)
+                                st.caption(f"Last updated: {meta.get('fetched_at', 'unknown')}")
+                            except Exception:
+                                pass
+
                         if fii_stake_data:
                             df_fii_stake = pd.DataFrame(fii_stake_data)
                             st.dataframe(
@@ -1030,7 +1057,7 @@ def run_dashboard():
                                 use_container_width=True, hide_index=True
                             )
                         else:
-                            st.info("FII shareholding data unavailable (NSE geo-restricted on cloud).")
+                            st.info("FII shareholding data unavailable. GitHub Actions will populate this daily.")
                     
                     st.divider()
                     st.subheader("Top 10 Weekly Performing Stocks (Indian Market)")

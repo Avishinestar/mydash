@@ -1,0 +1,35 @@
+name: Fetch FII Shareholding Data
+
+on:
+  schedule:
+    - cron: '0 3 * * 1-5'  # 8:30 AM IST (3:00 AM UTC), Monday–Friday
+  workflow_dispatch:         # Allow manual trigger from GitHub Actions tab
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests nsepython
+
+      - name: Fetch FII shareholding data
+        run: python scripts/fetch_fii_shareholding.py
+
+      - name: Commit and push updated data
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add fii_stake_data.json
+          git diff --staged --quiet || git commit -m "Auto-update FII shareholding data [skip ci]"
+          git push
