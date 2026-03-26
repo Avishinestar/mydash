@@ -1,37 +1,79 @@
 {
-  "fetched_at": "2026-03-26 09:19 UTC",
-  "data": [],
+  "fetched_at": "2026-03-26 11:12 UTC",
+  "source": "screener.in",
+  "data": [
+    {
+      "sr. no.": 1,
+      "company": "BHARTIARTL",
+      "current FII %": 28.75,
+      "prev quarter %": 27.42,
+      "change (pp)": "+1.33"
+    },
+    {
+      "sr. no.": 2,
+      "company": "ASIANPAINT",
+      "current FII %": 12.78,
+      "prev quarter %": 11.64,
+      "change (pp)": "+1.14"
+    },
+    {
+      "sr. no.": 3,
+      "company": "SBIN",
+      "current FII %": 10.34,
+      "prev quarter %": 9.57,
+      "change (pp)": "+0.77"
+    },
+    {
+      "sr. no.": 4,
+      "company": "AXISBANK",
+      "current FII %": 42.58,
+      "prev quarter %": 41.89,
+      "change (pp)": "+0.69"
+    },
+    {
+      "sr. no.": 5,
+      "company": "LT",
+      "current FII %": 20.06,
+      "prev quarter %": 19.48,
+      "change (pp)": "+0.58"
+    },
+    {
+      "sr. no.": 6,
+      "company": "ONGC",
+      "current FII %": 7.43,
+      "prev quarter %": 6.98,
+      "change (pp)": "+0.45"
+    },
+    {
+      "sr. no.": 7,
+      "company": "RELIANCE",
+      "current FII %": 19.09,
+      "prev quarter %": 18.65,
+      "change (pp)": "+0.44"
+    },
+    {
+      "sr. no.": 8,
+      "company": "INFY",
+      "current FII %": 30.27,
+      "prev quarter %": 30.08,
+      "change (pp)": "+0.19"
+    },
+    {
+      "sr. no.": 9,
+      "company": "LICI",
+      "current FII %": 0.2,
+      "prev quarter %": 0.13,
+      "change (pp)": "+0.07"
+    },
+    {
+      "sr. no.": 10,
+      "company": "TCS",
+      "current FII %": 10.37,
+      "prev quarter %": 10.33,
+      "change (pp)": "+0.04"
+    }
+  ],
   "failed_symbols": [
-    "RELIANCE",
-    "TCS",
-    "HDFCBANK",
-    "ICICIBANK",
-    "BHARTIARTL",
-    "SBIN",
-    "INFY",
-    "LICI",
-    "ITC",
-    "HINDUNILVR",
-    "LT",
-    "BAJFINANCE",
-    "HCLTECH",
-    "MARUTI",
-    "SUNPHARMA",
-    "ADANIENT",
-    "KOTAKBANK",
-    "TITAN",
-    "ONGC",
-    "TATAMOTORS",
-    "NTPC",
-    "AXISBANK",
-    "POWERGRID",
-    "M&M",
-    "ULTRACEMCO",
-    "ASIANPAINT",
-    "BAJAJFINSV",
-    "WIPRO",
-    "NESTLEIND",
-    "TECHM",
-    "BAJAJ-AUTO"
+    "TATAMOTORS"
   ]
 }

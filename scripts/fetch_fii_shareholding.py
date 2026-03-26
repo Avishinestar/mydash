@@ -1,13 +1,14 @@
 """
-Fetches FII/FPI shareholding pattern data for NIFTY 50 stocks from NSE India.
+Fetches FII/FPI shareholding pattern data for NIFTY 50 stocks from Screener.in.
 Compares latest quarter vs previous quarter and saves top 10 increases to fii_stake_data.json.
-Run by GitHub Actions daily at 8:30 AM IST.
+Run by GitHub Actions daily at 8:00 AM IST.
 """
 
 import json
 import requests
 import time
-from datetime import datetime
+from bs4 import BeautifulSoup
+from datetime import datetime, timezone
 
 NIFTY_50_SYMBOLS = [
     "RELIANCE", "TCS", "HDFCBANK", "ICICIBANK", "BHARTIARTL",
@@ -15,87 +16,131 @@ NIFTY_50_SYMBOLS = [
     "BAJFINANCE", "HCLTECH", "MARUTI", "SUNPHARMA", "ADANIENT",
     "KOTAKBANK", "TITAN", "ONGC", "TATAMOTORS", "NTPC",
     "AXISBANK", "POWERGRID", "M&M", "ULTRACEMCO", "ASIANPAINT",
-    "BAJAJFINSV", "WIPRO", "NESTLEIND", "TECHM", "BAJAJ-AUTO"
+    "BAJAJFINSV", "WIPRO", "NESTLEIND", "TECHM", "BAJAJ-AUTO",
 ]
 
-def get_session():
+# NSE symbol → Screener.in slug where they differ
+SCREENER_SYMBOL_MAP = {
+    "TATAMOTORS": "TMCV",  # Screener uses BSE code for Tata Motors
+}
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
+
+def make_session():
     session = requests.Session()
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    }
-    try:
-        session.get("https://www.nseindia.com", timeout=15, headers=headers)
-        time.sleep(2)
-    except Exception as e:
-        print(f"Warning: Could not load NSE homepage: {e}")
+    session.headers.update(HEADERS)
     return session
 
-def extract_fii(record):
-    for key in ["fiiFpiHolding", "totalForeignPortfolioInvestors", "fii", "FII", "fiiHolding"]:
-        if key in record:
-            try:
-                return float(str(record[key]).replace("%", "").strip())
-            except Exception:
-                pass
-    return None
 
-def fetch_shareholding(session, symbol):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-        "Referer": "https://www.nseindia.com/",
-        "Accept": "application/json",
-        "X-Requested-With": "XMLHttpRequest",
-    }
-    url = f"https://www.nseindia.com/api/corporate-shareholding-patterns?index=equities&symbol={symbol}"
-    resp = session.get(url, timeout=15, headers=headers)
-    resp.raise_for_status()
-    data = resp.json()
-    return data if isinstance(data, list) else data.get("data", [])
+def parse_fii_from_table(table):
+    """Return (latest_fii, prev_fii) floats from a Screener shareholding table, or (None, None)."""
+    tbody = table.find("tbody")
+    if not tbody:
+        return None, None
+
+    for row in tbody.find_all("tr"):
+        cells = row.find_all("td")
+        if not cells:
+            continue
+        label = cells[0].get_text(strip=True).upper()
+        if "FII" in label or "FPI" in label:
+            values = []
+            for cell in cells[1:]:
+                text = cell.get_text(strip=True).replace("%", "").replace(",", "").strip()
+                try:
+                    values.append(float(text))
+                except ValueError:
+                    pass
+            if len(values) >= 2:
+                return values[-1], values[-2]
+
+    return None, None
+
+
+def fetch_fii(session, nse_symbol):
+    slug = SCREENER_SYMBOL_MAP.get(nse_symbol, nse_symbol)
+
+    # Try consolidated first, then standalone
+    for variant in ["consolidated", ""]:
+        path = f"{variant}/" if variant else ""
+        url = f"https://www.screener.in/company/{slug}/{path}"
+        try:
+            resp = session.get(url, timeout=20)
+            if resp.status_code == 404:
+                continue
+            resp.raise_for_status()
+
+            soup = BeautifulSoup(resp.text, "lxml")
+            section = soup.find("section", {"id": "shareholding"})
+            if not section:
+                continue
+
+            table = section.find("table")
+            if not table:
+                continue
+
+            latest, prev = parse_fii_from_table(table)
+            if latest is not None:
+                return latest, prev
+
+        except requests.RequestException as e:
+            print(f"    [{variant or 'standalone'}] request error: {e}")
+
+    return None, None
+
 
 def main():
-    print(f"Starting FII shareholding fetch at {datetime.utcnow()} UTC")
-    session = get_session()
+    print(f"Starting FII shareholding fetch at {datetime.now(timezone.utc)} UTC")
+    session = make_session()
     results = []
     failed = []
 
     for symbol in NIFTY_50_SYMBOLS:
         try:
-            records = fetch_shareholding(session, symbol)
-            if len(records) < 2:
-                print(f"  {symbol}: not enough quarters ({len(records)})")
-                continue
-
-            latest_fii = extract_fii(records[0])
-            prev_fii   = extract_fii(records[1])
+            latest_fii, prev_fii = fetch_fii(session, symbol)
 
             if latest_fii is None or prev_fii is None:
-                print(f"  {symbol}: FII field not found. Keys: {list(records[0].keys())}")
-                continue
+                print(f"  {symbol}: FII data not found")
+                failed.append(symbol)
+            else:
+                change = round(latest_fii - prev_fii, 2)
+                print(f"  {symbol}: {prev_fii:.2f}% -> {latest_fii:.2f}% ({change:+.2f}pp)")
+                if change > 0:
+                    results.append({
+                        "sr. no.": 0,
+                        "company": symbol,
+                        "current FII %": round(latest_fii, 2),
+                        "prev quarter %": round(prev_fii, 2),
+                        "change (pp)": f"+{change}",
+                    })
 
-            change = round(latest_fii - prev_fii, 2)
-            print(f"  {symbol}: {prev_fii}% -> {latest_fii}% (change: {change:+.2f}pp)")
-
-            if change > 0:
-                results.append({
-                    "sr. no.": 0,
-                    "company": symbol,
-                    "current FII %": round(latest_fii, 2),
-                    "prev quarter %": round(prev_fii, 2),
-                    "change (pp)": f"+{change}",
-                })
-            time.sleep(0.5)  # be polite to NSE
         except Exception as e:
             print(f"  {symbol}: FAILED — {e}")
             failed.append(symbol)
 
-    results = sorted(results, key=lambda x: float(str(x["change (pp)"]).replace("+", "")), reverse=True)[:10]
+        time.sleep(1.5)  # be polite to Screener.in
+
+    results = sorted(
+        results,
+        key=lambda x: float(str(x["change (pp)"]).lstrip("+")),
+        reverse=True,
+    )[:10]
+
     for i, r in enumerate(results):
         r["sr. no."] = i + 1
 
     output = {
-        "fetched_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+        "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "source": "screener.in",
         "data": results,
         "failed_symbols": failed,
     }
@@ -104,7 +149,9 @@ def main():
         json.dump(output, f, indent=2)
 
     print(f"\nDone. {len(results)} stocks with FII increase. Failed: {len(failed)}")
-    print(json.dumps(output, indent=2))
+    if results:
+        print(json.dumps(output, indent=2))
+
 
 if __name__ == "__main__":
     main()

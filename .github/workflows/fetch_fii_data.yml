@@ -21,7 +21,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests nsepython
+        run: pip install requests beautifulsoup4 lxml
 
       - name: Fetch FII shareholding data
         run: python scripts/fetch_fii_shareholding.py
