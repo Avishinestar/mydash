@@ -29,12 +29,21 @@ def get_nifty500_tickers():
 st.set_page_config(page_title="Advanced Investor Dashboard", layout="wide")
 
 NIFTY_50 = [
-    "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "ICICIBANK.NS", "BHARTIARTL.NS", 
-    "SBIN.NS", "INFY.NS", "LICI.NS", "ITC.NS", "HINDUNILVR.NS", "LT.NS", 
-    "BAJFINANCE.NS", "HCLTECH.NS", "MARUTI.NS", "SUNPHARMA.NS", "ADANIENT.NS", 
-    "KOTAKBANK.NS", "TITAN.NS", "ONGC.NS", "TATAMOTORS.NS", "NTPC.NS", 
-    "AXISBANK.NS", "POWERGRID.NS", "M&M.NS", "ULTRACEMCO.NS", "ASIANPAINT.NS",
-    "BAJAJFINSV.NS", "WIPRO.NS", "NESTLEIND.NS", "TECHM.NS", "BAJAJ-AUTO.NS"
+    # Top 10 by weight
+    "RELIANCE.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "SBIN.NS", "ICICIBANK.NS",
+    "TCS.NS", "BAJFINANCE.NS", "INFY.NS", "LT.NS", "HINDUNILVR.NS",
+    # 11–20
+    "SUNPHARMA.NS", "MARUTI.NS", "M&M.NS", "AXISBANK.NS", "HCLTECH.NS",
+    "ITC.NS", "NTPC.NS", "KOTAKBANK.NS", "ONGC.NS", "TITAN.NS",
+    # 21–30
+    "ULTRACEMCO.NS", "ADANIPORTS.NS", "BEL.NS", "JSWSTEEL.NS", "POWERGRID.NS",
+    "COALINDIA.NS", "BAJAJFINSV.NS", "BAJAJ-AUTO.NS", "TATASTEEL.NS", "ADANIENT.NS",
+    # 31–40
+    "NESTLEIND.NS", "ETERNAL.NS", "ASIANPAINT.NS", "WIPRO.NS", "HINDALCO.NS",
+    "EICHERMOT.NS", "SBILIFE.NS", "GRASIM.NS", "SHRIRAMFIN.NS", "INDIGO.NS",
+    # 41–50
+    "JIOFINANCE.NS", "TECHM.NS", "HDFCLIFE.NS", "TRENT.NS", "TATAMOTORS.NS",
+    "APOLLOHOSP.NS", "DRREDDY.NS", "TATACONSUM.NS", "CIPLA.NS", "MAXHEALTH.NS",
 ]
 
 SECTORS = {
@@ -88,12 +97,19 @@ GLOBAL_MARKETS = {
 }
 
 NIFTY_500 = [
-    # Large Cap (Nifty 50 core)
-    "RELIANCE.NS","TCS.NS","HDFCBANK.NS","ICICIBANK.NS","BHARTIARTL.NS","SBIN.NS","INFY.NS",
-    "LICI.NS","ITC.NS","HINDUNILVR.NS","LT.NS","BAJFINANCE.NS","HCLTECH.NS","MARUTI.NS",
-    "SUNPHARMA.NS","ADANIENT.NS","KOTAKBANK.NS","TITAN.NS","ONGC.NS","TATAMOTORS.NS",
-    "NTPC.NS","AXISBANK.NS","POWERGRID.NS","M&M.NS","ULTRACEMCO.NS","ASIANPAINT.NS",
-    "BAJAJFINSV.NS","WIPRO.NS","NESTLEIND.NS","TECHM.NS","BAJAJ-AUTO.NS",
+    # Large Cap (current Nifty 50)
+    "RELIANCE.NS","HDFCBANK.NS","BHARTIARTL.NS","SBIN.NS","ICICIBANK.NS",
+    "TCS.NS","BAJFINANCE.NS","INFY.NS","LT.NS","HINDUNILVR.NS",
+    "SUNPHARMA.NS","MARUTI.NS","M&M.NS","AXISBANK.NS","HCLTECH.NS",
+    "ITC.NS","NTPC.NS","KOTAKBANK.NS","ONGC.NS","TITAN.NS",
+    "ULTRACEMCO.NS","ADANIPORTS.NS","BEL.NS","JSWSTEEL.NS","POWERGRID.NS",
+    "COALINDIA.NS","BAJAJFINSV.NS","BAJAJ-AUTO.NS","TATASTEEL.NS","ADANIENT.NS",
+    "NESTLEIND.NS","ETERNAL.NS","ASIANPAINT.NS","WIPRO.NS","HINDALCO.NS",
+    "EICHERMOT.NS","SBILIFE.NS","GRASIM.NS","SHRIRAMFIN.NS","INDIGO.NS",
+    "JIOFINANCE.NS","TECHM.NS","HDFCLIFE.NS","TRENT.NS","TATAMOTORS.NS",
+    "APOLLOHOSP.NS","DRREDDY.NS","TATACONSUM.NS","CIPLA.NS","MAXHEALTH.NS",
+    # Other Large Cap outside Nifty 50
+    "LICI.NS",
     # Banking & Finance
     "INDUSINDBK.NS","BANKBARODA.NS","PNB.NS","FEDERALBNK.NS","IDFCFIRSTB.NS","CANBK.NS",
     "UNIONBANK.NS","INDIANB.NS","BANKINDIA.NS","CENTRALBK.NS","MAHABANK.NS","UCOBANK.NS",
@@ -102,12 +118,12 @@ NIFTY_500 = [
     "CANFINHOME.NS","REPCO.NS","PNBHOUSING.NS","UGROCAP.NS","CREDITACC.NS",
     # IT & Tech
     "LTIM.NS","COFORGE.NS","PERSISTENT.NS","MPHASIS.NS","KPITTECH.NS","LTTS.NS",
-    "OFSS.NS","HEXAWARE.NS","ZENSAR.NS","NIITTECH.NS","TATAELXSI.NS","CYIENT.NS",
-    "MASTEK.NS","BIRLASOFT.NS","RAMSARUP.NS","SONATSOFTW.NS","TANLA.NS","ROUTE.NS",
+    "OFSS.NS","HEXT.NS","ZENSAR.NS","TATAELXSI.NS","CYIENT.NS",
+    "MASTEK.NS","BIRLASOFT.NS","SONATSOFTW.NS","TANLA.NS","ROUTE.NS",
     # Auto & Auto Ancillaries
     "HEROMOTOCO.NS","EICHERMOT.NS","TVSMOTOR.NS","ASHOKLEY.NS","MOTHERSON.NS","BOSCHLTD.NS",
     "ESCORTS.NS","APOLLOTYRE.NS","MRF.NS","CEAT.NS","BALKRISIND.NS","EXIDEIND.NS",
-    "AMARARAJA.NS","SUNDRMFAST.NS","BHARAT.NS","ENDURANCE.NS","SUPRAJIT.NS","GABRIEL.NS",
+    "AMARARAJA.NS","SUNDRMFAST.NS","BHARATFORG.NS","ENDURANCE.NS","SUPRAJIT.NS","GABRIEL.NS",
     # Pharma & Healthcare
     "CIPLA.NS","DRREDDY.NS","DIVISLAB.NS","LUPIN.NS","AUROPHARMA.NS","TORNTPHARM.NS",
     "ZYDUSLIFE.NS","ALKEM.NS","BIOCON.NS","IPCA.NS","GLENMARK.NS","PFIZER.NS",
@@ -125,7 +141,7 @@ NIFTY_500 = [
     "ADANIGREEN.NS","ADANIPOWER.NS","TORNTPOWER.NS","CESC.NS","NHPC.NS","SJVN.NS",
     "IREDA.NS","RPOWER.NS","JPPOWER.NS",
     # Infrastructure & Cement
-    "GRASIM.NS","ADANIPORTS.NS","AMBUJACEM.NS","SHREECEM.NS","ACC.NS","GMRINFRA.NS",
+    "AMBUJACEM.NS","SHREECEM.NS","ACC.NS","GMRINFRA.NS",
     "IRB.NS","HCC.NS","NBCC.NS","KEC.NS","KALPATPOWER.NS","THERMAX.NS","CUMMINSIND.NS",
     "ABB.NS","SIEMENS.NS","VOLTAS.NS","HAVELLS.NS","POLYCAB.NS","KEI.NS","FINOLEX.NS",
     # Realty
@@ -133,29 +149,32 @@ NIFTY_500 = [
     "PHOENIXLTD.NS","BRIGADE.NS","SOBHA.NS","MAHLIFE.NS","SUNTECK.NS","KOLTEPATIL.NS",
     # Chemicals & Specialty
     "PIDILITIND.NS","SRF.NS","AARTIIND.NS","DEEPAKNTR.NS","NAVINFLUOR.NS","FINEORG.NS",
-    "TATACHEMICALS.NS","UPL.NS","PIIND.NS","COROMANDEL.NS","RALLIS.NS","BASF.NS",
-    "GALAXYSURF.NS","CLEAN.NS","ROSSARI.NS","SUDARSCHEM.NS","TATACHEM.NS",
+    "TATACHEM.NS","UPL.NS","PIIND.NS","COROMANDEL.NS","RALLIS.NS","BASF.NS",
+    "GALAXYSURF.NS","CLEAN.NS","ROSSARI.NS","SUDARSCHEM.NS",
     # Consumption & Retail
     "TRENT.NS","PAGEIND.NS","BATAINDIA.NS","CROMPTON.NS","DIXON.NS","RELAXO.NS",
-    "RAYMOND.NS","VEDANT.NS","DMART.NS","NYKAA.NS","ZOMATO.NS","JUBLFOOD.NS",
+    "RAYMOND.NS","VEDANT.NS","DMART.NS","NYKAA.NS","ETERNAL.NS","JUBLFOOD.NS",
     "DEVYANI.NS","WESTLIFE.NS","SAPPHIRE.NS",
     # Hotels & Tourism
-    "INDHOTEL.NS","LEMONTREE.NS","CHALET.NS","EIHOTEL.NS","MAHINDHOLIDAYS.NS",
+    "INDHOTEL.NS","LEMONTREE.NS","CHALET.NS","EIHOTEL.NS","MHRIL.NS",
     # Logistics & Transport
     "BLUEDART.NS","DELHIVERY.NS","CONCOR.NS","MAHLOG.NS","TCI.NS","VRL.NS",
     # Telecom & Media
     "IDEA.NS","TATACOMM.NS","HFCL.NS","SUNTV.NS","PVRINOX.NS","SAREGAMA.NS","NAZARA.NS",
     # Defence & Aerospace
     "HAL.NS","BEL.NS","BHEL.NS","BEML.NS","PARAS.NS","MAZDOCK.NS","COCHINSHIP.NS",
+    # Insurance & New-Age Financial
+    "SBILIFE.NS","HDFCLIFE.NS","ICICIGI.NS","LICI.NS","MAXHEALTH.NS",
+    "JIOFINANCE.NS","POLICYBZR.NS","PAYTM.NS","NAUKRI.NS","CARTRADE.NS",
     # Others / Diversified
-    "ADANIENTERP.NS","ADANIPORTS.NS","ADANITRANS.NS","ATUL.NS","BALKRISHNA.NS",
+    "ADANITRANS.NS","ATUL.NS",
     "BERGEPAINT.NS","CASTROLIND.NS","GSPL.NS","HONAUT.NS","IGL.NS","MGL.NS",
-    "MCDOWELL-N.NS","NAUKRI.NS","POLICYBZR.NS","PAYTM.NS","CARTRADE.NS",
+    "MCDOWELL-N.NS",
 ]
 
 SECTOR_CONSTITUENTS = {
-    "BANK": ["HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "KOTAKBANK.NS", "AXISBANK.NS", "INDUSINDBK.NS", "BANKBARODA.NS", "PNB.NS", "FEDERALBNK.NS", "IDFCFIRSTB.NS"],
-    "IT": ["TCS.NS", "INFY.NS", "HCLTECH.NS", "WIPRO.NS", "TECHM.NS", "LTIM.NS", "COFORGE.NS", "PERSISTENT.NS", "MPHASIS.NS", "KPITTECH.NS"],
+    "BANK": ["HDFCBANK.NS", "SBIN.NS", "ICICIBANK.NS", "AXISBANK.NS", "KOTAKBANK.NS", "INDUSINDBK.NS", "BANKBARODA.NS", "PNB.NS", "FEDERALBNK.NS", "AUBANK.NS"],
+    "IT": ["TCS.NS", "INFY.NS", "HCLTECH.NS", "WIPRO.NS", "TECHM.NS", "LTIM.NS", "PERSISTENT.NS", "OFSS.NS", "MPHASIS.NS", "COFORGE.NS"],
     "AUTO": ["MARUTI.NS", "TATAMOTORS.NS", "M&M.NS", "BAJAJ-AUTO.NS", "HEROMOTOCO.NS", "EICHERMOT.NS", "TVSMOTOR.NS", "ASHOKLEY.NS", "MOTHERSON.NS", "BOSCHLTD.NS"],
     "FMCG": ["ITC.NS", "HINDUNILVR.NS", "NESTLEIND.NS", "BRITANNIA.NS", "TATACONSUM.NS", "GODREJCP.NS", "DABUR.NS", "MARICO.NS", "VBL.NS", "COLPAL.NS"],
     "PHARMA": ["SUNPHARMA.NS", "CIPLA.NS", "DRREDDY.NS", "DIVISLAB.NS", "LUPIN.NS", "AUROPHARMA.NS", "TORNTPHARM.NS", "ZYDUSLIFE.NS", "ALKEM.NS", "BIOCON.NS"],
@@ -166,8 +185,8 @@ SECTOR_CONSTITUENTS = {
     "MEDIA": ["PVRINOX.NS", "SUNTV.NS", "NETWORK18.NS", "TV18BRDCST.NS", "NAVNETEDUL.NS", "NDTV.NS", "HATHWAY.NS", "DISHTV.NS", "NAZARA.NS", "SAREGAMA.NS"],
     "PSU BANK": ["SBIN.NS", "BANKBARODA.NS", "PNB.NS", "CANBK.NS", "UNIONBANK.NS", "INDIANB.NS", "BANKINDIA.NS", "CENTRALBK.NS", "MAHABANK.NS", "UCOBANK.NS"],
     "INFRASTRUCTURE": ["LT.NS", "GRASIM.NS", "ULTRACEMCO.NS", "ADANIPORTS.NS", "AMBUJACEM.NS", "SHREECEM.NS", "ACC.NS", "GMRINFRA.NS", "IRB.NS", "HCC.NS"],
-    "COMMODITIES": ["TATACHEMICALS.NS", "UPL.NS", "PIIND.NS", "COROMANDEL.NS", "SRF.NS", "AARTIIND.NS", "DEEPAKNTR.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "VEDL.NS"],
-    "CONSUMPTION": ["ASIANPAINT.NS", "TITAN.NS", "TRENT.NS", "PAGEIND.NS", "JUBIQUANT.NS", "BATAINDIA.NS", "VOLTAS.NS", "CROMPTON.NS", "DIXON.NS", "HAVELLS.NS"],
+    "COMMODITIES": ["TATACHEM.NS", "UPL.NS", "PIIND.NS", "COROMANDEL.NS", "SRF.NS", "AARTIIND.NS", "DEEPAKNTR.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "VEDL.NS"],
+    "CONSUMPTION": ["ASIANPAINT.NS", "TITAN.NS", "TRENT.NS", "PAGEIND.NS", "ETERNAL.NS", "JUBLFOOD.NS", "BATAINDIA.NS", "VOLTAS.NS", "CROMPTON.NS", "DIXON.NS"],
     "MNC": ["MARUTI.NS", "NESTLEIND.NS", "BRITANNIA.NS", "CUMMINSIND.NS", "ABB.NS", "BOSCHLTD.NS", "SIEMENS.NS", "COLPAL.NS", "BATAINDIA.NS", "CASTROLIND.NS"],
     "PSE": ["NTPC.NS", "ONGC.NS", "POWERGRID.NS", "COALINDIA.NS", "IOC.NS", "BPCL.NS", "GAIL.NS", "NMDC.NS", "BHEL.NS", "HAL.NS", "BEL.NS"]
 }
@@ -245,13 +264,13 @@ def get_volume_split_stocks():
                     "day change %": day_change,
                     "candle": candle,
                     "daily buying vol": int(day_buy_vol),
-                    "daily buying %": f"{day_buy_pct}%",
+                    "daily buying %": day_buy_pct,
                     "weekly buying vol": int(week_buy_vol),
-                    "weekly buying %": f"{week_buy_pct}%",
+                    "weekly buying %": week_buy_pct,
                     "daily selling vol": int(day_sell_vol),
-                    "daily selling %": f"{day_sell_pct}%",
+                    "daily selling %": day_sell_pct,
                     "weekly selling vol": int(week_sell_vol),
-                    "weekly selling %": f"{week_sell_pct}%",
+                    "weekly selling %": week_sell_pct,
                     "_day_bvol":  day_buy_vol,
                     "_week_bvol": week_buy_vol,
                     "_day_svol":  day_sell_vol,
@@ -291,32 +310,59 @@ def get_volume_split_stocks():
 
 @st.cache_data(ttl=300)
 def get_sector_data():
+    import time as _time
+    tickers = list(SECTORS.values())
+    name_by_ticker = {v: k for k, v in SECTORS.items()}
     data = {}
-    for name, ticker in SECTORS.items():
+
+    # ── Step 1: one batch download (single HTTP round-trip, reduces rate-limit hits) ──
+    batch_df = pd.DataFrame()
+    for attempt in range(3):
         try:
-            df = yf.download(ticker, period="1y", interval="1d", progress=False)
-            if isinstance(df.columns, pd.MultiIndex):
-                df.columns = df.columns.droplevel(1)
-            if len(df) < 64:
-                continue
-            daily = (df['Close'].iloc[-1] / df['Close'].iloc[-2]) - 1
-            weekly = (df['Close'].iloc[-1] / df['Close'].iloc[-5]) - 1
-            monthly = (df['Close'].iloc[-1] / df['Close'].iloc[-21]) - 1
-            quarterly = (df['Close'].iloc[-1] / df['Close'].iloc[-63]) - 1
-            yearly = (df['Close'].iloc[-1] / df['Close'].iloc[0]) - 1
+            batch_df = yf.download(tickers, period="1y", interval="1d", progress=False)
+            if not batch_df.empty:
+                break
+        except Exception:
+            pass
+        _time.sleep(3)
+
+    # ── Step 2: extract per-ticker series; fall back to individual fetch if missing ──
+    for ticker, name in name_by_ticker.items():
+        df_t = pd.DataFrame()
+        try:
+            if not batch_df.empty and isinstance(batch_df.columns, pd.MultiIndex):
+                if ticker in batch_df.columns.get_level_values(1):
+                    df_t = batch_df.xs(ticker, axis=1, level=1).dropna(subset=["Close"])
+        except Exception:
+            pass
+
+        # Individual fallback if batch missed this ticker (rate-limited slot)
+        if len(df_t) < 64:
+            for retry in range(3):
+                try:
+                    _time.sleep(1.5 + retry * 2)
+                    df_t = yf.Ticker(ticker).history(period="1y").dropna(subset=["Close"])
+                    if len(df_t) >= 64:
+                        break
+                except Exception:
+                    pass
+
+        if len(df_t) < 64:
+            continue
+
+        try:
             data[name] = {
-                "Daily": float(daily) * 100,
-                "Weekly": float(weekly) * 100,
-                "Monthly": float(monthly) * 100,
-                "Quarterly": float(quarterly) * 100,
-                "Yearly": float(yearly) * 100
+                "Daily":     float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-2])  - 1) * 100,
+                "Weekly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-5])  - 1) * 100,
+                "Monthly":   float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-21]) - 1) * 100,
+                "Quarterly": float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-63]) - 1) * 100,
+                "Yearly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[0])   - 1) * 100,
             }
         except Exception:
             pass
-    
+
     if "NIFTY 50" not in data:
         get_sector_data.clear()
-        
     return data
 
 @st.cache_data(ttl=300)
@@ -711,55 +757,116 @@ def get_top_10_overall_stocks():
                 pass
         
         results = sorted(results, key=lambda x: x["weekly %"], reverse=True)[:10]
-        for i, r in enumerate(results): r["sr. no."] = i + 1
+        for i, r in enumerate(results):
+            r["sr. no."] = i + 1
+            try:
+                info = yf.Ticker(r["stock symbol"]).info
+                qoq = info.get("earningsQuarterlyGrowth")
+                yoy = info.get("earningsGrowth")
+                r["EPS QoQ %"] = f"{round(qoq * 100, 1)}%" if qoq is not None else "N/A"
+                r["EPS YoY %"] = f"{round(yoy * 100, 1)}%" if yoy is not None else "N/A"
+            except Exception:
+                r["EPS QoQ %"] = "N/A"
+                r["EPS YoY %"] = "N/A"
         return results
     except Exception:
         return []
 
 @st.cache_data(ttl=300)
 def get_nifty_sensex_levels():
+    import time as _time
     res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A"}
-    try:
-        df = yf.download(["^NSEI", "^BSESN", "^INDIAVIX"], period="max", interval="1d", progress=False)
-        for name, ticker in [("NIFTY 50", "^NSEI"), ("SENSEX", "^BSESN"), ("INDIA VIX", "^INDIAVIX")]:
+
+    for ticker, key in [("^NSEI", "NIFTY 50"), ("^BSESN", "SENSEX"), ("^INDIAVIX", "INDIA VIX")]:
+        for attempt in range(3):
             try:
-                if isinstance(df.columns, pd.MultiIndex):
-                    if ticker in df.columns.levels[1] or ticker in df.columns.get_level_values(1):
-                        series = df.xs(ticker, axis=1, level=1)['Close'].dropna()
-                        current = float(series.iloc[-1])
-                        res[name] = f"{current:,.2f}"
-                        if name == "NIFTY 50":
-                            import ta
-                            rsi_series = ta.momentum.RSIIndicator(series, window=14).rsi().dropna()
-                            if not rsi_series.empty:
-                                res["NIFTY RSI"] = f"{rsi_series.iloc[-1]:.1f}"
-                            high_series = df.xs(ticker, axis=1, level=1)['High'].dropna()
-                            ath = float(high_series.max())
-                            pct_ath = ((current / ath) - 1) * 100
-                            res["NIFTY % to ATH"] = f"{pct_ath:.2f}%"
-                else:
-                    if ticker in df['Close'].columns:
-                        series = df['Close'][ticker].dropna()
-                        current = float(series.iloc[-1])
-                        res[name] = f"{current:,.2f}"
-                        if name == "NIFTY 50":
-                            import ta
-                            rsi_series = ta.momentum.RSIIndicator(series, window=14).rsi().dropna()
-                            if not rsi_series.empty:
-                                res["NIFTY RSI"] = f"{rsi_series.iloc[-1]:.1f}"
-                            high_series = df['High'][ticker].dropna()
-                            ath = float(high_series.max())
-                            pct_ath = ((current / ath) - 1) * 100
-                            res["NIFTY % to ATH"] = f"{pct_ath:.2f}%"
+                df_t = yf.Ticker(ticker).history(period="2y")
+                if df_t.empty:
+                    _time.sleep(2)
+                    continue
+                df_t = df_t.dropna(subset=["Close"])
+                current = float(df_t["Close"].iloc[-1])
+                res[key] = f"{current:,.2f}"
+                if key == "NIFTY 50":
+                    rsi_s = ta.momentum.RSIIndicator(df_t["Close"], window=14).rsi().dropna()
+                    if not rsi_s.empty:
+                        res["NIFTY RSI"] = f"{rsi_s.iloc[-1]:.1f}"
+                    ath = float(df_t["High"].max())
+                    res["NIFTY % to ATH"] = f"{((current / ath) - 1) * 100:.2f}%"
+                break
             except Exception:
-                pass
-    except Exception:
-        pass
-        
+                _time.sleep(2)
+        _time.sleep(0.5)
+
     if res["NIFTY 50"] == "N/A":
         get_nifty_sensex_levels.clear()
-        
     return res
+
+
+@st.cache_data(ttl=3600)
+def get_nifty50_pe():
+    """
+    Fetch Nifty 50 trailing P/E ratio.
+    Method 1: NSE allIndices API (authoritative, Indian IP preferred).
+    Method 2: Calculated market-cap weighted P/E from Nifty 50 constituents via yfinance.
+    """
+    import requests
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    # ── Method 1: NSE allIndices API ─────────────────────────────────────────
+    try:
+        session = requests.Session()
+        session.get("https://www.nseindia.com", timeout=8, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+        })
+        resp = session.get(
+            "https://www.nseindia.com/api/allIndices",
+            timeout=10,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+                "Referer": "https://www.nseindia.com/",
+                "Accept": "application/json",
+            }
+        )
+        if resp.status_code == 200:
+            for item in resp.json().get("data", []):
+                if item.get("index") == "NIFTY 50":
+                    pe = item.get("pe")
+                    if pe:
+                        return round(float(pe), 2)
+    except Exception:
+        pass
+
+    # ── Method 2: Market-cap weighted P/E from constituents ──────────────────
+    try:
+        def _fetch(ticker):
+            try:
+                info = yf.Ticker(ticker).info
+                mc = info.get("marketCap") or 0
+                pe = info.get("trailingPE") or 0
+                if mc > 0 and pe > 0:
+                    return mc, mc / pe   # (market_cap, earnings)
+            except Exception:
+                pass
+            return None
+
+        total_mc = 0.0
+        total_earn = 0.0
+        with ThreadPoolExecutor(max_workers=10) as ex:
+            futures = {ex.submit(_fetch, t): t for t in NIFTY_50}
+            for f in as_completed(futures):
+                res = f.result()
+                if res:
+                    total_mc += res[0]
+                    total_earn += res[1]
+
+        if total_earn > 0:
+            return round(total_mc / total_earn, 2)
+    except Exception:
+        pass
+
+    return None
 
 @st.cache_data(ttl=3600)
 def get_fiidii():
@@ -880,7 +987,7 @@ def get_fii_stake_increases(_mtime=None):
                     "company": symbol,
                     "current FII %": round(latest_fii, 2),
                     "prev quarter %": round(prev_fii, 2),
-                    "change (pp)": f"+{change}",
+                    "change (pp)": change,
                 })
         except Exception:
             pass
@@ -890,21 +997,757 @@ def get_fii_stake_increases(_mtime=None):
         r["sr. no."] = i + 1
     return results
 
+COMMODITIES = {
+    "CL=F":  {"name": "WTI Crude Oil",  "unit": "USD/bbl"},
+    "BZ=F":  {"name": "Brent Crude",    "unit": "USD/bbl"},
+    "NG=F":  {"name": "Natural Gas",    "unit": "USD/MMBtu"},
+    "GC=F":  {"name": "Gold",           "unit": "USD/troy oz"},
+    "SI=F":  {"name": "Silver",         "unit": "USD/troy oz"},
+}
+
+@st.cache_data(ttl=300)
+def get_commodity_data():
+    import time as _time
+    # Live USD/INR for Gold & Silver INR conversion
+    usdinr = None
+    try:
+        _fx = yf.Ticker("USDINR=X").history(period="5d")
+        if not _fx.empty:
+            usdinr = float(_fx["Close"].dropna().iloc[-1])
+    except Exception:
+        pass
+
+    results = []
+    for t, meta in COMMODITIES.items():
+        try:
+            df_t = yf.Ticker(t).history(period="5y")
+            if df_t.empty or len(df_t) < 2:
+                continue
+            df_t = df_t.dropna(subset=["Close"])
+            current = float(df_t["Close"].iloc[-1])
+            prev    = float(df_t["Close"].iloc[-2])
+            ath     = float(df_t["High"].max())
+            name    = meta["name"]
+
+            inr_price = None
+            if usdinr:
+                if name == "Gold":
+                    inr_price = f"₹{round(current * usdinr / 31.1035 * 10):,} /10g"
+                elif name == "Silver":
+                    inr_price = f"₹{round(current * usdinr / 31.1035 * 1000):,} /kg"
+
+            results.append({
+                "commodity":     name,
+                "unit":          meta["unit"],
+                "current price": round(current, 2),
+                "INR price (Latur)": inr_price if inr_price else "—",
+                "day change %":  round((current / prev - 1) * 100, 2),
+                "% from 5Y high": round((current / ath - 1) * 100, 2),
+            })
+            _time.sleep(0.3)
+        except Exception:
+            pass
+    return results
+
+MF_SCHEMES = {
+    # Large Cap - Direct Growth
+    120503: ("Axis Bluechip Fund",                  "Large Cap"),
+    119598: ("HDFC Top 100 Fund",                   "Large Cap"),
+    120586: ("ICICI Pru Bluechip Fund",             "Large Cap"),
+    119286: ("SBI Bluechip Fund",                   "Large Cap"),
+    118989: ("Mirae Asset Large Cap Fund",          "Large Cap"),
+    122639: ("Nippon India Large Cap Fund",         "Large Cap"),
+    # Flexi Cap - Direct Growth
+    125354: ("Parag Parikh Flexi Cap Fund",         "Flexi Cap"),
+    100170: ("HDFC Flexi Cap Fund",                 "Flexi Cap"),
+    120505: ("Axis Focused 25 Fund",                "Flexi Cap"),
+    118778: ("Motilal Oswal Flexi Cap Fund",        "Flexi Cap"),
+    # Mid Cap - Direct Growth
+    119551: ("HDFC Mid-Cap Opportunities",          "Mid Cap"),
+    120594: ("ICICI Pru Midcap Fund",               "Mid Cap"),
+    120829: ("Axis Midcap Fund",                    "Mid Cap"),
+    120847: ("Kotak Emerging Equity Fund",          "Mid Cap"),
+    # Small Cap - Direct Growth
+    120828: ("Axis Small Cap Fund",                 "Small Cap"),
+    125497: ("Nippon India Small Cap Fund",         "Small Cap"),
+    119605: ("HDFC Small Cap Fund",                 "Small Cap"),
+    125959: ("Quant Small Cap Fund",                "Small Cap"),
+    # Index - Direct Growth
+    120716: ("UTI Nifty 50 Index Fund",             "Index"),
+    148627: ("Motilal Oswal Nifty 50 Index Fund",   "Index"),
+    # Hybrid - Direct Growth
+    125170: ("HDFC Balanced Advantage Fund",        "Hybrid"),
+    119775: ("ICICI Pru Balanced Advantage Fund",   "Hybrid"),
+}
+
+@st.cache_data(ttl=3600)
+def get_top_mutual_funds():
+    import requests
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    def fetch_fund(scheme_code, name, category):
+        try:
+            resp = requests.get(
+                f"https://api.mfapi.in/mf/{scheme_code}",
+                timeout=15
+            )
+            if resp.status_code != 200:
+                return None
+            data = resp.json().get("data", [])
+            if len(data) < 22:
+                return None
+
+            def nav(i):
+                return float(data[i]["nav"])
+
+            current = nav(0)
+            daily   = round((current / nav(1)   - 1) * 100, 2) if len(data) > 1   else None
+            weekly  = round((current / nav(5)   - 1) * 100, 2) if len(data) > 5   else None
+            monthly = round((current / nav(21)  - 1) * 100, 2) if len(data) > 21  else None
+            yearly  = round((current / nav(252) - 1) * 100, 2) if len(data) > 252 else None
+
+            return {
+                "fund name":    name,
+                "category":     category,
+                "NAV (₹)":      round(current, 2),
+                "daily %":      daily,
+                "weekly %":     weekly,
+                "monthly %":    monthly,
+                "yearly %":     yearly,
+            }
+        except Exception:
+            return None
+
+    results = []
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {
+            executor.submit(fetch_fund, code, name, cat): code
+            for code, (name, cat) in MF_SCHEMES.items()
+        }
+        for future in as_completed(futures):
+            res = future.result()
+            if res:
+                results.append(res)
+
+    results.sort(key=lambda x: x.get("weekly %") or 0, reverse=True)
+    for i, r in enumerate(results):
+        r["sr. no."] = i + 1
+    return results
+
+# ── Extended commodity list for the dedicated tab ─────────────────────────────
+FULL_COMMODITIES = {
+    "CL=F":  {"name": "WTI Crude Oil",   "unit": "USD/bbl"},
+    "BZ=F":  {"name": "Brent Crude",     "unit": "USD/bbl"},
+    "NG=F":  {"name": "Natural Gas",     "unit": "USD/MMBtu"},
+    "GC=F":  {"name": "Gold",            "unit": "USD/troy oz"},
+    "SI=F":  {"name": "Silver",          "unit": "USD/troy oz"},
+    "HG=F":  {"name": "Copper",          "unit": "USD/lb"},
+    "ZW=F":  {"name": "Wheat",           "unit": "USD/bushel"},
+    "ZC=F":  {"name": "Corn",            "unit": "USD/bushel"},
+    "PA=F":  {"name": "Palladium",       "unit": "USD/troy oz"},
+    "ALI=F": {"name": "Aluminium",       "unit": "USD/lb"},
+}
+
+CURRENCY_PAIRS = {
+    "USDINR=X": "USD / INR",
+    "EURINR=X": "EUR / INR",
+    "GBPINR=X": "GBP / INR",
+    "JPYINR=X": "JPY / INR",
+    "CNYINR=X": "CNY / INR",
+    "DX-Y.NYB": "US Dollar Index (DXY)",
+}
+
+@st.cache_data(ttl=300)
+def get_extended_commodity_data():
+    import time as _time
+
+    # Fetch live USD/INR rate for Gold & Silver INR conversion
+    usdinr = None
+    try:
+        _fx = yf.Ticker("USDINR=X").history(period="5d")
+        if not _fx.empty:
+            usdinr = float(_fx["Close"].dropna().iloc[-1])
+    except Exception:
+        pass
+
+    results = []
+    for t, meta in FULL_COMMODITIES.items():
+        try:
+            df_t = yf.Ticker(t).history(period="5y")
+            if df_t.empty or len(df_t) < 2:
+                continue
+            df_t = df_t.dropna(subset=["Close"])
+            if len(df_t) < 2:
+                continue
+            c   = float(df_t["Close"].iloc[-1])
+            ath = float(df_t["High"].max())
+
+            def _p(n, _c=c, _df=df_t):
+                return round((_c / float(_df["Close"].iloc[-(n + 1)]) - 1) * 100, 2) if len(_df) > n else None
+
+            pct_ath = round((c / ath - 1) * 100, 2)
+            wk      = _p(5) or 0
+            name    = meta["name"]
+
+            if "Crude" in name or "Oil" in name:
+                if wk > 3:    insight = "Rising crude pressures India's CAD and fuel inflation — watch for RBI response."
+                elif wk > 0:  insight = "Steady crude; manageable import bill for India in near term."
+                elif wk > -3: insight = "Softening crude benefits India's trade deficit and eases inflation."
+                else:         insight = "Sharp crude fall signals global demand weakness; positive for India inflation."
+            elif "Gas" in name:
+                if wk > 5:    insight = "Surging gas costs raise input costs for fertiliser and power sectors."
+                elif wk > 0:  insight = "Gas prices firm; watch GAIL, IGL, Petronet margins."
+                else:         insight = "Cooling gas prices ease energy costs for industry."
+            elif "Gold" in name:
+                if pct_ath >= -3: insight = "Gold near 5Y high — strong safe-haven bid; signals macro uncertainty."
+                elif wk > 1:      insight = "Gold rising; defensive positioning increasing globally."
+                elif wk < -2:     insight = "Gold retreating; risk appetite returning to equities."
+                else:             insight = "Gold consolidating; watch DXY direction for next move."
+            elif "Silver" in name:
+                if wk > 3:    insight = "Silver outpacing gold (ratio compressing) — industrial demand strong."
+                elif wk < -3: insight = "Silver underperforming; industrial demand concerns or gold weakness."
+                else:         insight = "Silver tracking gold with higher volatility; watch industrial PMI data."
+            elif "Copper" in name:
+                if wk > 2:    insight = "Copper surge signals strong global industrial/construction activity."
+                elif wk < -2: insight = "Copper weakness flags slowing global growth; monitor China PMI."
+                else:         insight = "Copper range-bound; mixed signals on global manufacturing cycle."
+            elif "Wheat" in name or "Corn" in name:
+                if wk > 3:    insight = "Agri commodity spike raises food inflation risks; watch CPI prints."
+                elif wk < -3: insight = "Agri prices easing; food inflation relief ahead."
+                else:         insight = "Agri prices stable; benign food inflation environment."
+            elif "Palladium" in name:
+                if wk > 3:    insight = "Palladium rising; EV transition may be slower than expected (petrol catalysts)."
+                elif wk < -3: insight = "Palladium weak; EV adoption accelerating, reducing autocatalyst demand."
+                else:         insight = "Palladium range-bound; watch auto sector and EV penetration data."
+            elif "Aluminium" in name:
+                if wk > 2:    insight = "Aluminium rising; strong demand from EVs, infra, and packaging sectors."
+                elif wk < -2: insight = "Aluminium under pressure; watch China industrial output and LME inventory."
+                else:         insight = "Aluminium stable; balanced supply-demand globally."
+            else:
+                if pct_ath >= -5: insight = "Near 5Y high; exceptional momentum."
+                elif wk > 0:      insight = "Positive trend; monitor for continuation."
+                else:             insight = "Under pressure; watch key support levels."
+
+            # INR price for Gold (₹/10g) and Silver (₹/kg) — Latur/MCX reference rate
+            # 1 troy oz = 31.1035 g
+            inr_price = None
+            inr_unit  = None
+            if usdinr:
+                if name == "Gold":
+                    inr_price = f"₹{round(c * usdinr / 31.1035 * 10):,} /10g"
+                    inr_unit  = "₹/10g"
+                elif name == "Silver":
+                    inr_price = f"₹{round(c * usdinr / 31.1035 * 1000):,} /kg"
+                    inr_unit  = "₹/kg"
+
+            results.append({
+                "commodity":  name,
+                "unit":       meta["unit"],
+                "price":      round(c, 2),
+                "INR price (Latur)": inr_price if inr_price else "—",
+                "day %":      _p(1),
+                "week %":     _p(5),
+                "month %":    _p(21),
+                "quarter %":  _p(63),
+                "yearly %":   _p(252),
+                "% from 5Y high": pct_ath,
+                "insight":    insight,
+            })
+            _time.sleep(0.3)
+        except Exception:
+            pass
+    return results
+
+@st.cache_data(ttl=300)
+def get_currency_data():
+    import time as _time
+    results = []
+    for t, pair in CURRENCY_PAIRS.items():
+        try:
+            df_t = yf.Ticker(t).history(period="5y")
+            if df_t.empty or len(df_t) < 2:
+                continue
+            df_t = df_t.dropna(subset=["Close"])
+            if len(df_t) < 2:
+                continue
+            c   = float(df_t["Close"].iloc[-1])
+            ath = float(df_t["High"].max())
+
+            def _p(n, _c=c, _df=df_t):
+                return round((_c / float(_df["Close"].iloc[-(n + 1)]) - 1) * 100, 2) if len(_df) > n else None
+
+            pct_ath = round((c / ath - 1) * 100, 2)
+            wk      = _p(5) or 0
+
+            if "USD / INR" in pair:
+                if wk > 0.5:    insight = "Rupee depreciating vs USD — FII equity outflows likely; import costs rise."
+                elif wk < -0.5: insight = "Rupee strengthening vs USD — positive for FII inflows and lower import inflation."
+                else:           insight = "USD/INR stable; RBI likely managing range via interventions."
+            elif "EUR / INR" in pair:
+                if wk > 0.5:    insight = "EUR/INR rising; Euro-zone resilience or rupee weakness driving move."
+                elif wk < -0.5: insight = "EUR/INR falling; watch ECB policy divergence vs RBI."
+                else:           insight = "EUR/INR range-bound; eurozone and India macro in equilibrium."
+            elif "GBP / INR" in pair:
+                if wk > 0.5:    insight = "GBP gaining on INR; UK data beating or BoE hawkishness."
+                elif wk < -0.5: insight = "GBP softening vs INR; UK growth concerns or dovish BoE signals."
+                else:           insight = "GBP/INR stable; limited directional catalyst in near term."
+            elif "JPY / INR" in pair:
+                if wk > 0.5:    insight = "Yen strengthening; risk-off globally or BoJ hike — watch carry trade unwind."
+                elif wk < -0.5: insight = "Yen weakening; carry trade intact; Japan keeping rates low."
+                else:           insight = "JPY/INR flat; BoJ-RBI policy divergence on hold."
+            elif "CNY / INR" in pair:
+                if wk > 0.3:    insight = "Yuan gaining on INR; China stimulus or trade surplus driving strength."
+                elif wk < -0.3: insight = "Yuan softening; China growth concerns or PBoC easing."
+                else:           insight = "CNY/INR stable; China-India trade dynamics balanced."
+            elif "DXY" in pair:
+                if wk > 0.5:    insight = "Strong DXY pressures EM currencies and commodities — headwind for Indian equities."
+                elif wk < -0.5: insight = "Weakening DXY boosts EM/commodities; supportive for Indian market inflows."
+                else:           insight = "DXY neutral; global macro in wait-and-watch mode."
+            else:
+                insight = "Monitor trend for directional cues."
+
+            results.append({
+                "pair":           pair,
+                "rate":           round(c, 4),
+                "day %":          _p(1),
+                "week %":         _p(5),
+                "month %":        _p(21),
+                "yearly %":       _p(252),
+                "% from 5Y high": pct_ath,
+                "insight":        insight,
+            })
+            _time.sleep(0.3)
+        except Exception:
+            pass
+    return results
+
+@st.cache_data(ttl=1800)
+def get_market_breadth():
+    tickers = get_nifty500_tickers()
+    res = {
+        "total": 0, "advances": 0, "declines": 0, "unchanged": 0,
+        "above_200dma": 0, "above_50dma": 0,
+        "new_52w_highs": 0, "new_52w_lows": 0,
+        "high_stocks": [], "low_stocks": [],
+    }
+    try:
+        df = yf.download(tickers, period="1y", interval="1d", progress=False)
+        for t in tickers:
+            try:
+                if isinstance(df.columns, pd.MultiIndex):
+                    if t not in df.columns.get_level_values(1):
+                        continue
+                    df_t = df.xs(t, axis=1, level=1).dropna()
+                else:
+                    df_t = df.dropna()
+                if len(df_t) < 52:
+                    continue
+
+                close   = df_t["Close"]
+                current = float(close.iloc[-1])
+                prev    = float(close.iloc[-2])
+                res["total"] += 1
+
+                if current > prev:      res["advances"]  += 1
+                elif current < prev:    res["declines"]  += 1
+                else:                   res["unchanged"] += 1
+
+                if len(df_t) >= 200 and current > float(close.iloc[-200:].mean()):
+                    res["above_200dma"] += 1
+                if len(df_t) >= 50 and current > float(close.iloc[-50:].mean()):
+                    res["above_50dma"] += 1
+
+                n = min(len(df_t), 252)
+                high52 = float(df_t["High"].iloc[-n:].max())
+                low52  = float(df_t["Low"].iloc[-n:].min())
+
+                if high52 > 0 and (current / high52 - 1) * 100 >= -1.5:
+                    res["new_52w_highs"] += 1
+                    res["high_stocks"].append(t.replace(".NS", ""))
+                if low52 > 0 and (current / low52 - 1) * 100 <= 1.5:
+                    res["new_52w_lows"] += 1
+                    res["low_stocks"].append(t.replace(".NS", ""))
+            except Exception:
+                pass
+    except Exception:
+        pass
+    return res
+
+@st.cache_data(ttl=300)
+def get_options_snapshot(symbol="NIFTY"):
+    import requests
+    session = requests.Session()
+    hdrs = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    try:
+        session.get("https://www.nseindia.com", timeout=10, headers=hdrs)
+        session.get("https://www.nseindia.com/option-chain", timeout=10, headers=hdrs)
+    except Exception as e:
+        return {"error": f"Cannot reach NSE — this feature requires an Indian IP address. ({type(e).__name__})"}
+    try:
+        resp = session.get(
+            f"https://www.nseindia.com/api/option-chain-indices?symbol={symbol}",
+            timeout=15,
+            headers={**hdrs, "Referer": "https://www.nseindia.com/option-chain", "Accept": "application/json"},
+        )
+        if resp.status_code != 200:
+            return {"error": f"NSE returned HTTP {resp.status_code} — this feature requires an Indian IP address."}
+        data = resp.json()
+    except Exception as e:
+        return {"error": f"Option chain fetch failed — this feature requires an Indian IP address. ({type(e).__name__})"}
+    try:
+        records       = data["records"]["data"]
+        expiry_dates  = data["records"]["expiryDates"]
+        spot          = float(data["records"]["underlyingValue"])
+        nearest_exp   = expiry_dates[0]
+        chain         = [r for r in records if r.get("expiryDate") == nearest_exp]
+
+        total_call_oi = sum(r.get("CE", {}).get("openInterest", 0) for r in records if "CE" in r)
+        total_put_oi  = sum(r.get("PE", {}).get("openInterest", 0) for r in records if "PE" in r)
+        pcr           = round(total_put_oi / total_call_oi, 2) if total_call_oi > 0 else None
+
+        rows = []
+        for r in chain:
+            strike = r.get("strikePrice", 0)
+            rows.append({
+                "call OI":   int(r.get("CE", {}).get("openInterest", 0)),
+                "call Δ OI": int(r.get("CE", {}).get("changeinOpenInterest", 0)),
+                "call LTP":  r.get("CE", {}).get("lastPrice", "-"),
+                "strike":    int(strike),
+                "put LTP":   r.get("PE", {}).get("lastPrice", "-"),
+                "put OI":    int(r.get("PE", {}).get("openInterest", 0)),
+                "put Δ OI":  int(r.get("PE", {}).get("changeinOpenInterest", 0)),
+            })
+        rows.sort(key=lambda x: x["strike"])
+
+        # Max pain
+        strikes    = [r["strike"] for r in rows]
+        call_oi_m  = {r["strike"]: r["call OI"] for r in rows}
+        put_oi_m   = {r["strike"]: r["put OI"]  for r in rows}
+        min_pain, max_pain = None, None
+        for cand in strikes:
+            pain = sum(
+                max(0, s - cand) * call_oi_m.get(s, 0) +
+                max(0, cand - s) * put_oi_m.get(s, 0)
+                for s in strikes
+            )
+            if min_pain is None or pain < min_pain:
+                min_pain, max_pain = pain, cand
+
+        atm_rows = [r for r in rows if spot > 0 and abs(r["strike"] - spot) / spot <= 0.10]
+        return {
+            "error": None, "symbol": symbol, "spot": spot, "expiry": nearest_exp,
+            "pcr": pcr, "max_pain": max_pain,
+            "total_call_oi": total_call_oi, "total_put_oi": total_put_oi,
+            "atm_rows": atm_rows,
+        }
+    except Exception as e:
+        return {"error": f"Error parsing NSE data: {e}"}
+
+@st.cache_data(ttl=3600)
+def get_earnings_calendar():
+    import requests
+    from datetime import datetime, timezone
+
+    # Method 1: NSE Event Calendar (Indian IP required)
+    try:
+        session = requests.Session()
+        hdrs = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json",
+            "Referer": "https://www.nseindia.com/",
+        }
+        session.get("https://www.nseindia.com", timeout=10, headers={**hdrs, "Accept": "text/html"})
+        resp = session.get("https://www.nseindia.com/api/event-calendar", timeout=15, headers=hdrs)
+        if resp.status_code == 200:
+            today = datetime.now(timezone.utc).date()
+            results = []
+            for e in resp.json():
+                purpose = e.get("purpose", "")
+                if any(k in purpose.lower() for k in ("result", "quarterly", "financial", "dividend")):
+                    try:
+                        ev_date = datetime.strptime(e.get("date", ""), "%d-%b-%Y").date()
+                        if ev_date >= today:
+                            results.append({
+                                "company": e.get("symbol", ""),
+                                "date":    e.get("date", ""),
+                                "event":   purpose,
+                            })
+                    except Exception:
+                        pass
+            results.sort(key=lambda x: x["date"])
+            if results:
+                return {"data": results[:60], "source": "NSE Event Calendar", "error": None}
+    except Exception:
+        pass
+
+    # Method 2: Yahoo Finance fallback (any IP)
+    results = []
+    for t in NIFTY_50:
+        try:
+            cal = yf.Ticker(t).calendar
+            if cal is None:
+                continue
+            dates = cal.get("Earnings Date", []) if isinstance(cal, dict) else []
+            if not isinstance(dates, list):
+                dates = [dates]
+            for d in dates:
+                if d:
+                    results.append({
+                        "company": t.replace(".NS", ""),
+                        "date":    str(d)[:10],
+                        "event":   "Quarterly Results (est.)",
+                    })
+        except Exception:
+            pass
+    results.sort(key=lambda x: x.get("date", ""))
+    if results:
+        return {"data": results[:60], "source": "Yahoo Finance (estimates)", "error": None}
+
+    return {"data": [], "source": None,
+            "error": "Earnings data unavailable. NSE Event Calendar requires an Indian IP address."}
+
+def _section(title, icon="", subtitle=""):
+    """Render a styled section header with left accent bar."""
+    sub_html = f'<div style="font-size:12px;color:#64748b;margin-top:3px;">{subtitle}</div>' if subtitle else ""
+    st.markdown(f"""
+    <div style="background:linear-gradient(90deg,rgba(59,130,246,.12) 0%,transparent 100%);
+                border-left:3px solid #3b82f6;border-radius:0 8px 8px 0;
+                padding:10px 16px;margin:18px 0 8px 0;">
+        <div style="font-size:15px;font-weight:700;color:#e2e8f0;">{icon}&nbsp;{title}</div>
+        {sub_html}
+    </div>""", unsafe_allow_html=True)
+
+
+def _color_pct(df):
+    """Return a Styler with green/red text on numeric %-like and signal columns."""
+    pct_cols = [c for c in df.columns if any(
+        k in str(c).lower() for k in ['%', 'alpha', 'change', 'return'])]
+
+    def _c(v):
+        try:
+            num = float(str(v).replace('%','').replace('₹','').replace(',','').replace('+','').strip())
+            if num > 0:  return 'color:#00e676;font-weight:600'
+            if num < 0:  return 'color:#ff5252;font-weight:600'
+        except Exception: pass
+        return ''
+
+    def _candle_c(v):
+        v = str(v)
+        if 'Green' in v or '▲' in v: return 'color:#00e676;font-weight:700'
+        if 'Red' in v or '▼' in v:   return 'color:#ff5252;font-weight:700'
+        return ''
+
+    def _signal_c(v):
+        v = str(v)
+        if any(k in v for k in ('✅✅✅✅', 'Strong', 'Fanning Up', 'Fresh Cross', 'Bullish ✅', 'Inflow')):
+            return 'color:#00e676;font-weight:600'
+        if any(k in v for k in ('❌', 'Bearish', 'Flat/Mixed', 'Weak', 'Unconfirmed', 'Outflow')):
+            return 'color:#ff5252'
+        if any(k in v for k in ('⚠️', 'Watch', 'Likely', 'Neutral', 'Overbought', 'Aligned, Not')):
+            return 'color:#fbbf24'
+        return ''
+
+    try:
+        s = df.style
+        # Format all float columns to 2 decimal places
+        float_cols = df.select_dtypes(include=['float64', 'float32', 'float16']).columns.tolist()
+        if float_cols:
+            s = s.format({col: "{:.2f}" for col in float_cols}, na_rep="-")
+        for col in pct_cols:
+            if col in df.columns:
+                s = s.map(_c, subset=[col])
+        if 'candle' in df.columns:
+            s = s.map(_candle_c, subset=['candle'])
+        for col in ('MACD', 'MA alignment', 'overall confirmation', 'RSI (14)', 'volume (vs 20D avg)'):
+            if col in df.columns:
+                s = s.map(_signal_c, subset=[col])
+        return s
+    except Exception:
+        return df.style
+
+
 def run_dashboard():
-    st.title("Advanced Investor Dashboard 📈")
-    st.markdown("Developed as requested, utilizing real-time market data to achieve all 9 tasks.")
-    
-    col_a, col_b = st.columns([8, 2])
+    # ── Global CSS ──────────────────────────────────────────────────────────
+    st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    html, body, [class*="css"], .stApp {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .stApp {
+        background: linear-gradient(145deg,#060b18 0%,#0c1628 55%,#080f1e 100%) !important;
+    }
+    .block-container { padding-top: 1.2rem !important; max-width: 100% !important; }
+
+    /* ── Tabs ── */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 4px;
+        background: rgba(255,255,255,.04);
+        border-radius: 14px;
+        padding: 5px;
+        border: 1px solid rgba(255,255,255,.07);
+    }
+    .stTabs [data-baseweb="tab"] {
+        background: transparent !important;
+        border-radius: 9px;
+        color: #64748b !important;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 7px 15px;
+        border: none !important;
+        white-space: nowrap;
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg,#1d4ed8,#3b82f6) !important;
+        color: #fff !important;
+        box-shadow: 0 4px 18px rgba(59,130,246,.45) !important;
+        font-weight: 700 !important;
+    }
+    .stTabs [data-baseweb="tab-highlight"] { display: none !important; }
+    .stTabs [data-baseweb="tab"]:hover:not([aria-selected="true"]) {
+        background: rgba(59,130,246,.12) !important;
+        color: #93c5fd !important;
+    }
+    .stTabs [data-baseweb="tab-panel"] {
+        padding-top: 18px !important;
+    }
+
+    /* ── Buttons ── */
+    .stButton > button {
+        background: linear-gradient(135deg,#1d4ed8,#3b82f6) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        font-size: 13px !important;
+        padding: 9px 22px !important;
+        box-shadow: 0 4px 18px rgba(59,130,246,.35) !important;
+        transition: all .2s !important;
+    }
+    .stButton > button:hover {
+        background: linear-gradient(135deg,#2563eb,#60a5fa) !important;
+        box-shadow: 0 6px 24px rgba(59,130,246,.55) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    /* ── Metrics ── */
+    [data-testid="metric-container"] {
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 14px;
+        padding: 14px 18px;
+    }
+    [data-testid="stMetricValue"] { font-size:1.55rem !important; font-weight:800 !important; color:#e2e8f0 !important; }
+    [data-testid="stMetricLabel"] { font-size:.75rem !important; color:#64748b !important; font-weight:600 !important; letter-spacing:.6px; text-transform:uppercase; }
+    [data-testid="stMetricDelta"] { font-size:.82rem !important; font-weight:600 !important; }
+
+    /* ── Dataframes ── */
+    .stDataFrame { border-radius: 12px !important; overflow: hidden; border: 1px solid rgba(255,255,255,.07) !important; }
+    .stDataFrame table { background: rgba(10,14,26,.9) !important; color: #cbd5e1 !important; }
+    .stDataFrame th {
+        background: rgba(30,64,175,.35) !important;
+        color: #93c5fd !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        letter-spacing: .5px !important;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(59,130,246,.3) !important;
+        padding: 10px 14px !important;
+    }
+    .stDataFrame td { font-size: 13px !important; padding: 8px 14px !important; border-bottom: 1px solid rgba(255,255,255,.04) !important; }
+    .stDataFrame tr:hover td { background: rgba(59,130,246,.06) !important; }
+
+    /* ── Alerts ── */
+    .stInfo > div { background:rgba(59,130,246,.1) !important; border:1px solid rgba(59,130,246,.25) !important; border-radius:10px !important; color:#93c5fd !important; }
+    .stWarning > div { background:rgba(245,158,11,.1) !important; border:1px solid rgba(245,158,11,.25) !important; border-radius:10px !important; }
+    .stError > div { background:rgba(239,68,68,.1) !important; border:1px solid rgba(239,68,68,.25) !important; border-radius:10px !important; }
+    .stSuccess > div { background:rgba(0,230,118,.1) !important; border:1px solid rgba(0,230,118,.25) !important; border-radius:10px !important; }
+
+    /* ── Text ── */
+    h1,h2,h3,h4 { color:#e2e8f0 !important; font-weight:700 !important; }
+    p, li { color:#cbd5e1 !important; }
+    .stCaption { color:#475569 !important; font-size:12px !important; }
+    a { color:#60a5fa !important; }
+    a:hover { color:#93c5fd !important; }
+
+    /* ── Divider ── */
+    hr { border:none !important; border-top:1px solid rgba(255,255,255,.06) !important; margin:20px 0 !important; }
+
+    /* ── Spinner ── */
+    .stSpinner > div { border-color:#3b82f6 transparent transparent transparent !important; }
+
+    /* ── Radio ── */
+    .stRadio > label { color:#94a3b8 !important; }
+    .stRadio [data-baseweb="radio"] { gap: 16px; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:rgba(255,255,255,.02); }
+    ::-webkit-scrollbar-thumb { background:rgba(59,130,246,.4); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:rgba(59,130,246,.7); }
+
+    /* ── News links ── */
+    .news-item {
+        background:rgba(255,255,255,.03);
+        border:1px solid rgba(255,255,255,.07);
+        border-radius:10px;
+        padding:10px 14px;
+        margin:6px 0;
+        transition:background .2s;
+    }
+    .news-item:hover { background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.25); }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # ── Branded header ───────────────────────────────────────────────────────
+    import datetime as _dt
+    _now = _dt.datetime.now().strftime("%d %b %Y, %I:%M %p")
+    st.markdown(f"""
+    <div style="background:linear-gradient(135deg,rgba(29,78,216,.55) 0%,rgba(59,130,246,.25) 50%,rgba(124,58,237,.25) 100%);
+                border:1px solid rgba(59,130,246,.3);border-radius:18px;padding:20px 28px;
+                margin-bottom:18px;backdrop-filter:blur(12px);
+                display:flex;align-items:center;justify-content:space-between;">
+        <div>
+            <div style="font-size:24px;font-weight:800;color:#fff;letter-spacing:-.5px;">
+                📈 &nbsp;Advanced Investor Dashboard
+            </div>
+            <div style="font-size:13px;color:#93c5fd;margin-top:5px;font-weight:400;">
+                Real-time Indian &amp; Global Market Intelligence &nbsp;·&nbsp; NSE &nbsp;·&nbsp; BSE &nbsp;·&nbsp; MCX &nbsp;·&nbsp; {_now}
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <div style="background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.35);border-radius:20px;
+                        padding:5px 14px;font-size:12px;color:#00e676;font-weight:700;letter-spacing:.6px;">
+                ● &nbsp;LIVE
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_a, col_b = st.columns([9, 1])
     with col_b:
-        if st.button("🔄 Force Refresh All Data"):
+        if st.button("🔄 Refresh"):
             st.cache_data.clear()
             st.rerun()
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["1 & 2: Sector Performance", "3 & 7: Technical Scanners", "6: Fundamentals", "4, 5, 8, 9: News & Macro", "Global Markets"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+        "🏭  Sectors",
+        "📊  Scanners",
+        "💎  Fundamentals",
+        "📰  News & Macro",
+        "🌐  Global Markets",
+        "📡  Market Breadth",
+        "🛢  Commodities",
+        "⚡  Options",
+        "📅  Earnings",
+    ])
 
     # --- TAB 1: Sector Performance ---
     with tab1:
-        st.header("Task 1 & 2: Sector Outperformance and Underperformance vs Nifty 50")
         
         levels = get_nifty_sensex_levels()
         nifty_lvl = levels.get("NIFTY 50", "N/A")
@@ -912,37 +1755,81 @@ def run_dashboard():
         vix_lvl = levels.get("INDIA VIX", "N/A")
         nifty_rsi = levels.get("NIFTY RSI", "N/A")
         nifty_ath = levels.get("NIFTY % to ATH", "N/A")
+        _pe = get_nifty50_pe()
+        nifty_pe  = f"{_pe:.2f}" if _pe else "N/A"
         
         fiidii = get_fiidii()
 
         fii_val = fiidii.get("FII")
         dii_val = fiidii.get("DII")
 
-        fii_color  = "#1a7a1a" if (fii_val is not None and fii_val >= 0) else "#cc0000"
-        dii_color  = "#1a7a1a" if (dii_val is not None and dii_val >= 0) else "#cc0000"
-        fii_arrow  = "▲ Inflow" if (fii_val is not None and fii_val >= 0) else "▼ Outflow"
-        dii_arrow  = "▲ Inflow" if (dii_val is not None and dii_val >= 0) else "▼ Outflow"
+        fii_pos    = fii_val is not None and fii_val >= 0
+        dii_pos    = dii_val is not None and dii_val >= 0
+        fii_arrow  = "▲ Inflow"  if fii_pos else "▼ Outflow"
+        dii_arrow  = "▲ Inflow"  if dii_pos else "▼ Outflow"
         fii_amount = f"₹{abs(fii_val):,.2f} Cr" if fii_val is not None else "N/A"
         dii_amount = f"₹{abs(dii_val):,.2f} Cr" if dii_val is not None else "N/A"
+        fii_bg     = "rgba(0,230,118,.10)" if fii_pos else "rgba(255,82,82,.10)"
+        dii_bg     = "rgba(0,230,118,.10)" if dii_pos else "rgba(255,82,82,.10)"
+        fii_border = "rgba(0,230,118,.35)" if fii_pos else "rgba(255,82,82,.35)"
+        dii_border = "rgba(0,230,118,.35)" if dii_pos else "rgba(255,82,82,.35)"
+        fii_line   = "#00e676" if fii_pos else "#ff5252"
+        dii_line   = "#00e676" if dii_pos else "#ff5252"
+        fii_tc     = "#00e676" if fii_pos else "#ff5252"
+        dii_tc     = "#00e676" if dii_pos else "#ff5252"
 
-        st.markdown(
-            f"""
-            <div style="background-color: #cc0000; padding: 10px; border-radius: 5px; color: white; font-weight: bold; margin-bottom: 12px; text-align: center; font-size: 18px;">
-                NIFTY 50: {nifty_lvl} &nbsp;|&nbsp; RSI: {nifty_rsi} &nbsp;|&nbsp; ATH Dist: {nifty_ath} &nbsp;|&nbsp; SENSEX: {sensex_lvl} &nbsp;|&nbsp; INDIA VIX: {vix_lvl}
+        st.markdown(f"""
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+            <div style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#ffd700;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY 50</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{nifty_lvl}</div>
             </div>
-            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-                <div style="flex: 1; background-color: {fii_color}; padding: 14px 10px; border-radius: 8px; color: white; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
-                    <div style="font-size: 13px; font-weight: 600; letter-spacing: 1px; opacity: 0.85; margin-bottom: 4px;">FII / FPI &nbsp;{fii_arrow}</div>
-                    <div style="font-size: 26px; font-weight: 800;">{fii_amount}</div>
-                </div>
-                <div style="flex: 1; background-color: {dii_color}; padding: 14px 10px; border-radius: 8px; color: white; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
-                    <div style="font-size: 13px; font-weight: 600; letter-spacing: 1px; opacity: 0.85; margin-bottom: 4px;">DII &nbsp;{dii_arrow}</div>
-                    <div style="font-size: 26px; font-weight: 800;">{dii_amount}</div>
-                </div>
+            <div style="background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;margin-bottom:5px;">SENSEX</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{sensex_lvl}</div>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+            <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#00d4ff;font-weight:700;letter-spacing:1px;margin-bottom:5px;">INDIA VIX</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{vix_lvl}</div>
+            </div>
+            <div style="background:rgba(147,197,253,.07);border:1px solid rgba(147,197,253,.2);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#93c5fd;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY RSI</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{nifty_rsi}</div>
+            </div>
+            <div style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#a78bfa;font-weight:700;letter-spacing:1px;margin-bottom:5px;">% FROM ATH</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{nifty_ath}</div>
+            </div>
+            <div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY P/E</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{nifty_pe}</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;">
+            <div style="background:{fii_bg};border:1px solid {fii_border};border-radius:14px;
+                        padding:16px 18px;text-align:center;position:relative;overflow:hidden;">
+                <div style="position:absolute;top:0;left:0;right:0;height:3px;background:{fii_line};"></div>
+                <div style="font-size:11px;color:{fii_tc};font-weight:700;letter-spacing:1.2px;margin-bottom:7px;">
+                    FII &nbsp;/&nbsp; FPI &nbsp;&nbsp; {fii_arrow}
+                </div>
+                <div style="font-size:28px;font-weight:800;color:#fff;">{fii_amount}</div>
+            </div>
+            <div style="background:{dii_bg};border:1px solid {dii_border};border-radius:14px;
+                        padding:16px 18px;text-align:center;position:relative;overflow:hidden;">
+                <div style="position:absolute;top:0;left:0;right:0;height:3px;background:{dii_line};"></div>
+                <div style="font-size:11px;color:{dii_tc};font-weight:700;letter-spacing:1.2px;margin-bottom:7px;">
+                    DII &nbsp;&nbsp; {dii_arrow}
+                </div>
+                <div style="font-size:28px;font-weight:800;color:#fff;">{dii_amount}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         with st.spinner("Fetching sector data..."):
             s_data = get_sector_data()
@@ -961,16 +1848,27 @@ def run_dashboard():
                     })
                 df_sectors = pd.DataFrame(results)
                 
+                alpha_cols = ["Sector", "Daily Alpha", "Weekly Alpha", "Monthly Alpha", "Quarterly Alpha", "Yearly Alpha"]
+                out_week   = df_sectors[df_sectors["Weekly Alpha"] > 0].sort_values("Weekly Alpha", ascending=False)
+                under_week = df_sectors[df_sectors["Weekly Alpha"] < 0].sort_values("Weekly Alpha")
+
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.subheader("1. Sector Outperformance (Weekly Alpha > 0)")
-                    out_week = df_sectors[df_sectors["Weekly Alpha"] > 0].sort_values("Weekly Alpha", ascending=False)
-                    st.dataframe(out_week[["Sector", "Daily Alpha", "Weekly Alpha", "Monthly Alpha", "Quarterly Alpha", "Yearly Alpha"]], use_container_width=False)
+                    _section("Sector Outperformance", "🟢", "Weekly Alpha > 0 vs Nifty 50")
+                    if out_week.empty:
+                        st.info("No sector outperformed Nifty 50 this week — market led by index heavyweights.")
+                        st.caption("Least underperforming sectors this week:")
+                        st.dataframe(_color_pct(df_sectors.sort_values("Weekly Alpha", ascending=False).head(5)[alpha_cols]),
+                                     use_container_width=True, hide_index=True)
+                    else:
+                        st.dataframe(_color_pct(out_week[alpha_cols]), use_container_width=True, hide_index=True)
 
                 with col2:
-                    st.subheader("2. Sector Underperformance (Weekly Alpha < 0)")
-                    under_week = df_sectors[df_sectors["Weekly Alpha"] < 0].sort_values("Weekly Alpha")
-                    st.dataframe(under_week[["Sector", "Daily Alpha", "Weekly Alpha", "Monthly Alpha", "Quarterly Alpha", "Yearly Alpha"]], use_container_width=False)
+                    _section("Sector Underperformance", "🔴", "Weekly Alpha < 0 vs Nifty 50")
+                    if under_week.empty:
+                        st.info("All sectors outperforming Nifty 50 this week — broad-based rally.")
+                    else:
+                        st.dataframe(_color_pct(under_week[alpha_cols]), use_container_width=True, hide_index=True)
                     
                 if not out_week.empty or not under_week.empty:
                     st.divider()
@@ -981,38 +1879,36 @@ def run_dashboard():
                     with col_best:
                         if not out_week.empty:
                             best_sector = out_week.iloc[0]["Sector"]
-                            st.subheader(f"Top 10 Weekly Performing Stocks in Best Sector: {best_sector}")
-                            
-                            with st.spinner(f"Fetching constituents for {best_sector}..."):
+                            _section(f"Best Sector: {best_sector}", "🏆", "Top 10 by weekly return")
+                            with st.spinner(f"Fetching {best_sector}..."):
                                 perf_best = get_sector_performers(best_sector)
                                 if perf_best["best"]:
                                     df_best = pd.DataFrame(perf_best["best"])
-                                    st.dataframe(df_best[cols], use_container_width=False, hide_index=True)
+                                    st.dataframe(_color_pct(df_best[cols]), use_container_width=True, hide_index=True)
                                 else:
-                                    st.info(f"Constituent tracking not configured or unavailable for {best_sector}.")
+                                    st.info(f"Data unavailable for {best_sector}.")
                         else:
                             st.info("No outperforming sectors this week.")
-                            
+
                     with col_worst:
                         if not under_week.empty:
                             worst_sector = under_week.iloc[0]["Sector"]
-                            st.subheader(f"Top 10 Weekly Underperforming Stocks in Worst Sector: {worst_sector}")
-                            
-                            with st.spinner(f"Fetching constituents for {worst_sector}..."):
+                            _section(f"Worst Sector: {worst_sector}", "⚠️", "Bottom 10 by weekly return")
+                            with st.spinner(f"Fetching {worst_sector}..."):
                                 perf_worst = get_sector_performers(worst_sector)
                                 if perf_worst["worst"]:
                                     df_worst = pd.DataFrame(perf_worst["worst"])
-                                    st.dataframe(df_worst[cols], use_container_width=False, hide_index=True)
+                                    st.dataframe(_color_pct(df_worst[cols]), use_container_width=True, hide_index=True)
                                 else:
-                                    st.info(f"Constituent tracking not configured or unavailable for {worst_sector}.")
+                                    st.info(f"Data unavailable for {worst_sector}.")
                         else:
                             st.info("No underperforming sectors this week.")
                             
                     st.divider()
-                    col_indices, col_fii_stake = st.columns([3, 2])
+                    col_indices, col_fii_stake, col_commodities = st.columns([3, 2, 2])
 
                     with col_indices:
-                        st.subheader("All Indian Indices Performance")
+                        _section("All Indian Indices", "📊", "Sorted by weekly return")
                         all_indices_list = []
                         for name, v in s_data.items():
                             weekly_val = v["Weekly"]
@@ -1037,10 +1933,10 @@ def run_dashboard():
                         df_all_indices = pd.DataFrame(all_indices_list)
                         cols_all = ["sr. no.", "index name", "daily returns %", "weekly returns %",
                                     "monthly returns %", "quarterly returns %", "yearly returns %", "remark for insights"]
-                        st.dataframe(df_all_indices[cols_all], use_container_width=True, hide_index=True)
+                        st.dataframe(_color_pct(df_all_indices[cols_all]), use_container_width=True, hide_index=True)
 
                     with col_fii_stake:
-                        st.subheader("Top 10 FII Stake Increases (Latest Quarter)")
+                        _section("FII Stake Changes", "🏦", "Nifty 500 — top increases")
                         with st.spinner("Fetching FII shareholding data..."):
                             fii_stake_data = get_fii_stake_increases(_mtime=_fii_json_mtime())
 
@@ -1051,66 +1947,85 @@ def run_dashboard():
                             try:
                                 with open(json_path) as f:
                                     meta = json.load(f)
-                                st.caption(f"Last updated: {meta.get('fetched_at', 'unknown')}")
+                                universe = meta.get("universe", "")
+                                st.caption(f"Last updated: {meta.get('fetched_at', 'unknown')}"
+                                           + (f" · {universe}" if universe else ""))
                             except Exception:
                                 pass
 
                         if fii_stake_data:
                             df_fii_stake = pd.DataFrame(fii_stake_data)
                             st.dataframe(
-                                df_fii_stake[["sr. no.", "company", "current FII %", "prev quarter %", "change (pp)"]],
+                                _color_pct(df_fii_stake[["sr. no.", "company", "current FII %", "prev quarter %", "change (pp)"]]),
                                 use_container_width=True, hide_index=True
                             )
                         else:
                             st.info("FII shareholding data unavailable. GitHub Actions will populate this daily.")
-                    
+
+                    with col_commodities:
+                        _section("Commodities", "🛢")
+                        with st.spinner("Fetching commodity prices..."):
+                            commodity_data = get_commodity_data()
+                        if commodity_data:
+                            df_comm = pd.DataFrame(commodity_data)
+                            st.dataframe(
+                                df_comm[["commodity", "unit", "current price", "INR price (Latur)", "day change %", "% from 5Y high"]],
+                                use_container_width=True, hide_index=True
+                            )
+                        else:
+                            st.info("Commodity data unavailable.")
+
                     st.divider()
-                    st.subheader("Top 10 Weekly Performing Stocks (Indian Market)")
+                    _section("Top 10 Weekly Performers — Indian Market", "🚀", "Across all tracked sector constituents")
                     with st.spinner("Scanning all tracked Indian sector constituents..."):
                         top_overall = get_top_10_overall_stocks()
                         if top_overall:
                             df_overall = pd.DataFrame(top_overall)
-                            cols_overall = ["sr. no.", "stock symbol", "daily %", "weekly %", "monthly %", "quarterly %", "yearly %", "remark for insights"]
-                            st.dataframe(df_overall[cols_overall], use_container_width=False, hide_index=True)
+                            cols_overall = ["sr. no.", "stock symbol", "daily %", "weekly %", "monthly %", "quarterly %", "yearly %", "EPS QoQ %", "EPS YoY %", "remark for insights"]
+                            st.dataframe(_color_pct(df_overall[cols_overall]), use_container_width=True, hide_index=True)
                         else:
                             st.info("Overall constituent tracking unavailable.")
+
+                    st.divider()
+                    _section("Top Mutual Funds — Direct Growth", "💰", "NAV returns sorted by weekly · Source: AMFI via mfapi.in")
+                    with st.spinner("Fetching mutual fund NAV data..."):
+                        mf_data = get_top_mutual_funds()
+                    if mf_data:
+                        df_mf = pd.DataFrame(mf_data)
+                        st.dataframe(
+                            _color_pct(df_mf[["sr. no.", "fund name", "category", "NAV (₹)", "daily %", "weekly %", "monthly %", "yearly %"]]),
+                            use_container_width=True, hide_index=True
+                        )
+                    else:
+                        st.info("Mutual fund data unavailable. Check internet connectivity to api.mfapi.in.")
 
             else:
                 st.error("Could not fetch NIFTY 50 data.")
 
     # --- TAB 2: Technical Scanners ---
     with tab2:
-        st.header("Task 3 & 7: Technical Scanners")
-        
-        with st.spinner("Fetching historical data for Nifty 50 liquid stocks..."):
-            daily_df = get_stock_data_daily()
-            weekly_df = get_stock_data_weekly()
-
-        st.subheader("3. Top 10 Stocks About to Break Out of Range")
-        st.caption("Scans all tracked sector constituents (~130 stocks) across 20D / 50D / 52W highs. Ranked by proximity score + volume surge.")
+        _section("Range Breakout Scanner", "🔍", "Scans sector constituents across 20D / 50D / 52W highs · Ranked by proximity score + volume surge")
         with st.spinner("Scanning for range breakout candidates..."):
             breakout_data = get_range_breakout_stocks()
             if breakout_data:
                 df_breakout = pd.DataFrame(breakout_data)
                 cols_b = ["sr. no.", "stock", "sector", "current price", "% to 52W high",
                           "volume (vs 20D avg)", "MACD", "MA alignment", "RSI (14)", "overall confirmation"]
-                st.dataframe(df_breakout[cols_b], use_container_width=True, hide_index=True)
+                st.dataframe(_color_pct(df_breakout[cols_b]), use_container_width=True, hide_index=True)
             else:
                 st.info("No breakout candidates found right now.")
 
         st.divider()
-        st.subheader("7. Weekly RSI < 40 (Above 200-DMA) — Nifty 500 Universe")
-        st.caption("Scans ~500 NSE stocks for weekly RSI < 40 while price remains above 200-DMA. Top 20 sorted by lowest RSI.")
-        with st.spinner("Scanning Nifty 500 for weekly RSI oversold candidates..."):
+        _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is above 200-DMA · Top 20 sorted by lowest RSI")
+        with st.spinner("Scanning Nifty 500 for RSI oversold candidates..."):
             rsi_candidates = get_nifty500_weekly_rsi_scan()
         if rsi_candidates:
-            st.dataframe(pd.DataFrame(rsi_candidates), use_container_width=True, hide_index=True)
+            st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
         else:
             st.info("No RSI < 40 candidates found above 200-DMA in Nifty 500 universe.")
 
         st.divider()
-        st.subheader("Nifty 500 — Volume Analysis (Preceding Day)")
-        st.caption("Buying Volume = Total Volume × (Close − Low) / (High − Low) | Selling Volume = Total Volume × (High − Close) / (High − Low)")
+        _section("Volume Analysis — Nifty 500", "📦", "Buy Vol = Volume × (Close−Low)/(High−Low)  ·  Sell Vol = Volume × (High−Close)/(High−Low)")
         with st.spinner("Scanning Nifty 500 universe for volume data..."):
             vol_data = get_volume_split_stocks()
 
@@ -1123,7 +2038,7 @@ def run_dashboard():
                     cols_buy = ["sr. no.", "stock", "prev day close (NSE)", "day change %", "candle",
                                 "daily buying vol", "daily buying %",
                                 "weekly buying vol", "weekly buying %"]
-                    st.dataframe(df_buy[cols_buy], use_container_width=True, hide_index=True)
+                    st.dataframe(_color_pct(df_buy[cols_buy]), use_container_width=True, hide_index=True)
                 else:
                     st.info("No data available.")
 
@@ -1134,7 +2049,7 @@ def run_dashboard():
                     cols_sell = ["sr. no.", "stock", "prev day close (NSE)", "day change %", "candle",
                                  "daily selling vol", "daily selling %",
                                  "weekly selling vol", "weekly selling %"]
-                    st.dataframe(df_sell[cols_sell], use_container_width=True, hide_index=True)
+                    st.dataframe(_color_pct(df_sell[cols_sell]), use_container_width=True, hide_index=True)
                 else:
                     st.info("No data available.")
 
@@ -1160,7 +2075,7 @@ def run_dashboard():
                         "Justification": f"Trading at {round(pe, 1)}x PE despite healthy {round(roe*100, 1)}% ROE."
                     })
             
-            st.dataframe(pd.DataFrame(undervalued) if undervalued else pd.DataFrame([{"Message": "No undervalued bluechips found."}]), use_container_width=False)
+            st.dataframe(_color_pct(pd.DataFrame(undervalued)) if undervalued else pd.DataFrame([{"Message": "No undervalued bluechips found."}]), use_container_width=True, hide_index=True)
 
     # --- TAB 4: News & Macro ---
     with tab4:
@@ -1201,9 +2116,144 @@ def run_dashboard():
                         "% of current value from preceding day", "monthly %", "quarterly %", 
                         "yearly %", "3-year %", "its ATH", "% from ATH", 
                         "remarks for insights from investor"]
-                st.dataframe(df_global[cols], use_container_width=False, hide_index=True)
+                st.dataframe(_color_pct(df_global[cols]), use_container_width=True, hide_index=True)
             else:
                 st.error("Could not fetch global markets data.")
+
+    # --- TAB 6: Market Breadth ---
+    with tab6:
+        st.header("Market Breadth — Nifty 500 Universe")
+        st.caption("Scans ~500 NSE stocks. 30-min cache. 52W high/low = within 1.5% of the 52-week extreme.")
+        with st.spinner("Scanning ~500 NSE stocks for breadth indicators..."):
+            breadth = get_market_breadth()
+
+        total = breadth.get("total", 0)
+        if total > 0:
+            adv  = breadth["advances"]
+            dec  = breadth["declines"]
+            unch = breadth["unchanged"]
+            ad_ratio = round(adv / dec, 2) if dec > 0 else None
+
+            c1, c2, c3, c4, c5, c6 = st.columns(6)
+            c1.metric("Stocks Scanned",    total)
+            c2.metric("Advances",          adv,  f"{adv/total*100:.1f}%")
+            c3.metric("Declines",          dec,  f"-{dec/total*100:.1f}%")
+            c4.metric("A/D Ratio",         str(ad_ratio) if ad_ratio else "N/A")
+            c5.metric("% Above 200-DMA",   f"{breadth['above_200dma']/total*100:.1f}%")
+            c6.metric("% Above 50-DMA",    f"{breadth['above_50dma']/total*100:.1f}%")
+
+            st.divider()
+            col_h, col_l = st.columns(2)
+            with col_h:
+                st.subheader(f"Near 52-Week Highs  ({breadth['new_52w_highs']} stocks)")
+                if breadth["high_stocks"]:
+                    st.dataframe(pd.DataFrame({"stock": breadth["high_stocks"]}),
+                                 use_container_width=True, hide_index=True)
+                else:
+                    st.info("No stocks within 1.5% of 52W high.")
+            with col_l:
+                st.subheader(f"Near 52-Week Lows  ({breadth['new_52w_lows']} stocks)")
+                if breadth["low_stocks"]:
+                    st.dataframe(pd.DataFrame({"stock": breadth["low_stocks"]}),
+                                 use_container_width=True, hide_index=True)
+                else:
+                    st.info("No stocks within 1.5% of 52W low.")
+        else:
+            st.error("Market breadth data unavailable.")
+
+    # --- TAB 7: Commodities & Currencies ---
+    with tab7:
+        st.header("Commodities & Currency Monitor")
+
+        col_comm, col_curr = st.columns(2)
+
+        with col_comm:
+            st.subheader("Commodities")
+            with st.spinner("Fetching commodity prices..."):
+                ext_comm = get_extended_commodity_data()
+            if ext_comm:
+                st.caption("Gold & Silver: INR price = MCX spot rate (Latur local market reference). "
+                           "1 troy oz = 31.1035g · USD/INR fetched live.")
+                st.dataframe(
+                    _color_pct(pd.DataFrame(ext_comm)[["commodity", "unit", "price",
+                                            "INR price (Latur)", "day %",
+                                            "week %", "month %", "quarter %", "yearly %",
+                                            "% from 5Y high", "insight"]]),
+                    use_container_width=True, hide_index=True,
+                )
+            else:
+                st.info("Commodity data unavailable.")
+
+        with col_curr:
+            st.subheader("Currencies vs Indian Rupee")
+            with st.spinner("Fetching currency rates..."):
+                curr_data = get_currency_data()
+            if curr_data:
+                st.dataframe(
+                    _color_pct(pd.DataFrame(curr_data)[["pair", "rate", "day %",
+                                             "week %", "month %", "yearly %",
+                                             "% from 5Y high", "insight"]]),
+                    use_container_width=True, hide_index=True,
+                )
+            else:
+                st.info("Currency data unavailable.")
+
+    # --- TAB 8: Options Snapshot ---
+    with tab8:
+        st.header("Options Snapshot — Nifty & BankNifty")
+        st.caption("PCR, Max Pain, and full OI chain for the nearest expiry. Sourced from NSE — requires an Indian IP address.")
+
+        symbol_choice = st.radio("Select Index", ["NIFTY", "BANKNIFTY"], horizontal=True, key="opt_symbol")
+
+        with st.spinner(f"Fetching {symbol_choice} option chain from NSE..."):
+            opt = get_options_snapshot(symbol_choice)
+
+        if opt.get("error"):
+            st.warning(f"⚠️  {opt['error']}")
+            st.info("To use this feature, run the dashboard from a machine with an Indian IP address, "
+                    "or connect via an India-based VPN.")
+        else:
+            spot     = opt["spot"]
+            c1, c2, c3, c4, c5 = st.columns(5)
+            c1.metric("Spot Price",           f"{spot:,.2f}")
+            c2.metric("Nearest Expiry",        opt["expiry"])
+            pcr = opt["pcr"]
+            c3.metric("PCR (All Expiries)",    str(pcr) if pcr else "N/A",
+                      "Bullish >1" if pcr and pcr > 1 else ("Bearish <1" if pcr else ""))
+            c4.metric("Max Pain",              f"{opt['max_pain']:,}" if opt["max_pain"] else "N/A")
+            c5.metric("Total OI (Calls+Puts)", f"{opt['total_call_oi'] + opt['total_put_oi']:,}")
+
+            st.divider()
+            st.subheader(f"{symbol_choice} Option Chain — Expiry: {opt['expiry']}  (ATM ± 10%)")
+            atm_rows = opt["atm_rows"]
+            if atm_rows:
+                df_opt = pd.DataFrame(atm_rows)
+                st.dataframe(
+                    df_opt[["call OI", "call Δ OI", "call LTP", "strike", "put LTP", "put OI", "put Δ OI"]],
+                    use_container_width=True, hide_index=True,
+                )
+            else:
+                st.info("No option chain rows found near ATM.")
+
+    # --- TAB 9: Earnings Calendar ---
+    with tab9:
+        st.header("Earnings Calendar")
+        st.caption("Upcoming quarterly results & board meetings. NSE calendar is authoritative but requires an Indian IP; "
+                   "falls back to Yahoo Finance estimates automatically.")
+        with st.spinner("Fetching earnings calendar..."):
+            earnings = get_earnings_calendar()
+
+        if earnings.get("source"):
+            st.caption(f"Source: **{earnings['source']}**")
+
+        if earnings.get("data"):
+            df_earn = pd.DataFrame(earnings["data"])
+            st.dataframe(df_earn[["company", "date", "event"]],
+                         use_container_width=True, hide_index=True)
+        else:
+            st.warning(f"⚠️  {earnings.get('error', 'No data available.')}")
+            st.info("NSE Event Calendar requires an Indian IP address. "
+                    "Connect via an India-based VPN to see the full calendar.")
 
 if __name__ == "__main__":
     run_dashboard()
