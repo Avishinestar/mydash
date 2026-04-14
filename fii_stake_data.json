@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-04-13 05:42 UTC",
+  "fetched_at": "2026-04-14 05:25 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -20,9 +20,9 @@
     {
       "sr. no.": 3,
       "company": "AXISBANK",
-      "current FII %": 42.58,
-      "prev quarter %": 41.89,
-      "change (pp)": "+0.69"
+      "current FII %": 42.04,
+      "prev quarter %": 42.58,
+      "change (pp)": "-0.54"
     },
     {
       "sr. no.": 4,
@@ -54,24 +54,24 @@
     },
     {
       "sr. no.": 8,
-      "company": "CHOLAFIN",
-      "current FII %": 26.56,
-      "prev quarter %": 26.85,
-      "change (pp)": "-0.29"
-    },
-    {
-      "sr. no.": 9,
-      "company": "HDFCAMC",
-      "current FII %": 23.99,
-      "prev quarter %": 24.69,
-      "change (pp)": "-0.7"
-    },
-    {
-      "sr. no.": 10,
       "company": "BAJFINANCE",
       "current FII %": 21.49,
       "prev quarter %": 21.97,
       "change (pp)": "-0.48"
+    },
+    {
+      "sr. no.": 9,
+      "company": "LT",
+      "current FII %": 20.06,
+      "prev quarter %": 19.48,
+      "change (pp)": "+0.58"
+    },
+    {
+      "sr. no.": 10,
+      "company": "MPHASIS",
+      "current FII %": 19.79,
+      "prev quarter %": 18.52,
+      "change (pp)": "+1.27"
     }
   ],
   "failed_symbols": [
@@ -81,17 +81,17 @@
     "ASIANPAINT",
     "BAJAJFINSV",
     "WIPRO",
+    "NESTLEIND",
     "TECHM",
-    "BAJAJ-AUTO",
     "INDUSINDBK",
-    "BANKBARODA",
+    "PNB",
     "FEDERALBNK",
     "IDFCFIRSTB",
     "CANBK",
-    "UNIONBANK",
     "MUTHOOTFIN",
+    "CHOLAFIN",
     "RECLTD",
-    "PFC",
+    "HDFCAMC",
     "SBICARD",
     "SHRIRAMFIN",
     "LICHSGFIN",
@@ -101,7 +101,7 @@
     "KPITTECH",
     "LTTS",
     "OFSS",
-    "TATAELXSI",
+    "CYIENT",
     "BIRLASOFT",
     "TANLA",
     "HEROMOTOCO",
