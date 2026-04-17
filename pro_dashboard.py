@@ -424,6 +424,282 @@ def get_nifty500_weekly_rsi_scan():
     candidates.sort(key=lambda x: x["Weekly RSI"])
     return candidates[:20]
 
+# ─────────────────────────────────────────────────────────────────────────────
+# DCF Intrinsic Value Scanner — Nifty 500
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _dcf(fcf, growth, terminal, discount, years=10):
+    """Present value of projected FCF stream plus terminal value."""
+    if fcf is None or fcf <= 0 or discount <= terminal:
+        return None
+    pv = sum(
+        fcf * ((1 + growth) ** t) / ((1 + discount) ** t)
+        for t in range(1, years + 1)
+    )
+    tv = fcf * ((1 + growth) ** years) * (1 + terminal) / (discount - terminal)
+    pv += tv / ((1 + discount) ** years)
+    return pv
+
+
+def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, fcf_yield, fcf_margin, eps_1y, g_base):
+    """Generate expert investor insight string for a stock's DCF valuation."""
+    parts = []
+
+    if pct_off <= -20:
+        parts.append(f"Trades {abs(pct_off):.0f}% below DCF intrinsic value — rare margin of safety; strong accumulation zone for patient, long-term capital.")
+    elif pct_off <= -10:
+        parts.append(f"Meaningful {abs(pct_off):.0f}% discount to intrinsic value — market yet to recognise full earnings power; accumulate in tranches.")
+    elif pct_off <= -3:
+        parts.append(f"Modestly undervalued ({abs(pct_off):.0f}% below DCF base case) — compelling entry as earnings visibility improves.")
+    elif pct_off <= 5:
+        parts.append(f"Fairly valued — DCF and market price are in tight alignment; ideal for SIP-style accumulation without timing risk.")
+    else:
+        parts.append(f"Trading {pct_off:.0f}% above base DCF — market pricing-in future growth; execution risk elevated at this premium.")
+
+    if isinstance(pe, (int, float)):
+        if pe < 10:
+            parts.append(f"Single-digit PE ({pe}x) warrants earnings-quality check — verify whether it reflects a cyclical trough or structural impairment.")
+        elif pe < 18:
+            parts.append(f"Reasonable {pe}x PE leaves room for re-rating as cash flows compound.")
+        elif pe < 30:
+            parts.append(f"Mid-range PE of {pe}x reflects quality franchise; watch for operating-leverage unlock to justify valuation.")
+        else:
+            parts.append(f"Rich {pe}x PE demands consistent double-digit growth to avoid de-rating — monitor quarterly guidance closely.")
+
+    if isinstance(peg, (int, float)):
+        if peg < 0.8:
+            parts.append(f"PEG of {peg}x is sub-1 — growth is gifted at a discount; classic GARP opportunity.")
+        elif peg < 1.5:
+            parts.append(f"PEG of {peg}x sits in fair-value range — growth is reasonably priced for the quality on offer.")
+        elif peg > 2.0:
+            parts.append(f"Elevated PEG of {peg}x — hold only if competitive moat is durable and widening.")
+
+    if isinstance(fcf_yield, (int, float)):
+        if fcf_yield > 7:
+            parts.append(f"Exceptional FCF yield of {fcf_yield:.1f}% — cash machine capable of sustained buybacks or dividends.")
+        elif fcf_yield > 4:
+            parts.append(f"Healthy {fcf_yield:.1f}% FCF yield signals disciplined capital allocation and earnings quality.")
+        elif fcf_yield > 1:
+            parts.append(f"Positive FCF yield ({fcf_yield:.1f}%) — business self-funds growth without dilution risk.")
+        else:
+            parts.append(f"Sub-1% FCF yield flags heavy reinvestment phase — validate capex generates adequate return on capital.")
+
+    if isinstance(fcf_margin, (int, float)) and fcf_margin > 0:
+        if fcf_margin > 20:
+            parts.append(f"Exceptional {fcf_margin:.0f}% FCF margin — asset-light model with strong pricing power.")
+        elif fcf_margin > 10:
+            parts.append(f"Solid {fcf_margin:.0f}% FCF margin confirms earnings reliably convert to cash.")
+
+    if isinstance(eps_1y, (int, float)):
+        if eps_1y > 25:
+            parts.append(f"Accelerating {eps_1y:.0f}% EPS growth is the primary re-rating catalyst — momentum will follow earnings.")
+        elif eps_1y > 0:
+            parts.append(f"Steady {eps_1y:.0f}% EPS growth provides confidence in the DCF growth trajectory.")
+        elif eps_1y < -10:
+            parts.append(f"Earnings under pressure ({eps_1y:.0f}% YoY) — DCF assumes recovery; verify if cyclical or structural headwind.")
+
+    return " ".join(parts) if parts else f"Monitor {symbol} for FCF consistency and earnings-visibility improvement before committing capital."
+
+
+@st.cache_data(ttl=3600)
+def get_dcf_valuation_stocks():
+    """
+    Scans Nifty 500 for stocks near their DCF intrinsic value.
+    Three scenarios: Base (11% WACC), Bearish (12% WACC), Bear (13% WACC).
+    Filters: -35% to +15% of base-case intrinsic value.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    # Reverse-map: ticker → sector
+    stock_sector = {}
+    for sec, constituents in SECTOR_CONSTITUENTS.items():
+        for t in constituents:
+            stock_sector[t] = sec
+
+    tickers = get_nifty500_tickers()
+
+    def fetch_one(ticker):
+        try:
+            yft  = yf.Ticker(ticker)
+            info = yft.info
+
+            price  = info.get("currentPrice") or info.get("regularMarketPrice") or info.get("previousClose")
+            shares = info.get("sharesOutstanding")
+            mkt_cap = info.get("marketCap")
+            fcf    = info.get("freeCashflow")
+            op_cf  = info.get("operatingCashflow")
+            revenue = info.get("totalRevenue")
+
+            if not price or price <= 0 or not shares or shares <= 0:
+                return None
+
+            # Fallback: estimate FCF from operating cash flow
+            if (fcf is None or fcf <= 0) and op_cf and op_cf > 0:
+                fcf = op_cf * 0.72
+            if not fcf or fcf <= 0:
+                return None
+
+            pe         = info.get("trailingPE")
+            book_value = info.get("bookValue")
+            peg        = info.get("pegRatio")
+            eps_1y_raw = info.get("earningsGrowth")   # decimal
+            rev_growth = info.get("revenueGrowth") or 0.0
+
+            # 3Y / 5Y EPS CAGR from annual income statement
+            eps_3y, eps_5y = None, None
+            try:
+                inc = yft.income_stmt
+                if inc is not None and not inc.empty:
+                    ni_row = None
+                    for rn in ["Net Income", "Net Income Common Stockholders", "NetIncome"]:
+                        if rn in inc.index:
+                            ni_row = inc.loc[rn].dropna()
+                            break
+                    if ni_row is not None and len(ni_row) >= 2:
+                        ni_latest = float(ni_row.iloc[0])
+                        if len(ni_row) >= 4:
+                            ni_3ya = float(ni_row.iloc[3])
+                            if ni_latest > 0 and ni_3ya > 0:
+                                eps_3y = (ni_latest / ni_3ya) ** (1 / 3) - 1
+                        if len(ni_row) >= 6:
+                            ni_5ya = float(ni_row.iloc[5])
+                            if ni_latest > 0 and ni_5ya > 0:
+                                eps_5y = (ni_latest / ni_5ya) ** (1 / 5) - 1
+            except Exception:
+                pass
+
+            # Base growth rate for DCF
+            eps_1y = eps_1y_raw
+            if eps_1y and eps_1y > 0:
+                g_base = min(eps_1y, 0.30)
+            elif rev_growth > 0:
+                g_base = min(rev_growth, 0.25)
+            elif eps_3y and eps_3y > 0:
+                g_base = min(eps_3y, 0.25)
+            else:
+                g_base = 0.07
+            g_base = max(g_base, 0.03)
+
+            # ── Three DCF scenarios ───────────────────────────────────────────
+            # Base:    moderate growth, 11% WACC, 4.0% terminal
+            # Bearish: 60% of base growth, 12% WACC, 3.5% terminal
+            # Bear:    30% of base growth, 13% WACC, 2.5% terminal
+            base_total    = _dcf(fcf, g_base,                   0.040, 0.110)
+            bearish_total = _dcf(fcf, g_base * 0.60,            0.035, 0.120)
+            bear_total    = _dcf(fcf, max(g_base * 0.30, 0.01), 0.025, 0.130)
+
+            if base_total is None or base_total <= 0:
+                return None
+
+            base_iv    = base_total    / shares
+            bearish_iv = bearish_total / shares if bearish_total else None
+            bear_iv    = bear_total    / shares if bear_total    else None
+
+            # Filter: within -35% to +15% of base IV
+            pct_off = (price / base_iv - 1) * 100
+            if pct_off > 15 or pct_off < -35:
+                return None
+
+            fcf_yield  = (fcf / mkt_cap  * 100) if mkt_cap  and mkt_cap  > 0 else None
+            fcf_margin = (fcf / revenue  * 100) if revenue  and revenue  > 0 else None
+
+            sector = stock_sector.get(ticker, info.get("sector", "—"))
+            name   = info.get("longName") or info.get("shortName") or ticker.replace(".NS", "")
+
+            return {
+                "_ticker":  ticker,
+                "_sector":  sector,
+                "_g_base":  g_base,
+                "_pct_off": pct_off,
+                "_pe":      pe,
+                "_peg":     peg,
+                "_fcfy":    fcf_yield,
+                "_fcfm":    fcf_margin,
+                "_eps1y":   (eps_1y * 100) if eps_1y is not None else None,
+                "name":                   name,
+                "price (₹)":              round(price, 2),
+                "base case DCF IV (₹)":   round(base_iv, 2),
+                "bearish DCF IV (₹)":     round(bearish_iv, 2) if bearish_iv else "N/A",
+                "bear case DCF IV (₹)":   round(bear_iv,    2) if bear_iv    else "N/A",
+                "% to intrinsic value":   round(pct_off, 1),
+                "current PE":             round(pe, 1) if pe else "N/A",
+                "current PEG":            round(peg, 2) if peg else "N/A",
+                "1Y EPS growth %":        round(eps_1y * 100, 1) if eps_1y is not None else "N/A",
+                "3Y EPS CAGR %":          round(eps_3y * 100, 1) if eps_3y is not None else "N/A",
+                "5Y EPS CAGR %":          round(eps_5y * 100, 1) if eps_5y is not None else "N/A",
+                "book value (₹)":         round(book_value, 2)   if book_value           else "N/A",
+                "FCF yield %":            round(fcf_yield, 2)    if fcf_yield is not None else "N/A",
+                "FCF margin %":           round(fcf_margin, 2)   if fcf_margin is not None else "N/A",
+            }
+        except Exception:
+            return None
+
+    # Parallel fetch with 18 workers
+    raw = []
+    with ThreadPoolExecutor(max_workers=18) as ex:
+        futs = {ex.submit(fetch_one, t): t for t in tickers}
+        for f in as_completed(futs):
+            r = f.result()
+            if r:
+                raw.append(r)
+
+    if not raw:
+        return []
+
+    # Compute industry median PE per sector from the results set
+    sector_pes = {}
+    for r in raw:
+        pe_v = r["_pe"]
+        if isinstance(pe_v, (int, float)) and 0 < pe_v < 200:
+            sector_pes.setdefault(r["_sector"], []).append(pe_v)
+    sector_median_pe = {
+        s: round(sorted(v)[len(v) // 2], 1)
+        for s, v in sector_pes.items() if v
+    }
+
+    # Build final display rows
+    results = []
+    for r in raw:
+        symbol = r["_ticker"].replace(".NS", "")
+        remarks = _dcf_remarks(
+            symbol,
+            r["price (₹)"],
+            r["base case DCF IV (₹)"],
+            r["_pct_off"],
+            r["_pe"],
+            r["_peg"],
+            r["_fcfy"],
+            r["_fcfm"],
+            r["_eps1y"],
+            r["_g_base"],
+        )
+        results.append({
+            "name":                   r["name"],
+            "price (₹)":              r["price (₹)"],
+            "base case DCF IV (₹)":   r["base case DCF IV (₹)"],
+            "bearish DCF IV (₹)":     r["bearish DCF IV (₹)"],
+            "bear case DCF IV (₹)":   r["bear case DCF IV (₹)"],
+            "industry PE":            sector_median_pe.get(r["_sector"], "N/A"),
+            "current PE":             r["current PE"],
+            "current PEG":            r["current PEG"],
+            "1Y EPS growth %":        r["1Y EPS growth %"],
+            "3Y EPS CAGR %":          r["3Y EPS CAGR %"],
+            "5Y EPS CAGR %":          r["5Y EPS CAGR %"],
+            "book value (₹)":         r["book value (₹)"],
+            "FCF yield %":            r["FCF yield %"],
+            "FCF margin %":           r["FCF margin %"],
+            "% to intrinsic value":   r["% to intrinsic value"],
+            "remarks":                remarks,
+        })
+
+    # Sort: most undervalued first
+    results.sort(key=lambda x: x["% to intrinsic value"] if isinstance(x["% to intrinsic value"], (int, float)) else 0)
+    for i, r in enumerate(results):
+        r["sr. no."] = i + 1
+
+    return results
+
+
 @st.cache_data(ttl=3600)
 def get_stock_info():
     info_dict = {}
@@ -2055,27 +2331,43 @@ def run_dashboard():
 
     # --- TAB 3: Fundamental Scanners ---
     with tab3:
-        st.header("Task 6: Undervalued vs Intrinsic Value")
-        with st.spinner("Fetching fundamental data..."):
-            info_dict = get_stock_info()
-            undervalued = []
+        st.header("DCF Intrinsic Value Scanner — Nifty 500")
+        st.caption(
+            "Screens the Nifty 500 universe for stocks whose current market price is within "
+            "**–35% to +15%** of their Base-Case DCF intrinsic value. "
+            "Three scenarios are computed per stock using Free Cash Flow projections: "
+            "**Base** (11% WACC · 4% terminal), "
+            "**Bearish** (12% WACC · 3.5% terminal · 60% base growth), "
+            "**Bear** (13% WACC · 2.5% terminal · 30% base growth). "
+            "Industry PE is the median PE of sector peers. "
+            "Results are sorted by largest discount to intrinsic value first. "
+            "*1-hour cache — click 'Force Refresh' in the sidebar to reload.*"
+        )
 
-            for t, info in info_dict.items():
-                pe = info.get("trailingPE", info.get("forwardPE", 999))
-                roe = info.get("returnOnEquity", 0)
-                pb = info.get("priceToBook", 0)
-                
-                # Rule: PE < 20, ROE > 15%
-                if pe and roe and pe < 20 and roe > 0.15:
-                    undervalued.append({
-                        "Ticker": t,
-                        "P/E Ratio": round(pe, 2),
-                        "P/B Ratio": round(pb, 2) if pb else "N/A",
-                        "ROE (%)": round(roe * 100, 2),
-                        "Justification": f"Trading at {round(pe, 1)}x PE despite healthy {round(roe*100, 1)}% ROE."
-                    })
-            
-            st.dataframe(_color_pct(pd.DataFrame(undervalued)) if undervalued else pd.DataFrame([{"Message": "No undervalued bluechips found."}]), width='stretch', hide_index=True)
+        with st.spinner("Scanning Nifty 500 — fetching fundamentals & computing DCF for each stock (may take 60–90 s on first load)..."):
+            dcf_data = get_dcf_valuation_stocks()
+
+        if dcf_data:
+            df_dcf = pd.DataFrame(dcf_data)
+            # Column order matching user spec
+            cols_order = [
+                "sr. no.", "name", "price (₹)",
+                "base case DCF IV (₹)", "bearish DCF IV (₹)", "bear case DCF IV (₹)",
+                "industry PE", "current PE", "current PEG",
+                "1Y EPS growth %", "3Y EPS CAGR %", "5Y EPS CAGR %",
+                "book value (₹)", "FCF yield %", "FCF margin %",
+                "% to intrinsic value", "remarks",
+            ]
+            # Only include columns that exist in the df
+            cols_order = [c for c in cols_order if c in df_dcf.columns]
+            st.success(f"Found **{len(df_dcf)}** Nifty 500 stocks near DCF intrinsic value.")
+            st.dataframe(
+                _color_pct(df_dcf[cols_order]),
+                use_container_width=True,
+                hide_index=True,
+            )
+        else:
+            st.warning("No stocks matched the DCF filter — data may still be loading or all stocks are overvalued/undervalued beyond the filter range. Try refreshing.")
 
     # --- TAB 4: News & Macro ---
     with tab4:

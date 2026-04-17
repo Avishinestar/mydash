@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 .claude/
 *.html
+
+# Old/backup versions — not part of the published project
+be5381e_dash.py
+remote_current.py
+uploaded_v1.py
+uploaded_v2.py
