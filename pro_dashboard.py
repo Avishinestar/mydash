@@ -5,6 +5,7 @@ import ta
 import feedparser
 import io
 import warnings
+from contextlib import nullcontext as _spinner
 try:
     from nsepython import nse_eq_symbols
     _NSE_AVAILABLE = True
@@ -2107,7 +2108,7 @@ def run_dashboard():
         </div>
         """, unsafe_allow_html=True)
 
-        with st.spinner("Fetching sector data..."):
+        with _spinner("Fetching sector data..."):
             s_data = get_sector_data()
             if "NIFTY 50" in s_data:
                 nifty = s_data["NIFTY 50"]
@@ -2156,7 +2157,7 @@ def run_dashboard():
                         if not out_week.empty:
                             best_sector = out_week.iloc[0]["Sector"]
                             _section(f"Best Sector: {best_sector}", "🏆", "Top 10 by weekly return")
-                            with st.spinner(f"Fetching {best_sector}..."):
+                            with _spinner(f"Fetching {best_sector}..."):
                                 perf_best = get_sector_performers(best_sector)
                                 if perf_best["best"]:
                                     df_best = pd.DataFrame(perf_best["best"])
@@ -2170,7 +2171,7 @@ def run_dashboard():
                         if not under_week.empty:
                             worst_sector = under_week.iloc[0]["Sector"]
                             _section(f"Worst Sector: {worst_sector}", "⚠️", "Bottom 10 by weekly return")
-                            with st.spinner(f"Fetching {worst_sector}..."):
+                            with _spinner(f"Fetching {worst_sector}..."):
                                 perf_worst = get_sector_performers(worst_sector)
                                 if perf_worst["worst"]:
                                     df_worst = pd.DataFrame(perf_worst["worst"])
@@ -2213,7 +2214,7 @@ def run_dashboard():
 
                     with col_fii_stake:
                         _section("FII Stake Changes", "🏦", "Nifty 500 — top increases")
-                        with st.spinner("Fetching FII shareholding data..."):
+                        with _spinner("Fetching FII shareholding data..."):
                             fii_stake_data = get_fii_stake_increases(_mtime=_fii_json_mtime())
 
                         # Show last-updated timestamp from JSON if available
@@ -2240,7 +2241,7 @@ def run_dashboard():
 
                     with col_commodities:
                         _section("Commodities", "🛢")
-                        with st.spinner("Fetching commodity prices..."):
+                        with _spinner("Fetching commodity prices..."):
                             commodity_data = get_commodity_data()
                         if commodity_data:
                             df_comm = pd.DataFrame(commodity_data)
@@ -2253,7 +2254,7 @@ def run_dashboard():
 
                     st.divider()
                     _section("Top 10 Weekly Performers — Indian Market", "🚀", "Across all tracked sector constituents")
-                    with st.spinner("Scanning all tracked Indian sector constituents..."):
+                    with _spinner("Scanning all tracked Indian sector constituents..."):
                         top_overall = get_top_10_overall_stocks()
                         if top_overall:
                             df_overall = pd.DataFrame(top_overall)
@@ -2264,7 +2265,7 @@ def run_dashboard():
 
                     st.divider()
                     _section("Top Mutual Funds — Direct Growth", "💰", "NAV returns sorted by weekly · Source: AMFI via mfapi.in")
-                    with st.spinner("Fetching mutual fund NAV data..."):
+                    with _spinner("Fetching mutual fund NAV data..."):
                         mf_data = get_top_mutual_funds()
                     if mf_data:
                         df_mf = pd.DataFrame(mf_data)
@@ -2281,7 +2282,7 @@ def run_dashboard():
     # --- TAB 2: Technical Scanners ---
     with tab2:
         _section("Range Breakout Scanner", "🔍", "Scans sector constituents across 20D / 50D / 52W highs · Ranked by proximity score + volume surge")
-        with st.spinner("Scanning for range breakout candidates..."):
+        with _spinner("Scanning for range breakout candidates..."):
             breakout_data = get_range_breakout_stocks()
             if breakout_data:
                 df_breakout = pd.DataFrame(breakout_data)
@@ -2293,7 +2294,7 @@ def run_dashboard():
 
         st.divider()
         _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is above 200-DMA · Top 20 sorted by lowest RSI")
-        with st.spinner("Scanning Nifty 500 for RSI oversold candidates..."):
+        with _spinner("Scanning Nifty 500 for RSI oversold candidates..."):
             rsi_candidates = get_nifty500_weekly_rsi_scan()
         if rsi_candidates:
             st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
@@ -2302,7 +2303,7 @@ def run_dashboard():
 
         st.divider()
         _section("Volume Analysis — Nifty 500", "📦", "Buy Vol = Volume × (Close−Low)/(High−Low)  ·  Sell Vol = Volume × (High−Close)/(High−Low)")
-        with st.spinner("Scanning Nifty 500 universe for volume data..."):
+        with _spinner("Scanning Nifty 500 universe for volume data..."):
             vol_data = get_volume_split_stocks()
 
             col_buy, col_sell = st.columns(2)
@@ -2344,7 +2345,7 @@ def run_dashboard():
             "*1-hour cache — click 'Force Refresh' in the sidebar to reload.*"
         )
 
-        with st.spinner("Scanning Nifty 500 — fetching fundamentals & computing DCF for each stock (may take 60–90 s on first load)..."):
+        with _spinner("Scanning Nifty 500 — fetching fundamentals & computing DCF for each stock (may take 60–90 s on first load)..."):
             dcf_data = get_dcf_valuation_stocks()
 
         if dcf_data:
@@ -2400,7 +2401,7 @@ def run_dashboard():
     # --- TAB 5: Global Markets ---
     with tab5:
         st.header("Top 20 Global Markets Performance")
-        with st.spinner("Fetching maximum history for global indices to determine ATH..."):
+        with _spinner("Fetching maximum history for global indices to determine ATH..."):
             global_data = get_global_markets_data()
             if global_data:
                 df_global = pd.DataFrame(global_data)
@@ -2416,7 +2417,7 @@ def run_dashboard():
     with tab6:
         st.header("Market Breadth — Nifty 500 Universe")
         st.caption("Scans ~500 NSE stocks. 30-min cache. 52W high/low = within 1.5% of the 52-week extreme.")
-        with st.spinner("Scanning ~500 NSE stocks for breadth indicators..."):
+        with _spinner("Scanning ~500 NSE stocks for breadth indicators..."):
             breadth = get_market_breadth()
 
         total = breadth.get("total", 0)
@@ -2461,7 +2462,7 @@ def run_dashboard():
 
         with col_comm:
             st.subheader("Commodities")
-            with st.spinner("Fetching commodity prices..."):
+            with _spinner("Fetching commodity prices..."):
                 ext_comm = get_extended_commodity_data()
             if ext_comm:
                 st.caption("Gold & Silver: INR price = MCX spot rate (Latur local market reference). "
@@ -2478,7 +2479,7 @@ def run_dashboard():
 
         with col_curr:
             st.subheader("Currencies vs Indian Rupee")
-            with st.spinner("Fetching currency rates..."):
+            with _spinner("Fetching currency rates..."):
                 curr_data = get_currency_data()
             if curr_data:
                 st.dataframe(
@@ -2497,7 +2498,7 @@ def run_dashboard():
 
         symbol_choice = st.radio("Select Index", ["NIFTY", "BANKNIFTY"], horizontal=True, key="opt_symbol")
 
-        with st.spinner(f"Fetching {symbol_choice} option chain from NSE..."):
+        with _spinner(f"Fetching {symbol_choice} option chain from NSE..."):
             opt = get_options_snapshot(symbol_choice)
 
         if opt.get("error"):
@@ -2532,7 +2533,7 @@ def run_dashboard():
         st.header("Earnings Calendar")
         st.caption("Upcoming quarterly results & board meetings. NSE calendar is authoritative but requires an Indian IP; "
                    "falls back to Yahoo Finance estimates automatically.")
-        with st.spinner("Fetching earnings calendar..."):
+        with _spinner("Fetching earnings calendar..."):
             earnings = get_earnings_calendar()
 
         if earnings.get("source"):
