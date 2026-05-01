@@ -2135,16 +2135,16 @@ def run_dashboard():
                         st.info("No sector outperformed Nifty 50 this week — market led by index heavyweights.")
                         st.caption("Least underperforming sectors this week:")
                         st.dataframe(_color_pct(df_sectors.sort_values("Weekly Alpha", ascending=False).head(5)[alpha_cols]),
-                                     width='stretch', hide_index=True)
+                                     use_container_width=True, hide_index=True)
                     else:
-                        st.dataframe(_color_pct(out_week[alpha_cols]), width='stretch', hide_index=True)
+                        st.dataframe(_color_pct(out_week[alpha_cols]), use_container_width=True, hide_index=True)
 
                 with col2:
                     _section("Sector Underperformance", "🔴", "Weekly Alpha < 0 vs Nifty 50")
                     if under_week.empty:
                         st.info("All sectors outperforming Nifty 50 this week — broad-based rally.")
                     else:
-                        st.dataframe(_color_pct(under_week[alpha_cols]), width='stretch', hide_index=True)
+                        st.dataframe(_color_pct(under_week[alpha_cols]), use_container_width=True, hide_index=True)
                     
                 if not out_week.empty or not under_week.empty:
                     st.divider()
@@ -2160,7 +2160,7 @@ def run_dashboard():
                                 perf_best = get_sector_performers(best_sector)
                                 if perf_best["best"]:
                                     df_best = pd.DataFrame(perf_best["best"])
-                                    st.dataframe(_color_pct(df_best[cols]), width='stretch', hide_index=True)
+                                    st.dataframe(_color_pct(df_best[cols]), use_container_width=True, hide_index=True)
                                 else:
                                     st.info(f"Data unavailable for {best_sector}.")
                         else:
@@ -2174,7 +2174,7 @@ def run_dashboard():
                                 perf_worst = get_sector_performers(worst_sector)
                                 if perf_worst["worst"]:
                                     df_worst = pd.DataFrame(perf_worst["worst"])
-                                    st.dataframe(_color_pct(df_worst[cols]), width='stretch', hide_index=True)
+                                    st.dataframe(_color_pct(df_worst[cols]), use_container_width=True, hide_index=True)
                                 else:
                                     st.info(f"Data unavailable for {worst_sector}.")
                         else:
@@ -2209,7 +2209,7 @@ def run_dashboard():
                         df_all_indices = pd.DataFrame(all_indices_list)
                         cols_all = ["sr. no.", "index name", "daily returns %", "weekly returns %",
                                     "monthly returns %", "quarterly returns %", "yearly returns %", "remark for insights"]
-                        st.dataframe(_color_pct(df_all_indices[cols_all]), width='stretch', hide_index=True)
+                        st.dataframe(_color_pct(df_all_indices[cols_all]), use_container_width=True, hide_index=True)
 
                     with col_fii_stake:
                         _section("FII Stake Changes", "🏦", "Nifty 500 — top increases")
@@ -2233,7 +2233,7 @@ def run_dashboard():
                             df_fii_stake = pd.DataFrame(fii_stake_data)
                             st.dataframe(
                                 _color_pct(df_fii_stake[["sr. no.", "company", "current FII %", "prev quarter %", "change (pp)"]]),
-                                width='stretch', hide_index=True
+                                use_container_width=True, hide_index=True
                             )
                         else:
                             st.info("FII shareholding data unavailable. GitHub Actions will populate this daily.")
@@ -2246,7 +2246,7 @@ def run_dashboard():
                             df_comm = pd.DataFrame(commodity_data)
                             st.dataframe(
                                 df_comm[["commodity", "unit", "current price", "INR price (Latur)", "day change %", "% from 5Y high"]],
-                                width='stretch', hide_index=True
+                                use_container_width=True, hide_index=True
                             )
                         else:
                             st.info("Commodity data unavailable.")
@@ -2258,7 +2258,7 @@ def run_dashboard():
                         if top_overall:
                             df_overall = pd.DataFrame(top_overall)
                             cols_overall = ["sr. no.", "stock symbol", "daily %", "weekly %", "monthly %", "quarterly %", "yearly %", "EPS QoQ %", "EPS YoY %", "remark for insights"]
-                            st.dataframe(_color_pct(df_overall[cols_overall]), width='stretch', hide_index=True)
+                            st.dataframe(_color_pct(df_overall[cols_overall]), use_container_width=True, hide_index=True)
                         else:
                             st.info("Overall constituent tracking unavailable.")
 
@@ -2270,7 +2270,7 @@ def run_dashboard():
                         df_mf = pd.DataFrame(mf_data)
                         st.dataframe(
                             _color_pct(df_mf[["sr. no.", "fund name", "category", "NAV (₹)", "daily %", "weekly %", "monthly %", "yearly %"]]),
-                            width='stretch', hide_index=True
+                            use_container_width=True, hide_index=True
                         )
                     else:
                         st.info("Mutual fund data unavailable. Check internet connectivity to api.mfapi.in.")
@@ -2287,7 +2287,7 @@ def run_dashboard():
                 df_breakout = pd.DataFrame(breakout_data)
                 cols_b = ["sr. no.", "stock", "sector", "current price", "% to 52W high",
                           "volume (vs 20D avg)", "MACD", "MA alignment", "RSI (14)", "overall confirmation"]
-                st.dataframe(_color_pct(df_breakout[cols_b]), width='stretch', hide_index=True)
+                st.dataframe(_color_pct(df_breakout[cols_b]), use_container_width=True, hide_index=True)
             else:
                 st.info("No breakout candidates found right now.")
 
@@ -2296,7 +2296,7 @@ def run_dashboard():
         with st.spinner("Scanning Nifty 500 for RSI oversold candidates..."):
             rsi_candidates = get_nifty500_weekly_rsi_scan()
         if rsi_candidates:
-            st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), width='stretch', hide_index=True)
+            st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
         else:
             st.info("No RSI < 40 candidates found above 200-DMA in Nifty 500 universe.")
 
@@ -2314,7 +2314,7 @@ def run_dashboard():
                     cols_buy = ["sr. no.", "stock", "prev day close (NSE)", "day change %", "candle",
                                 "daily buying vol", "daily buying %",
                                 "weekly buying vol", "weekly buying %"]
-                    st.dataframe(_color_pct(df_buy[cols_buy]), width='stretch', hide_index=True)
+                    st.dataframe(_color_pct(df_buy[cols_buy]), use_container_width=True, hide_index=True)
                 else:
                     st.info("No data available.")
 
@@ -2325,7 +2325,7 @@ def run_dashboard():
                     cols_sell = ["sr. no.", "stock", "prev day close (NSE)", "day change %", "candle",
                                  "daily selling vol", "daily selling %",
                                  "weekly selling vol", "weekly selling %"]
-                    st.dataframe(_color_pct(df_sell[cols_sell]), width='stretch', hide_index=True)
+                    st.dataframe(_color_pct(df_sell[cols_sell]), use_container_width=True, hide_index=True)
                 else:
                     st.info("No data available.")
 
@@ -2408,7 +2408,7 @@ def run_dashboard():
                         "% of current value from preceding day", "monthly %", "quarterly %", 
                         "yearly %", "3-year %", "its ATH", "% from ATH", 
                         "remarks for insights from investor"]
-                st.dataframe(_color_pct(df_global[cols]), width='stretch', hide_index=True)
+                st.dataframe(_color_pct(df_global[cols]), use_container_width=True, hide_index=True)
             else:
                 st.error("Could not fetch global markets data.")
 
@@ -2440,14 +2440,14 @@ def run_dashboard():
                 st.subheader(f"Near 52-Week Highs  ({breadth['new_52w_highs']} stocks)")
                 if breadth["high_stocks"]:
                     st.dataframe(pd.DataFrame({"stock": breadth["high_stocks"]}),
-                                 width='stretch', hide_index=True)
+                                 use_container_width=True, hide_index=True)
                 else:
                     st.info("No stocks within 1.5% of 52W high.")
             with col_l:
                 st.subheader(f"Near 52-Week Lows  ({breadth['new_52w_lows']} stocks)")
                 if breadth["low_stocks"]:
                     st.dataframe(pd.DataFrame({"stock": breadth["low_stocks"]}),
-                                 width='stretch', hide_index=True)
+                                 use_container_width=True, hide_index=True)
                 else:
                     st.info("No stocks within 1.5% of 52W low.")
         else:
@@ -2471,7 +2471,7 @@ def run_dashboard():
                                             "INR price (Latur)", "day %",
                                             "week %", "month %", "quarter %", "yearly %",
                                             "% from 5Y high", "insight"]]),
-                    width='stretch', hide_index=True,
+                    use_container_width=True, hide_index=True,
                 )
             else:
                 st.info("Commodity data unavailable.")
@@ -2485,7 +2485,7 @@ def run_dashboard():
                     _color_pct(pd.DataFrame(curr_data)[["pair", "rate", "day %",
                                              "week %", "month %", "yearly %",
                                              "% from 5Y high", "insight"]]),
-                    width='stretch', hide_index=True,
+                    use_container_width=True, hide_index=True,
                 )
             else:
                 st.info("Currency data unavailable.")
@@ -2522,7 +2522,7 @@ def run_dashboard():
                 df_opt = pd.DataFrame(atm_rows)
                 st.dataframe(
                     df_opt[["call OI", "call Δ OI", "call LTP", "strike", "put LTP", "put OI", "put Δ OI"]],
-                    width='stretch', hide_index=True,
+                    use_container_width=True, hide_index=True,
                 )
             else:
                 st.info("No option chain rows found near ATM.")
@@ -2541,7 +2541,7 @@ def run_dashboard():
         if earnings.get("data"):
             df_earn = pd.DataFrame(earnings["data"])
             st.dataframe(df_earn[["company", "date", "event"]],
-                         width='stretch', hide_index=True)
+                         use_container_width=True, hide_index=True)
         else:
             st.warning(f"⚠️  {earnings.get('error', 'No data available.')}")
             st.info("NSE Event Calendar requires an Indian IP address. "
