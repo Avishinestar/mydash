@@ -2065,20 +2065,27 @@ def run_dashboard():
 
     # --- TAB 1: Sector Performance ---
     with tab1:
-        
-        levels = get_nifty_sensex_levels()
-        nifty_lvl = levels.get("NIFTY 50", "N/A")
-        sensex_lvl = levels.get("SENSEX", "N/A")
-        vix_lvl = levels.get("INDIA VIX", "N/A")
-        nifty_rsi = levels.get("NIFTY RSI", "N/A")
-        nifty_ath = levels.get("NIFTY % to ATH", "N/A")
-        _pe = get_nifty50_pe()
-        nifty_pe  = f"{_pe:.2f}" if _pe else "N/A"
-        
-        fiidii = get_fiidii()
 
-        fii_val = fiidii.get("FII")
-        dii_val = fiidii.get("DII")
+        if st.button("▶ Load Market Data", key="run_sectors", type="primary"):
+            st.session_state['sectors_loaded'] = True
+
+        # Defaults shown before data loads
+        nifty_lvl  = "—"; sensex_lvl = "—"; vix_lvl = "—"
+        nifty_rsi  = "—"; nifty_ath  = "—"; nifty_pe = "—"
+        fii_val    = None; dii_val    = None
+
+        if st.session_state.get('sectors_loaded'):
+            levels     = get_nifty_sensex_levels()
+            nifty_lvl  = levels.get("NIFTY 50", "N/A")
+            sensex_lvl = levels.get("SENSEX", "N/A")
+            vix_lvl    = levels.get("INDIA VIX", "N/A")
+            nifty_rsi  = levels.get("NIFTY RSI", "N/A")
+            nifty_ath  = levels.get("NIFTY % to ATH", "N/A")
+            _pe        = get_nifty50_pe()
+            nifty_pe   = f"{_pe:.2f}" if _pe else "N/A"
+            fiidii     = get_fiidii()
+            fii_val    = fiidii.get("FII")
+            dii_val    = fiidii.get("DII")
 
         fii_pos    = fii_val is not None and fii_val >= 0
         dii_pos    = dii_val is not None and dii_val >= 0
@@ -2148,7 +2155,9 @@ def run_dashboard():
         </div>
         """, unsafe_allow_html=True)
 
-        with _spinner("Fetching sector data..."):
+        if not st.session_state.get('sectors_loaded'):
+            st.info("Click **▶ Load Market Data** above to fetch live indices, sector performance, and FII/DII data.")
+        elif True:
             s_data = get_sector_data()
             if "NIFTY 50" in s_data:
                 nifty = s_data["NIFTY 50"]
@@ -2317,7 +2326,7 @@ def run_dashboard():
                         st.info("Mutual fund data unavailable. Check internet connectivity to api.mfapi.in.")
 
             else:
-                st.error("Could not fetch NIFTY 50 data.")
+                st.warning("Could not fetch NIFTY 50 sector data — try refreshing.")
 
     # --- TAB 2: Technical Scanners ---
     with tab2:
