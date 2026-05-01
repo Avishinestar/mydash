@@ -2555,36 +2555,34 @@ def run_dashboard():
 
         if not st.session_state.get('options_loaded'):
             st.info("Click **▶ Load Option Chain** above to fetch live NSE option data.")
-            opt = {"error": ""}
         else:
             opt = get_options_snapshot(symbol_choice)
-
-        if opt.get("error"):
-            st.warning(f"⚠️  {opt['error']}")
-            st.info("To use this feature, run the dashboard from a machine with an Indian IP address, "
-                    "or connect via an India-based VPN.")
-        else:
-            spot     = opt["spot"]
-            c1, c2, c3, c4, c5 = st.columns(5)
-            c1.metric("Spot Price",           f"{spot:,.2f}")
-            c2.metric("Nearest Expiry",        opt["expiry"])
-            pcr = opt["pcr"]
-            c3.metric("PCR (All Expiries)",    str(pcr) if pcr else "N/A",
-                      "Bullish >1" if pcr and pcr > 1 else ("Bearish <1" if pcr else ""))
-            c4.metric("Max Pain",              f"{opt['max_pain']:,}" if opt["max_pain"] else "N/A")
-            c5.metric("Total OI (Calls+Puts)", f"{opt['total_call_oi'] + opt['total_put_oi']:,}")
-
-            st.divider()
-            st.subheader(f"{symbol_choice} Option Chain — Expiry: {opt['expiry']}  (ATM ± 10%)")
-            atm_rows = opt["atm_rows"]
-            if atm_rows:
-                df_opt = pd.DataFrame(atm_rows)
-                st.dataframe(
-                    df_opt[["call OI", "call Δ OI", "call LTP", "strike", "put LTP", "put OI", "put Δ OI"]],
-                    use_container_width=True, hide_index=True,
-                )
+            if opt.get("error"):
+                st.warning(f"⚠️  {opt['error']}")
+                st.info("To use this feature, run the dashboard from a machine with an Indian IP address, "
+                        "or connect via an India-based VPN.")
             else:
-                st.info("No option chain rows found near ATM.")
+                spot = opt["spot"]
+                c1, c2, c3, c4, c5 = st.columns(5)
+                c1.metric("Spot Price",           f"{spot:,.2f}")
+                c2.metric("Nearest Expiry",        opt["expiry"])
+                pcr = opt["pcr"]
+                c3.metric("PCR (All Expiries)",    str(pcr) if pcr else "N/A",
+                          "Bullish >1" if pcr and pcr > 1 else ("Bearish <1" if pcr else ""))
+                c4.metric("Max Pain",              f"{opt['max_pain']:,}" if opt["max_pain"] else "N/A")
+                c5.metric("Total OI (Calls+Puts)", f"{opt['total_call_oi'] + opt['total_put_oi']:,}")
+
+                st.divider()
+                st.subheader(f"{symbol_choice} Option Chain — Expiry: {opt['expiry']}  (ATM ± 10%)")
+                atm_rows = opt["atm_rows"]
+                if atm_rows:
+                    df_opt = pd.DataFrame(atm_rows)
+                    st.dataframe(
+                        df_opt[["call OI", "call Δ OI", "call LTP", "strike", "put LTP", "put OI", "put Δ OI"]],
+                        use_container_width=True, hide_index=True,
+                    )
+                else:
+                    st.info("No option chain rows found near ATM.")
 
     # --- TAB 9: Earnings Calendar ---
     with tab9:
@@ -2597,21 +2595,18 @@ def run_dashboard():
 
         if not st.session_state.get('earnings_loaded'):
             st.info("Click **▶ Load Earnings Calendar** above to fetch upcoming result dates.")
-            earnings = {"data": [], "source": None, "error": None}
         else:
             earnings = get_earnings_calendar()
-
-        if earnings.get("source"):
-            st.caption(f"Source: **{earnings['source']}**")
-
-        if earnings.get("data"):
-            df_earn = pd.DataFrame(earnings["data"])
-            st.dataframe(df_earn[["company", "date", "event"]],
-                         use_container_width=True, hide_index=True)
-        else:
-            st.warning(f"⚠️  {earnings.get('error', 'No data available.')}")
-            st.info("NSE Event Calendar requires an Indian IP address. "
-                    "Connect via an India-based VPN to see the full calendar.")
+            if earnings.get("source"):
+                st.caption(f"Source: **{earnings['source']}**")
+            if earnings.get("data"):
+                df_earn = pd.DataFrame(earnings["data"])
+                st.dataframe(df_earn[["company", "date", "event"]],
+                             use_container_width=True, hide_index=True)
+            else:
+                st.warning(f"⚠️  {earnings.get('error', 'No data available.')}")
+                st.info("NSE Event Calendar requires an Indian IP address. "
+                        "Connect via an India-based VPN to see the full calendar.")
 
 if __name__ == "__main__":
     run_dashboard()
