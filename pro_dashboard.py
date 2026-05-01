@@ -318,14 +318,13 @@ def get_sector_data():
 
     # ── Step 1: one batch download (single HTTP round-trip, reduces rate-limit hits) ──
     batch_df = pd.DataFrame()
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             batch_df = yf.download(tickers, period="1y", interval="1d", progress=False)
             if not batch_df.empty:
                 break
         except Exception:
             pass
-        _time.sleep(3)
 
     # ── Step 2: extract per-ticker series; fall back to individual fetch if missing ──
     for ticker, name in name_by_ticker.items():
@@ -337,16 +336,12 @@ def get_sector_data():
         except Exception:
             pass
 
-        # Individual fallback if batch missed this ticker (rate-limited slot)
+        # Individual fallback if batch missed this ticker
         if len(df_t) < 64:
-            for retry in range(3):
-                try:
-                    _time.sleep(1.5 + retry * 2)
-                    df_t = yf.Ticker(ticker).history(period="1y").dropna(subset=["Close"])
-                    if len(df_t) >= 64:
-                        break
-                except Exception:
-                    pass
+            try:
+                df_t = yf.Ticker(ticker).history(period="1y").dropna(subset=["Close"])
+            except Exception:
+                pass
 
         if len(df_t) < 64:
             continue
@@ -1055,11 +1050,10 @@ def get_nifty_sensex_levels():
     res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A"}
 
     for ticker, key in [("^NSEI", "NIFTY 50"), ("^BSESN", "SENSEX"), ("^INDIAVIX", "INDIA VIX")]:
-        for attempt in range(3):
+        for attempt in range(2):
             try:
                 df_t = yf.Ticker(ticker).history(period="2y")
                 if df_t.empty:
-                    _time.sleep(2)
                     continue
                 df_t = df_t.dropna(subset=["Close"])
                 current = float(df_t["Close"].iloc[-1])
@@ -1072,8 +1066,7 @@ def get_nifty_sensex_levels():
                     res["NIFTY % to ATH"] = f"{((current / ath) - 1) * 100:.2f}%"
                 break
             except Exception:
-                _time.sleep(2)
-        _time.sleep(0.5)
+                pass
 
     if res["NIFTY 50"] == "N/A":
         get_nifty_sensex_levels.clear()
@@ -1189,9 +1182,14 @@ def get_fiidii():
 
     return {"FII": None, "DII": None}
 
+def _fii_json_path():
+    import os
+    here = os.path.dirname(os.path.abspath(__file__)) if '__file__' in dir() else os.getcwd()
+    return os.path.join(here, "fii_stake_data.json")
+
 def _fii_json_mtime():
     import os
-    p = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+    p = _fii_json_path()
     return os.path.getmtime(p) if os.path.exists(p) else 0
 
 @st.cache_data(ttl=86400)  # quarterly data — refresh once a day
@@ -1204,7 +1202,7 @@ def get_fii_stake_increases(_mtime=None):
     import json, os, requests
 
     # --- Primary: read from pre-fetched JSON (committed by GitHub Actions) ---
-    json_path = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+    json_path = _fii_json_path()
     if os.path.exists(json_path):
         try:
             with open(json_path) as f:
@@ -1321,7 +1319,6 @@ def get_commodity_data():
                 "day change %":  round((current / prev - 1) * 100, 2),
                 "% from 5Y high": round((current / ath - 1) * 100, 2),
             })
-            _time.sleep(0.3)
         except Exception:
             pass
     return results
@@ -1530,7 +1527,6 @@ def get_extended_commodity_data():
                 "% from 5Y high": pct_ath,
                 "insight":    insight,
             })
-            _time.sleep(0.3)
         except Exception:
             pass
     return results
@@ -1593,7 +1589,6 @@ def get_currency_data():
                 "% from 5Y high": pct_ath,
                 "insight":        insight,
             })
-            _time.sleep(0.3)
         except Exception:
             pass
     return results
@@ -2219,7 +2214,7 @@ def run_dashboard():
 
                         # Show last-updated timestamp from JSON if available
                         import json, os
-                        json_path = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+                        json_path = _fii_json_path()
                         if os.path.exists(json_path):
                             try:
                                 with open(json_path) as f:
