@@ -386,25 +386,23 @@ def get_stock_data_weekly():
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty500_weekly_rsi_scan():
     """Scan Nifty 500 universe for stocks with weekly RSI < 40 and price above 200-DMA.
-    Returns top 20 sorted by RSI ascending."""
+    Single 2Y daily download — resampled to weekly for RSI, used directly for 200-DMA."""
     tickers = get_nifty500_tickers()
-    weekly_df = yf.download(tickers, period="2y", interval="1wk", progress=False)
-    daily_df  = yf.download(tickers, period="1y",  interval="1d",  progress=False)
+    # One download instead of two: 2Y daily covers both weekly RSI and 200-DMA needs
+    daily_df = yf.download(tickers, period="2y", interval="1d", progress=False)
     candidates = []
     for t in tickers:
         try:
-            if isinstance(weekly_df.columns, pd.MultiIndex):
-                if t not in weekly_df.columns.get_level_values(1): continue
-                w_df = weekly_df.xs(t, axis=1, level=1).dropna()
-            else:
-                w_df = weekly_df.dropna()
             if isinstance(daily_df.columns, pd.MultiIndex):
                 if t not in daily_df.columns.get_level_values(1): continue
                 d_df = daily_df.xs(t, axis=1, level=1).dropna()
             else:
                 d_df = daily_df.dropna()
-            if len(w_df) < 15 or len(d_df) < 200: continue
-            w_rsi = float(ta.momentum.RSIIndicator(w_df['Close'], window=14).rsi().iloc[-1])
+            if len(d_df) < 200: continue
+            # Resample daily → weekly (last close of each week)
+            w_close = d_df['Close'].resample('W').last().dropna()
+            if len(w_close) < 15: continue
+            w_rsi = float(ta.momentum.RSIIndicator(w_close, window=14).rsi().iloc[-1])
             d_200dma = float(d_df['Close'].tail(200).mean())
             current_price = float(d_df['Close'].iloc[-1])
             if w_rsi < 40 and current_price > d_200dma:
@@ -881,7 +879,8 @@ def get_sector_performers(sector_name):
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_range_breakout_stocks():
-    all_tickers = list(set([t for constituents in SECTOR_CONSTITUENTS.values() for t in constituents] + NIFTY_50 + get_nifty500_tickers()))
+    # Use sector constituents + Nifty 50 only (~200 stocks) — much faster than full Nifty500
+    all_tickers = list(set([t for constituents in SECTOR_CONSTITUENTS.values() for t in constituents] + NIFTY_50))
     ticker_to_sector = {t: s for s, tickers in SECTOR_CONSTITUENTS.items() for t in tickers}
 
     try:
@@ -2322,8 +2321,13 @@ def run_dashboard():
 
     # --- TAB 2: Technical Scanners ---
     with tab2:
-        _section("Range Breakout Scanner", "🔍", "Scans sector constituents across 20D / 50D / 52W highs · Ranked by proximity score + volume surge")
-        with _spinner("Scanning for range breakout candidates..."):
+        if st.button("▶ Run Technical Scans", key="run_scanners", type="primary"):
+            st.session_state['scanners_loaded'] = True
+
+        if not st.session_state.get('scanners_loaded'):
+            st.info("Click **▶ Run Technical Scans** above to load breakout, RSI oversold, and volume data.")
+        else:
+            _section("Range Breakout Scanner", "🔍", "Scans sector constituents + Nifty 50 · Ranked by proximity score + volume surge")
             breakout_data = get_range_breakout_stocks()
             if breakout_data:
                 df_breakout = pd.DataFrame(breakout_data)
@@ -2333,22 +2337,18 @@ def run_dashboard():
             else:
                 st.info("No breakout candidates found right now.")
 
-        st.divider()
-        _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is above 200-DMA · Top 20 sorted by lowest RSI")
-        with _spinner("Scanning Nifty 500 for RSI oversold candidates..."):
+            st.divider()
+            _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is above 200-DMA · Top 20 sorted by lowest RSI")
             rsi_candidates = get_nifty500_weekly_rsi_scan()
-        if rsi_candidates:
-            st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
-        else:
-            st.info("No RSI < 40 candidates found above 200-DMA in Nifty 500 universe.")
+            if rsi_candidates:
+                st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
+            else:
+                st.info("No RSI < 40 candidates found above 200-DMA in Nifty 500 universe.")
 
-        st.divider()
-        _section("Volume Analysis — Nifty 500", "📦", "Buy Vol = Volume × (Close−Low)/(High−Low)  ·  Sell Vol = Volume × (High−Close)/(High−Low)")
-        with _spinner("Scanning Nifty 500 universe for volume data..."):
+            st.divider()
+            _section("Volume Analysis — Nifty 500", "📦", "Buy Vol = Volume × (Close−Low)/(High−Low)  ·  Sell Vol = Volume × (High−Close)/(High−Low)")
             vol_data = get_volume_split_stocks()
-
             col_buy, col_sell = st.columns(2)
-
             with col_buy:
                 st.markdown("**🟢 Top 10 — Highest Buying Volume (Daily + Weekly)**")
                 if vol_data["buying"]:
@@ -2359,7 +2359,6 @@ def run_dashboard():
                     st.dataframe(_color_pct(df_buy[cols_buy]), use_container_width=True, hide_index=True)
                 else:
                     st.info("No data available.")
-
             with col_sell:
                 st.markdown("**🔴 Top 10 — Highest Selling Volume (Daily + Weekly)**")
                 if vol_data["selling"]:
@@ -2385,34 +2384,36 @@ def run_dashboard():
             "**EV/EBITDA** measures enterprise value vs operating earnings. "
             "**P/FCF** = Market Cap ÷ Free Cash Flow (lower = cheaper on cash basis). "
             "Results sorted by largest discount to intrinsic value first. "
-            "*1-hour cache — click 'Refresh' to reload.*"
+            "*1-hour cache · first run takes ~60–90 s.*"
         )
 
-        with _spinner("Scanning Nifty 500 — fetching fundamentals & computing DCF for each stock (may take 60–90 s on first load)..."):
-            dcf_data = get_dcf_valuation_stocks()
+        if st.button("▶ Run DCF Scanner", key="run_dcf", type="primary"):
+            st.session_state['dcf_loaded'] = True
 
-        if dcf_data:
-            df_dcf = pd.DataFrame(dcf_data)
-            # Column order matching user spec
-            cols_order = [
-                "sr. no.", "name", "price (₹)",
-                "base case DCF IV (₹)", "best case DCF IV (₹)", "worst case DCF IV (₹)",
-                "% to intrinsic value",
-                "industry PE", "current PE", "current PEG",
-                "EV/EBITDA", "P/FCF ratio",
-                "1Y EPS growth %", "3Y EPS CAGR %", "5Y EPS CAGR %",
-                "book value (₹)", "remarks",
-            ]
-            # Only include columns that exist in the df
-            cols_order = [c for c in cols_order if c in df_dcf.columns]
-            st.success(f"Found **{len(df_dcf)}** Nifty 500 stocks near DCF intrinsic value.")
-            st.dataframe(
-                _color_pct(df_dcf[cols_order]),
-                use_container_width=True,
-                hide_index=True,
-            )
+        if not st.session_state.get('dcf_loaded'):
+            st.info("Click **▶ Run DCF Scanner** above to scan Nifty 500 for undervalued stocks. This may take 60–90 seconds on first run.")
         else:
-            st.warning("No stocks matched the DCF filter — data may still be loading or all stocks are overvalued/undervalued beyond the filter range. Try refreshing.")
+            dcf_data = get_dcf_valuation_stocks()
+            if dcf_data:
+                df_dcf = pd.DataFrame(dcf_data)
+                cols_order = [
+                    "sr. no.", "name", "price (₹)",
+                    "base case DCF IV (₹)", "best case DCF IV (₹)", "worst case DCF IV (₹)",
+                    "% to intrinsic value",
+                    "industry PE", "current PE", "current PEG",
+                    "EV/EBITDA", "P/FCF ratio",
+                    "1Y EPS growth %", "3Y EPS CAGR %", "5Y EPS CAGR %",
+                    "book value (₹)", "remarks",
+                ]
+                cols_order = [c for c in cols_order if c in df_dcf.columns]
+                st.success(f"Found **{len(df_dcf)}** Nifty 500 stocks near DCF intrinsic value.")
+                st.dataframe(
+                    _color_pct(df_dcf[cols_order]),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+            else:
+                st.warning("No stocks matched the DCF filter — data may still be loading or all stocks are outside the filter range. Try refreshing.")
 
     # --- TAB 4: News & Macro ---
     with tab4:
@@ -2461,7 +2462,14 @@ def run_dashboard():
     with tab6:
         st.header("Market Breadth — Nifty 500 Universe")
         st.caption("Scans ~500 NSE stocks. 30-min cache. 52W high/low = within 1.5% of the 52-week extreme.")
-        with _spinner("Scanning ~500 NSE stocks for breadth indicators..."):
+
+        if st.button("▶ Load Market Breadth", key="run_breadth", type="primary"):
+            st.session_state['breadth_loaded'] = True
+
+        if not st.session_state.get('breadth_loaded'):
+            st.info("Click **▶ Load Market Breadth** above to scan Nifty 500 for advance/decline data.")
+            breadth = {"total": 0}
+        else:
             breadth = get_market_breadth()
 
         total = breadth.get("total", 0)
@@ -2542,7 +2550,13 @@ def run_dashboard():
 
         symbol_choice = st.radio("Select Index", ["NIFTY", "BANKNIFTY"], horizontal=True, key="opt_symbol")
 
-        with _spinner(f"Fetching {symbol_choice} option chain from NSE..."):
+        if st.button("▶ Load Option Chain", key="run_options", type="primary"):
+            st.session_state['options_loaded'] = True
+
+        if not st.session_state.get('options_loaded'):
+            st.info("Click **▶ Load Option Chain** above to fetch live NSE option data.")
+            opt = {"error": ""}
+        else:
             opt = get_options_snapshot(symbol_choice)
 
         if opt.get("error"):
@@ -2577,7 +2591,14 @@ def run_dashboard():
         st.header("Earnings Calendar")
         st.caption("Upcoming quarterly results & board meetings. NSE calendar is authoritative but requires an Indian IP; "
                    "falls back to Yahoo Finance estimates automatically.")
-        with _spinner("Fetching earnings calendar..."):
+
+        if st.button("▶ Load Earnings Calendar", key="run_earnings", type="primary"):
+            st.session_state['earnings_loaded'] = True
+
+        if not st.session_state.get('earnings_loaded'):
+            st.info("Click **▶ Load Earnings Calendar** above to fetch upcoming result dates.")
+            earnings = {"data": [], "source": None, "error": None}
+        else:
             earnings = get_earnings_calendar()
 
         if earnings.get("source"):
