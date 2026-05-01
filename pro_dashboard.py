@@ -437,7 +437,7 @@ def _dcf(fcf, growth, terminal, discount, years=10):
     return pv
 
 
-def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, fcf_yield, fcf_margin, eps_1y, g_base):
+def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, ev_ebitda, pfcf, eps_1y, g_base):
     """Generate expert investor insight string for a stock's DCF valuation."""
     parts = []
 
@@ -470,21 +470,25 @@ def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, fcf_yield, fcf_margin
         elif peg > 2.0:
             parts.append(f"Elevated PEG of {peg}x — hold only if competitive moat is durable and widening.")
 
-    if isinstance(fcf_yield, (int, float)):
-        if fcf_yield > 7:
-            parts.append(f"Exceptional FCF yield of {fcf_yield:.1f}% — cash machine capable of sustained buybacks or dividends.")
-        elif fcf_yield > 4:
-            parts.append(f"Healthy {fcf_yield:.1f}% FCF yield signals disciplined capital allocation and earnings quality.")
-        elif fcf_yield > 1:
-            parts.append(f"Positive FCF yield ({fcf_yield:.1f}%) — business self-funds growth without dilution risk.")
+    if isinstance(ev_ebitda, (int, float)) and ev_ebitda > 0:
+        if ev_ebitda < 8:
+            parts.append(f"EV/EBITDA of {ev_ebitda:.1f}x is deeply cheap vs peers — strong enterprise-value case for patient capital.")
+        elif ev_ebitda < 15:
+            parts.append(f"EV/EBITDA of {ev_ebitda:.1f}x is in fair-value territory — reasonable entry for quality-conscious investors.")
+        elif ev_ebitda < 25:
+            parts.append(f"EV/EBITDA of {ev_ebitda:.1f}x carries a premium — justified only by durable competitive advantage or high growth visibility.")
         else:
-            parts.append(f"Sub-1% FCF yield flags heavy reinvestment phase — validate capex generates adequate return on capital.")
+            parts.append(f"Rich EV/EBITDA of {ev_ebitda:.1f}x — market embedding aggressive future earnings; execution must match expectations.")
 
-    if isinstance(fcf_margin, (int, float)) and fcf_margin > 0:
-        if fcf_margin > 20:
-            parts.append(f"Exceptional {fcf_margin:.0f}% FCF margin — asset-light model with strong pricing power.")
-        elif fcf_margin > 10:
-            parts.append(f"Solid {fcf_margin:.0f}% FCF margin confirms earnings reliably convert to cash.")
+    if isinstance(pfcf, (int, float)) and pfcf > 0:
+        if pfcf < 10:
+            parts.append(f"P/FCF of {pfcf:.1f}x is exceptionally cheap on a cash-flow basis — strong buyback or dividend capacity.")
+        elif pfcf < 20:
+            parts.append(f"P/FCF of {pfcf:.1f}x is fair — cash generation aligns well with market price.")
+        elif pfcf < 35:
+            parts.append(f"P/FCF of {pfcf:.1f}x reflects a growth premium — monitor FCF conversion trend closely.")
+        else:
+            parts.append(f"Elevated P/FCF of {pfcf:.1f}x — high reinvestment phase or thin FCF; validate capex returns ROI.")
 
     if isinstance(eps_1y, (int, float)):
         if eps_1y > 25:
@@ -500,8 +504,10 @@ def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, fcf_yield, fcf_margin
 @st.cache_data(ttl=3600)
 def get_dcf_valuation_stocks():
     """
-    Scans Nifty 500 for stocks near their DCF intrinsic value.
-    Three scenarios: Base (11% WACC), Bearish (12% WACC), Bear (13% WACC).
+    Scans Nifty 500 for stocks near their DCF intrinsic value (AlphaSpread methodology).
+    Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS → Revenue → 7% default.
+    Three scenarios: Base (10% WACC, 3% terminal), Best (9% WACC, 3.5% terminal, 1.5× growth),
+    Worst (11% WACC, 2.5% terminal, 0.5× growth).
     Filters: -35% to +15% of base-case intrinsic value.
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -519,17 +525,16 @@ def get_dcf_valuation_stocks():
             yft  = yf.Ticker(ticker)
             info = yft.info
 
-            price  = info.get("currentPrice") or info.get("regularMarketPrice") or info.get("previousClose")
-            shares = info.get("sharesOutstanding")
+            price   = info.get("currentPrice") or info.get("regularMarketPrice") or info.get("previousClose")
+            shares  = info.get("sharesOutstanding")
             mkt_cap = info.get("marketCap")
-            fcf    = info.get("freeCashflow")
-            op_cf  = info.get("operatingCashflow")
-            revenue = info.get("totalRevenue")
+            fcf     = info.get("freeCashflow")
+            op_cf   = info.get("operatingCashflow")
 
             if not price or price <= 0 or not shares or shares <= 0:
                 return None
 
-            # Fallback: estimate FCF from operating cash flow
+            # Fallback: estimate FCF from operating cash flow (conservative 72% conversion)
             if (fcf is None or fcf <= 0) and op_cf and op_cf > 0:
                 fcf = op_cf * 0.72
             if not fcf or fcf <= 0:
@@ -541,8 +546,36 @@ def get_dcf_valuation_stocks():
             eps_1y_raw = info.get("earningsGrowth")   # decimal
             rev_growth = info.get("revenueGrowth") or 0.0
 
-            # 3Y / 5Y EPS CAGR from annual income statement
+            # ── FCF CAGR from annual cash flow statement (AlphaSpread primary driver) ──
+            fcf_5y_cagr, fcf_3y_cagr = None, None
             eps_3y, eps_5y = None, None
+            try:
+                cf = yft.cashflow
+                if cf is not None and not cf.empty:
+                    opcf_row, capex_row = None, None
+                    for rn in ["Operating Cash Flow", "Total Cash From Operating Activities"]:
+                        if rn in cf.index:
+                            opcf_row = cf.loc[rn].dropna()
+                            break
+                    for rn in ["Capital Expenditure", "Capital Expenditures"]:
+                        if rn in cf.index:
+                            capex_row = cf.loc[rn].dropna()
+                            break
+                    if opcf_row is not None:
+                        fcf_hist = (opcf_row + capex_row) if capex_row is not None else opcf_row
+                        fcf_hist = fcf_hist[fcf_hist > 0]
+                        if len(fcf_hist) >= 4:
+                            f0, f3 = float(fcf_hist.iloc[0]), float(fcf_hist.iloc[3])
+                            if f0 > 0 and f3 > 0:
+                                fcf_3y_cagr = (f0 / f3) ** (1 / 3) - 1
+                        if len(fcf_hist) >= 6:
+                            f5 = float(fcf_hist.iloc[5])
+                            if f0 > 0 and f5 > 0:
+                                fcf_5y_cagr = (f0 / f5) ** (1 / 5) - 1
+            except Exception:
+                pass
+
+            # 3Y / 5Y EPS CAGR from income statement (for display)
             try:
                 inc = yft.income_stmt
                 if inc is not None and not inc.empty:
@@ -564,41 +597,54 @@ def get_dcf_valuation_stocks():
             except Exception:
                 pass
 
-            # Base growth rate for DCF
-            eps_1y = eps_1y_raw
-            if eps_1y and eps_1y > 0:
-                g_base = min(eps_1y, 0.30)
+            # ── Base growth rate (AlphaSpread priority: 5Y FCF CAGR first) ──────────
+            if fcf_5y_cagr and fcf_5y_cagr > 0:
+                g_base = min(fcf_5y_cagr, 0.30)
+            elif fcf_3y_cagr and fcf_3y_cagr > 0:
+                g_base = min(fcf_3y_cagr, 0.25)
+            elif eps_1y_raw and eps_1y_raw > 0:
+                g_base = min(eps_1y_raw, 0.25)
             elif rev_growth > 0:
-                g_base = min(rev_growth, 0.25)
-            elif eps_3y and eps_3y > 0:
-                g_base = min(eps_3y, 0.25)
+                g_base = min(rev_growth, 0.20)
             else:
                 g_base = 0.07
             g_base = max(g_base, 0.03)
 
-            # ── Three DCF scenarios ───────────────────────────────────────────
-            # Base:    moderate growth, 11% WACC, 4.0% terminal
-            # Bearish: 60% of base growth, 12% WACC, 3.5% terminal
-            # Bear:    30% of base growth, 13% WACC, 2.5% terminal
-            base_total    = _dcf(fcf, g_base,                   0.040, 0.110)
-            bearish_total = _dcf(fcf, g_base * 0.60,            0.035, 0.120)
-            bear_total    = _dcf(fcf, max(g_base * 0.30, 0.01), 0.025, 0.130)
+            # ── Three DCF scenarios (AlphaSpread methodology) ─────────────────────────
+            # Base:  g_base,        10% WACC, 3.0% terminal
+            # Best:  g_base × 1.5,  9% WACC, 3.5% terminal
+            # Worst: g_base × 0.5, 11% WACC, 2.5% terminal
+            base_total  = _dcf(fcf, g_base,                        0.030, 0.100)
+            best_total  = _dcf(fcf, min(g_base * 1.5, 0.35),       0.035, 0.090)
+            worst_total = _dcf(fcf, max(g_base * 0.5,  0.01),      0.025, 0.110)
 
             if base_total is None or base_total <= 0:
                 return None
 
-            base_iv    = base_total    / shares
-            bearish_iv = bearish_total / shares if bearish_total else None
-            bear_iv    = bear_total    / shares if bear_total    else None
+            base_iv  = base_total  / shares
+            best_iv  = best_total  / shares if best_total  else None
+            worst_iv = worst_total / shares if worst_total else None
 
             # Filter: within -35% to +15% of base IV
             pct_off = (price / base_iv - 1) * 100
             if pct_off > 15 or pct_off < -35:
                 return None
 
-            fcf_yield  = (fcf / mkt_cap  * 100) if mkt_cap  and mkt_cap  > 0 else None
-            fcf_margin = (fcf / revenue  * 100) if revenue  and revenue  > 0 else None
+            # ── EV/EBITDA (replaces FCF yield) ────────────────────────────────────────
+            ev_ebitda = info.get("enterpriseToEbitda")
+            if ev_ebitda is None:
+                try:
+                    ebitda = info.get("ebitda")
+                    ev     = info.get("enterpriseValue")
+                    if ebitda and ev and ebitda > 0:
+                        ev_ebitda = round(ev / ebitda, 1)
+                except Exception:
+                    pass
 
+            # ── P/FCF ratio (replaces FCF margin) ─────────────────────────────────────
+            pfcf = round(mkt_cap / fcf, 1) if mkt_cap and mkt_cap > 0 else None
+
+            eps_1y = eps_1y_raw
             sector = stock_sector.get(ticker, info.get("sector", "—"))
             name   = info.get("longName") or info.get("shortName") or ticker.replace(".NS", "")
 
@@ -609,23 +655,23 @@ def get_dcf_valuation_stocks():
                 "_pct_off": pct_off,
                 "_pe":      pe,
                 "_peg":     peg,
-                "_fcfy":    fcf_yield,
-                "_fcfm":    fcf_margin,
+                "_ev_ebitda": ev_ebitda,
+                "_pfcf":    pfcf,
                 "_eps1y":   (eps_1y * 100) if eps_1y is not None else None,
-                "name":                   name,
-                "price (₹)":              round(price, 2),
-                "base case DCF IV (₹)":   round(base_iv, 2),
-                "bearish DCF IV (₹)":     round(bearish_iv, 2) if bearish_iv else "N/A",
-                "bear case DCF IV (₹)":   round(bear_iv,    2) if bear_iv    else "N/A",
-                "% to intrinsic value":   round(pct_off, 1),
-                "current PE":             round(pe, 1) if pe else "N/A",
-                "current PEG":            round(peg, 2) if peg else "N/A",
-                "1Y EPS growth %":        round(eps_1y * 100, 1) if eps_1y is not None else "N/A",
-                "3Y EPS CAGR %":          round(eps_3y * 100, 1) if eps_3y is not None else "N/A",
-                "5Y EPS CAGR %":          round(eps_5y * 100, 1) if eps_5y is not None else "N/A",
-                "book value (₹)":         round(book_value, 2)   if book_value           else "N/A",
-                "FCF yield %":            round(fcf_yield, 2)    if fcf_yield is not None else "N/A",
-                "FCF margin %":           round(fcf_margin, 2)   if fcf_margin is not None else "N/A",
+                "name":                    name,
+                "price (₹)":               round(price, 2),
+                "base case DCF IV (₹)":    round(base_iv, 2),
+                "best case DCF IV (₹)":    round(best_iv,  2) if best_iv  else "N/A",
+                "worst case DCF IV (₹)":   round(worst_iv, 2) if worst_iv else "N/A",
+                "% to intrinsic value":    round(pct_off, 1),
+                "current PE":              round(pe, 1) if pe else "N/A",
+                "current PEG":             round(peg, 2) if peg else "N/A",
+                "1Y EPS growth %":         round(eps_1y * 100, 1) if eps_1y is not None else "N/A",
+                "3Y EPS CAGR %":           round(eps_3y * 100, 1) if eps_3y is not None else "N/A",
+                "5Y EPS CAGR %":           round(eps_5y * 100, 1) if eps_5y is not None else "N/A",
+                "book value (₹)":          round(book_value, 2)   if book_value else "N/A",
+                "EV/EBITDA":               round(ev_ebitda, 1)    if isinstance(ev_ebitda, (int, float)) else "N/A",
+                "P/FCF ratio":             pfcf if pfcf is not None else "N/A",
             }
         except Exception:
             return None
@@ -664,8 +710,8 @@ def get_dcf_valuation_stocks():
             r["_pct_off"],
             r["_pe"],
             r["_peg"],
-            r["_fcfy"],
-            r["_fcfm"],
+            r["_ev_ebitda"],
+            r["_pfcf"],
             r["_eps1y"],
             r["_g_base"],
         )
@@ -673,18 +719,18 @@ def get_dcf_valuation_stocks():
             "name":                   r["name"],
             "price (₹)":              r["price (₹)"],
             "base case DCF IV (₹)":   r["base case DCF IV (₹)"],
-            "bearish DCF IV (₹)":     r["bearish DCF IV (₹)"],
-            "bear case DCF IV (₹)":   r["bear case DCF IV (₹)"],
+            "best case DCF IV (₹)":   r["best case DCF IV (₹)"],
+            "worst case DCF IV (₹)":  r["worst case DCF IV (₹)"],
+            "% to intrinsic value":   r["% to intrinsic value"],
             "industry PE":            sector_median_pe.get(r["_sector"], "N/A"),
             "current PE":             r["current PE"],
             "current PEG":            r["current PEG"],
+            "EV/EBITDA":              r["EV/EBITDA"],
+            "P/FCF ratio":            r["P/FCF ratio"],
             "1Y EPS growth %":        r["1Y EPS growth %"],
             "3Y EPS CAGR %":          r["3Y EPS CAGR %"],
             "5Y EPS CAGR %":          r["5Y EPS CAGR %"],
             "book value (₹)":         r["book value (₹)"],
-            "FCF yield %":            r["FCF yield %"],
-            "FCF margin %":           r["FCF margin %"],
-            "% to intrinsic value":   r["% to intrinsic value"],
             "remarks":                remarks,
         })
 
@@ -2330,14 +2376,16 @@ def run_dashboard():
         st.header("DCF Intrinsic Value Scanner — Nifty 500")
         st.caption(
             "Screens the Nifty 500 universe for stocks whose current market price is within "
-            "**–35% to +15%** of their Base-Case DCF intrinsic value. "
-            "Three scenarios are computed per stock using Free Cash Flow projections: "
-            "**Base** (11% WACC · 4% terminal), "
-            "**Bearish** (12% WACC · 3.5% terminal · 60% base growth), "
-            "**Bear** (13% WACC · 2.5% terminal · 30% base growth). "
-            "Industry PE is the median PE of sector peers. "
-            "Results are sorted by largest discount to intrinsic value first. "
-            "*1-hour cache — click 'Force Refresh' in the sidebar to reload.*"
+            "**–35% to +15%** of their Base-Case DCF intrinsic value (AlphaSpread methodology). "
+            "Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS growth → Revenue growth → 7% default. "
+            "Three scenarios per stock: "
+            "**Base** (10% WACC · 3% terminal · base growth), "
+            "**Best Case** (9% WACC · 3.5% terminal · 1.5× base growth), "
+            "**Worst Case** (11% WACC · 2.5% terminal · 0.5× base growth). "
+            "**EV/EBITDA** measures enterprise value vs operating earnings. "
+            "**P/FCF** = Market Cap ÷ Free Cash Flow (lower = cheaper on cash basis). "
+            "Results sorted by largest discount to intrinsic value first. "
+            "*1-hour cache — click 'Refresh' to reload.*"
         )
 
         with _spinner("Scanning Nifty 500 — fetching fundamentals & computing DCF for each stock (may take 60–90 s on first load)..."):
@@ -2348,11 +2396,12 @@ def run_dashboard():
             # Column order matching user spec
             cols_order = [
                 "sr. no.", "name", "price (₹)",
-                "base case DCF IV (₹)", "bearish DCF IV (₹)", "bear case DCF IV (₹)",
+                "base case DCF IV (₹)", "best case DCF IV (₹)", "worst case DCF IV (₹)",
+                "% to intrinsic value",
                 "industry PE", "current PE", "current PEG",
+                "EV/EBITDA", "P/FCF ratio",
                 "1Y EPS growth %", "3Y EPS CAGR %", "5Y EPS CAGR %",
-                "book value (₹)", "FCF yield %", "FCF margin %",
-                "% to intrinsic value", "remarks",
+                "book value (₹)", "remarks",
             ]
             # Only include columns that exist in the df
             cols_order = [c for c in cols_order if c in df_dcf.columns]
