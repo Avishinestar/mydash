@@ -14,7 +14,7 @@ except Exception:
 
 warnings.filterwarnings('ignore')
 
-@st.cache_data(ttl=86400)  # refresh once a day
+@st.cache_data(ttl=86400, show_spinner=False)  # refresh once a day
 def get_nifty500_tickers():
     """Fetch live Nifty 500 constituent list from NSE and convert to yfinance format."""
     try:
@@ -192,7 +192,7 @@ SECTOR_CONSTITUENTS = {
     "PSE": ["NTPC.NS", "ONGC.NS", "POWERGRID.NS", "COALINDIA.NS", "IOC.NS", "BPCL.NS", "GAIL.NS", "NMDC.NS", "BHEL.NS", "HAL.NS", "BEL.NS"]
 }
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_volume_split_stocks():
     """
     Scans Nifty 500 (NSE) for stocks with consistently high buying/selling volume
@@ -309,7 +309,7 @@ def get_volume_split_stocks():
     except Exception:
         return {"buying": [], "selling": []}
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_sector_data():
     import time as _time
     tickers = list(SECTORS.values())
@@ -361,7 +361,7 @@ def get_sector_data():
         get_sector_data.clear()
     return data
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def fetch_rss_news(feed_url):
     feed = feedparser.parse(feed_url)
     entries = []
@@ -373,17 +373,17 @@ def fetch_rss_news(feed_url):
         })
     return entries
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_stock_data_daily():
     df = yf.download(NIFTY_50, period="1y", interval="1d", progress=False)
     return df
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_stock_data_weekly():
     df = yf.download(NIFTY_50, period="2y", interval="1wk", progress=False)
     return df
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty500_weekly_rsi_scan():
     """Scan Nifty 500 universe for stocks with weekly RSI < 40 and price above 200-DMA.
     Returns top 20 sorted by RSI ascending."""
@@ -501,7 +501,7 @@ def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, ev_ebitda, pfcf, eps_
     return " ".join(parts) if parts else f"Monitor {symbol} for FCF consistency and earnings-visibility improvement before committing capital."
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_dcf_valuation_stocks():
     """
     Scans Nifty 500 for stocks near their DCF intrinsic value (AlphaSpread methodology).
@@ -742,7 +742,7 @@ def get_dcf_valuation_stocks():
     return results
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_stock_info():
     info_dict = {}
     for t in NIFTY_50:
@@ -754,7 +754,7 @@ def get_stock_info():
             pass
     return info_dict
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_global_markets_data():
     results = []
     tickers = list(GLOBAL_MARKETS.keys())
@@ -816,7 +816,7 @@ def get_global_markets_data():
         return results
     except Exception:
         return []
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_sector_performers(sector_name):
     if sector_name not in SECTOR_CONSTITUENTS:
         return {"best": [], "worst": []}
@@ -879,7 +879,7 @@ def get_sector_performers(sector_name):
     except Exception:
         return {"best": [], "worst": []}
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_range_breakout_stocks():
     all_tickers = list(set([t for constituents in SECTOR_CONSTITUENTS.values() for t in constituents] + NIFTY_50 + get_nifty500_tickers()))
     ticker_to_sector = {t: s for s, tickers in SECTOR_CONSTITUENTS.items() for t in tickers}
@@ -1032,7 +1032,7 @@ def get_range_breakout_stocks():
     except Exception:
         return []
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_top_10_overall_stocks():
     all_tickers = list(set([ticker for constituents in SECTOR_CONSTITUENTS.values() for ticker in constituents]))
     try:
@@ -1090,7 +1090,7 @@ def get_top_10_overall_stocks():
     except Exception:
         return []
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_nifty_sensex_levels():
     import time as _time
     res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A"}
@@ -1119,7 +1119,7 @@ def get_nifty_sensex_levels():
     return res
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty50_pe():
     """
     Fetch Nifty 50 trailing P/E ratio.
@@ -1184,7 +1184,7 @@ def get_nifty50_pe():
 
     return None
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_fiidii():
     # First try nsepython (works locally with Indian IP)
     try:
@@ -1238,7 +1238,7 @@ def _fii_json_mtime():
     p = _fii_json_path()
     return os.path.getmtime(p) if os.path.exists(p) else 0
 
-@st.cache_data(ttl=86400)  # quarterly data — refresh once a day
+@st.cache_data(ttl=86400, show_spinner=False)  # quarterly data — refresh once a day
 def get_fii_stake_increases(_mtime=None):
     """
     Returns top 10 NIFTY 50 stocks where FII/FPI increased stake last quarter.
@@ -1326,7 +1326,7 @@ COMMODITIES = {
     "SI=F":  {"name": "Silver",         "unit": "USD/troy oz"},
 }
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_commodity_data():
     import time as _time
     # Live USD/INR for Gold & Silver INR conversion
@@ -1400,7 +1400,7 @@ MF_SCHEMES = {
     119775: ("ICICI Pru Balanced Advantage Fund",   "Hybrid"),
 }
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_top_mutual_funds():
     import requests
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -1477,7 +1477,7 @@ CURRENCY_PAIRS = {
     "DX-Y.NYB": "US Dollar Index (DXY)",
 }
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_extended_commodity_data():
     import time as _time
 
@@ -1577,7 +1577,7 @@ def get_extended_commodity_data():
             pass
     return results
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_currency_data():
     import time as _time
     results = []
@@ -1639,7 +1639,7 @@ def get_currency_data():
             pass
     return results
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=1800, show_spinner=False)
 def get_market_breadth():
     tickers = get_nifty500_tickers()
     res = {
@@ -1691,7 +1691,7 @@ def get_market_breadth():
         pass
     return res
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_options_snapshot(symbol="NIFTY"):
     import requests
     session = requests.Session()
@@ -1764,7 +1764,7 @@ def get_options_snapshot(symbol="NIFTY"):
     except Exception as e:
         return {"error": f"Error parsing NSE data: {e}"}
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_earnings_calendar():
     import requests
     from datetime import datetime, timezone
