@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-12 06:08 UTC",
+  "fetched_at": "2026-05-13 06:17 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -12,105 +12,105 @@
     },
     {
       "sr. no.": 2,
+      "company": "AXISBANK",
+      "current FII %": 42.04,
+      "prev quarter %": 42.58,
+      "change (pp)": "-0.54"
+    },
+    {
+      "sr. no.": 3,
+      "company": "IDFCFIRSTB",
+      "current FII %": 36.52,
+      "prev quarter %": 36.76,
+      "change (pp)": "-0.24"
+    },
+    {
+      "sr. no.": 4,
       "company": "M&M",
       "current FII %": 36.23,
       "prev quarter %": 37.49,
       "change (pp)": "-1.26"
     },
     {
-      "sr. no.": 3,
+      "sr. no.": 5,
       "company": "ITC",
       "current FII %": 34.83,
       "prev quarter %": 36.11,
       "change (pp)": "-1.28"
     },
     {
-      "sr. no.": 4,
+      "sr. no.": 6,
       "company": "ICICIBANK",
       "current FII %": 34.48,
       "prev quarter %": 43.87,
       "change (pp)": "-9.39"
     },
     {
-      "sr. no.": 5,
+      "sr. no.": 7,
       "company": "INDUSINDBK",
       "current FII %": 28.57,
       "prev quarter %": 31.6,
       "change (pp)": "-3.03"
     },
     {
-      "sr. no.": 6,
+      "sr. no.": 8,
       "company": "INFY",
       "current FII %": 28.45,
       "prev quarter %": 30.27,
       "change (pp)": "-1.82"
     },
     {
-      "sr. no.": 7,
+      "sr. no.": 9,
       "company": "BHARTIARTL",
       "current FII %": 27.79,
       "prev quarter %": 28.75,
       "change (pp)": "-0.96"
     },
     {
-      "sr. no.": 8,
+      "sr. no.": 10,
       "company": "KOTAKBANK",
       "current FII %": 26.4,
       "prev quarter %": 29.36,
       "change (pp)": "-2.96"
-    },
-    {
-      "sr. no.": 9,
-      "company": "PERSISTENT",
-      "current FII %": 22.11,
-      "prev quarter %": 22.79,
-      "change (pp)": "-0.68"
-    },
-    {
-      "sr. no.": 10,
-      "company": "LICHSGFIN",
-      "current FII %": 21.39,
-      "prev quarter %": 20.36,
-      "change (pp)": "+1.03"
     }
   ],
   "failed_symbols": [
     "TATAMOTORS",
-    "AXISBANK",
+    "NTPC",
     "POWERGRID",
     "ULTRACEMCO",
-    "ASIANPAINT",
     "BAJAJFINSV",
-    "NESTLEIND",
+    "ASIANPAINT",
     "TECHM",
+    "NESTLEIND",
     "BAJAJ-AUTO",
     "BANKBARODA",
     "PNB",
     "FEDERALBNK",
-    "IDFCFIRSTB",
+    "CANBK",
     "UNIONBANK",
     "CHOLAFIN",
-    "MUTHOOTFIN",
     "RECLTD",
+    "PFC",
     "HDFCAMC",
-    "SBICARD",
     "SHRIRAMFIN",
+    "LICHSGFIN",
     "PNBHOUSING",
     "LTIM",
-    "COFORGE",
     "MPHASIS",
+    "PERSISTENT",
     "KPITTECH",
-    "LTTS",
     "OFSS",
+    "TATAELXSI",
     "CYIENT",
     "BIRLASOFT",
     "TANLA",
     "HEROMOTOCO",
-    "TVSMOTOR",
     "EICHERMOT",
+    "TVSMOTOR",
     "ASHOKLEY",
-    "MOTHERSON",
     "BOSCHLTD",
+    "MOTHERSON",
     "APOLLOTYRE",
     "MRF",
     "BALKRISIND",
@@ -184,16 +184,16 @@
     "TRENT",
     "PAGEIND",
     "BATAINDIA",
-    "DIXON",
     "DMART",
+    "DIXON",
     "ZOMATO",
     "JUBLFOOD",
     "NAUKRI",
     "POLICYBZR",
     "HAL",
-    "BHEL",
     "BEL",
     "IGL",
+    "BHEL",
     "MGL"
   ]
 }
