@@ -1,112 +1,110 @@
 {
-  "fetched_at": "2026-05-15 06:24 UTC",
+  "fetched_at": "2026-05-18 06:53 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
     {
       "sr. no.": 1,
+      "company": "SHRIRAMFIN",
+      "current FII %": 56.14,
+      "prev quarter %": 45.15,
+      "change (pp)": "+10.99"
+    },
+    {
+      "sr. no.": 2,
       "company": "HDFCBANK",
       "current FII %": 44.05,
       "prev quarter %": 47.67,
       "change (pp)": "-3.62"
     },
     {
-      "sr. no.": 2,
-      "company": "AXISBANK",
-      "current FII %": 42.04,
-      "prev quarter %": 42.58,
-      "change (pp)": "-0.54"
+      "sr. no.": 3,
+      "company": "IDFCFIRSTB",
+      "current FII %": 36.52,
+      "prev quarter %": 36.76,
+      "change (pp)": "-0.24"
     },
     {
-      "sr. no.": 3,
+      "sr. no.": 4,
+      "company": "M&M",
+      "current FII %": 36.23,
+      "prev quarter %": 37.49,
+      "change (pp)": "-1.26"
+    },
+    {
+      "sr. no.": 5,
       "company": "ITC",
       "current FII %": 34.83,
       "prev quarter %": 36.11,
       "change (pp)": "-1.28"
     },
     {
-      "sr. no.": 4,
+      "sr. no.": 6,
       "company": "ICICIBANK",
       "current FII %": 34.48,
       "prev quarter %": 43.87,
       "change (pp)": "-9.39"
     },
     {
-      "sr. no.": 5,
+      "sr. no.": 7,
+      "company": "INDUSINDBK",
+      "current FII %": 28.57,
+      "prev quarter %": 31.6,
+      "change (pp)": "-3.03"
+    },
+    {
+      "sr. no.": 8,
       "company": "INFY",
       "current FII %": 28.45,
       "prev quarter %": 30.27,
       "change (pp)": "-1.82"
     },
     {
-      "sr. no.": 6,
+      "sr. no.": 9,
       "company": "BHARTIARTL",
       "current FII %": 27.79,
       "prev quarter %": 28.75,
       "change (pp)": "-0.96"
     },
     {
-      "sr. no.": 7,
+      "sr. no.": 10,
       "company": "KOTAKBANK",
       "current FII %": 26.4,
       "prev quarter %": 29.36,
       "change (pp)": "-2.96"
-    },
-    {
-      "sr. no.": 8,
-      "company": "CHOLAFIN",
-      "current FII %": 24.87,
-      "prev quarter %": 26.56,
-      "change (pp)": "-1.69"
-    },
-    {
-      "sr. no.": 9,
-      "company": "HDFCAMC",
-      "current FII %": 24.45,
-      "prev quarter %": 23.99,
-      "change (pp)": "+0.46"
-    },
-    {
-      "sr. no.": 10,
-      "company": "BAJFINANCE",
-      "current FII %": 21.33,
-      "prev quarter %": 21.49,
-      "change (pp)": "-0.16"
     }
   ],
   "failed_symbols": [
     "TATAMOTORS",
-    "NTPC",
+    "AXISBANK",
     "POWERGRID",
-    "M&M",
+    "ULTRACEMCO",
     "ASIANPAINT",
     "BAJAJFINSV",
-    "WIPRO",
+    "NESTLEIND",
     "TECHM",
-    "INDUSINDBK",
     "BAJAJ-AUTO",
     "BANKBARODA",
+    "PNB",
     "FEDERALBNK",
-    "IDFCFIRSTB",
     "CANBK",
     "UNIONBANK",
-    "MUTHOOTFIN",
+    "CHOLAFIN",
     "RECLTD",
     "PFC",
-    "SHRIRAMFIN",
+    "HDFCAMC",
     "SBICARD",
     "LICHSGFIN",
-    "LTIM",
     "PNBHOUSING",
-    "PERSISTENT",
+    "LTIM",
     "COFORGE",
+    "PERSISTENT",
+    "MPHASIS",
     "KPITTECH",
     "OFSS",
-    "LTTS",
     "TATAELXSI",
     "CYIENT",
     "BIRLASOFT",
-    "TANLA",
     "HEROMOTOCO",
     "EICHERMOT",
     "TVSMOTOR",
