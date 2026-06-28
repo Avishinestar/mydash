@@ -5,6 +5,7 @@ import ta
 import feedparser
 import io
 import warnings
+from contextlib import nullcontext as _spinner
 try:
     from nsepython import nse_eq_symbols
     _NSE_AVAILABLE = True
@@ -13,7 +14,7 @@ except Exception:
 
 warnings.filterwarnings('ignore')
 
-@st.cache_data(ttl=86400)  # refresh once a day
+@st.cache_data(ttl=86400, show_spinner=False)  # refresh once a day
 def get_nifty500_tickers():
     """Fetch live Nifty 500 constituent list from NSE and convert to yfinance format."""
     try:
@@ -42,7 +43,7 @@ NIFTY_50 = [
     "NESTLEIND.NS", "ETERNAL.NS", "ASIANPAINT.NS", "WIPRO.NS", "HINDALCO.NS",
     "EICHERMOT.NS", "SBILIFE.NS", "GRASIM.NS", "SHRIRAMFIN.NS", "INDIGO.NS",
     # 41–50
-    "JIOFINANCE.NS", "TECHM.NS", "HDFCLIFE.NS", "TRENT.NS", "TATAMOTORS.NS",
+    "JIOFIN.NS", "TECHM.NS", "HDFCLIFE.NS", "TRENT.NS", "TATAMOTORS.NS",
     "APOLLOHOSP.NS", "DRREDDY.NS", "TATACONSUM.NS", "CIPLA.NS", "MAXHEALTH.NS",
 ]
 
@@ -106,7 +107,7 @@ NIFTY_500 = [
     "COALINDIA.NS","BAJAJFINSV.NS","BAJAJ-AUTO.NS","TATASTEEL.NS","ADANIENT.NS",
     "NESTLEIND.NS","ETERNAL.NS","ASIANPAINT.NS","WIPRO.NS","HINDALCO.NS",
     "EICHERMOT.NS","SBILIFE.NS","GRASIM.NS","SHRIRAMFIN.NS","INDIGO.NS",
-    "JIOFINANCE.NS","TECHM.NS","HDFCLIFE.NS","TRENT.NS","TATAMOTORS.NS",
+    "JIOFIN.NS","TECHM.NS","HDFCLIFE.NS","TRENT.NS","TATAMOTORS.NS",
     "APOLLOHOSP.NS","DRREDDY.NS","TATACONSUM.NS","CIPLA.NS","MAXHEALTH.NS",
     # Other Large Cap outside Nifty 50
     "LICI.NS",
@@ -141,11 +142,11 @@ NIFTY_500 = [
     "ADANIGREEN.NS","ADANIPOWER.NS","TORNTPOWER.NS","CESC.NS","NHPC.NS","SJVN.NS",
     "IREDA.NS","RPOWER.NS","JPPOWER.NS",
     # Infrastructure & Cement
-    "AMBUJACEM.NS","SHREECEM.NS","ACC.NS","GMRINFRA.NS",
+    "AMBUJACEM.NS","SHREECEM.NS","ACC.NS","GMRAIRPORT.NS",
     "IRB.NS","HCC.NS","NBCC.NS","KEC.NS","KALPATPOWER.NS","THERMAX.NS","CUMMINSIND.NS",
     "ABB.NS","SIEMENS.NS","VOLTAS.NS","HAVELLS.NS","POLYCAB.NS","KEI.NS","FINOLEX.NS",
     # Realty
-    "DLF.NS","MACROTECH.NS","GODREJPROP.NS","OBEROIRLTY.NS","PRESTIGE.NS",
+    "DLF.NS","LODHA.NS","GODREJPROP.NS","OBEROIRLTY.NS","PRESTIGE.NS",
     "PHOENIXLTD.NS","BRIGADE.NS","SOBHA.NS","MAHLIFE.NS","SUNTECK.NS","KOLTEPATIL.NS",
     # Chemicals & Specialty
     "PIDILITIND.NS","SRF.NS","AARTIIND.NS","DEEPAKNTR.NS","NAVINFLUOR.NS","FINEORG.NS",
@@ -165,7 +166,7 @@ NIFTY_500 = [
     "HAL.NS","BEL.NS","BHEL.NS","BEML.NS","PARAS.NS","MAZDOCK.NS","COCHINSHIP.NS",
     # Insurance & New-Age Financial
     "SBILIFE.NS","HDFCLIFE.NS","ICICIGI.NS","LICI.NS","MAXHEALTH.NS",
-    "JIOFINANCE.NS","POLICYBZR.NS","PAYTM.NS","NAUKRI.NS","CARTRADE.NS",
+    "JIOFIN.NS","POLICYBZR.NS","PAYTM.NS","NAUKRI.NS","CARTRADE.NS",
     # Others / Diversified
     "ADANITRANS.NS","ATUL.NS",
     "BERGEPAINT.NS","CASTROLIND.NS","GSPL.NS","HONAUT.NS","IGL.NS","MGL.NS",
@@ -181,17 +182,17 @@ SECTOR_CONSTITUENTS = {
     "METAL": ["TATASTEEL.NS", "JSWSTEEL.NS", "HINDALCO.NS", "VEDL.NS", "COALINDIA.NS", "NMDC.NS", "SAIL.NS", "JINDALSTEL.NS", "NATIONALUM.NS", "RATNAMANI.NS"],
     "ENERGY": ["RELIANCE.NS", "ONGC.NS", "NTPC.NS", "POWERGRID.NS", "IOC.NS", "BPCL.NS", "GAIL.NS", "HINDPETRO.NS", "TATAPOWER.NS", "PETRONET.NS"],
     "FINANCIAL SERVICES": ["BAJFINANCE.NS", "BAJAJFINSV.NS", "CHOLAFIN.NS", "MUTHOOTFIN.NS", "RECLTD.NS", "PFC.NS", "HDFCAMC.NS", "SBICARD.NS", "ABCAPITAL.NS", "SHRIRAMFIN.NS"],
-    "REALTY": ["DLF.NS", "MACROTECH.NS", "GODREJPROP.NS", "OBEROIRLTY.NS", "PRESTIGE.NS", "PHOENIXLTD.NS", "BRIGADE.NS", "SOBHA.NS", "MAHLIFE.NS", "SUNTECK.NS"],
-    "MEDIA": ["PVRINOX.NS", "SUNTV.NS", "NETWORK18.NS", "TV18BRDCST.NS", "NAVNETEDUL.NS", "NDTV.NS", "HATHWAY.NS", "DISHTV.NS", "NAZARA.NS", "SAREGAMA.NS"],
+    "REALTY": ["DLF.NS", "LODHA.NS", "GODREJPROP.NS", "OBEROIRLTY.NS", "PRESTIGE.NS", "PHOENIXLTD.NS", "BRIGADE.NS", "SOBHA.NS", "MAHLIFE.NS", "SUNTECK.NS"],
+    "MEDIA": ["PVRINOX.NS", "SUNTV.NS", "NETWORK18.NS", "NETWORK18.NS", "NAVNETEDUL.NS", "NDTV.NS", "HATHWAY.NS", "DISHTV.NS", "NAZARA.NS", "SAREGAMA.NS"],
     "PSU BANK": ["SBIN.NS", "BANKBARODA.NS", "PNB.NS", "CANBK.NS", "UNIONBANK.NS", "INDIANB.NS", "BANKINDIA.NS", "CENTRALBK.NS", "MAHABANK.NS", "UCOBANK.NS"],
-    "INFRASTRUCTURE": ["LT.NS", "GRASIM.NS", "ULTRACEMCO.NS", "ADANIPORTS.NS", "AMBUJACEM.NS", "SHREECEM.NS", "ACC.NS", "GMRINFRA.NS", "IRB.NS", "HCC.NS"],
+    "INFRASTRUCTURE": ["LT.NS", "GRASIM.NS", "ULTRACEMCO.NS", "ADANIPORTS.NS", "AMBUJACEM.NS", "SHREECEM.NS", "ACC.NS", "GMRAIRPORT.NS", "IRB.NS", "HCC.NS"],
     "COMMODITIES": ["TATACHEM.NS", "UPL.NS", "PIIND.NS", "COROMANDEL.NS", "SRF.NS", "AARTIIND.NS", "DEEPAKNTR.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "VEDL.NS"],
     "CONSUMPTION": ["ASIANPAINT.NS", "TITAN.NS", "TRENT.NS", "PAGEIND.NS", "ETERNAL.NS", "JUBLFOOD.NS", "BATAINDIA.NS", "VOLTAS.NS", "CROMPTON.NS", "DIXON.NS"],
     "MNC": ["MARUTI.NS", "NESTLEIND.NS", "BRITANNIA.NS", "CUMMINSIND.NS", "ABB.NS", "BOSCHLTD.NS", "SIEMENS.NS", "COLPAL.NS", "BATAINDIA.NS", "CASTROLIND.NS"],
     "PSE": ["NTPC.NS", "ONGC.NS", "POWERGRID.NS", "COALINDIA.NS", "IOC.NS", "BPCL.NS", "GAIL.NS", "NMDC.NS", "BHEL.NS", "HAL.NS", "BEL.NS"]
 }
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_volume_split_stocks():
     """
     Scans Nifty 500 (NSE) for stocks with consistently high buying/selling volume
@@ -308,7 +309,7 @@ def get_volume_split_stocks():
     except Exception:
         return {"buying": [], "selling": []}
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_sector_data():
     import time as _time
     tickers = list(SECTORS.values())
@@ -317,14 +318,13 @@ def get_sector_data():
 
     # ── Step 1: one batch download (single HTTP round-trip, reduces rate-limit hits) ──
     batch_df = pd.DataFrame()
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             batch_df = yf.download(tickers, period="1y", interval="1d", progress=False)
             if not batch_df.empty:
                 break
         except Exception:
             pass
-        _time.sleep(3)
 
     # ── Step 2: extract per-ticker series; fall back to individual fetch if missing ──
     for ticker, name in name_by_ticker.items():
@@ -336,16 +336,12 @@ def get_sector_data():
         except Exception:
             pass
 
-        # Individual fallback if batch missed this ticker (rate-limited slot)
+        # Individual fallback if batch missed this ticker
         if len(df_t) < 64:
-            for retry in range(3):
-                try:
-                    _time.sleep(1.5 + retry * 2)
-                    df_t = yf.Ticker(ticker).history(period="1y").dropna(subset=["Close"])
-                    if len(df_t) >= 64:
-                        break
-                except Exception:
-                    pass
+            try:
+                df_t = yf.Ticker(ticker).history(period="1y").dropna(subset=["Close"])
+            except Exception:
+                pass
 
         if len(df_t) < 64:
             continue
@@ -365,7 +361,7 @@ def get_sector_data():
         get_sector_data.clear()
     return data
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def fetch_rss_news(feed_url):
     feed = feedparser.parse(feed_url)
     entries = []
@@ -377,38 +373,36 @@ def fetch_rss_news(feed_url):
         })
     return entries
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_stock_data_daily():
     df = yf.download(NIFTY_50, period="1y", interval="1d", progress=False)
     return df
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_stock_data_weekly():
     df = yf.download(NIFTY_50, period="2y", interval="1wk", progress=False)
     return df
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty500_weekly_rsi_scan():
     """Scan Nifty 500 universe for stocks with weekly RSI < 40 and price above 200-DMA.
-    Returns top 20 sorted by RSI ascending."""
+    Single 2Y daily download — resampled to weekly for RSI, used directly for 200-DMA."""
     tickers = get_nifty500_tickers()
-    weekly_df = yf.download(tickers, period="2y", interval="1wk", progress=False)
-    daily_df  = yf.download(tickers, period="1y",  interval="1d",  progress=False)
+    # One download instead of two: 2Y daily covers both weekly RSI and 200-DMA needs
+    daily_df = yf.download(tickers, period="2y", interval="1d", progress=False)
     candidates = []
     for t in tickers:
         try:
-            if isinstance(weekly_df.columns, pd.MultiIndex):
-                if t not in weekly_df.columns.get_level_values(1): continue
-                w_df = weekly_df.xs(t, axis=1, level=1).dropna()
-            else:
-                w_df = weekly_df.dropna()
             if isinstance(daily_df.columns, pd.MultiIndex):
                 if t not in daily_df.columns.get_level_values(1): continue
                 d_df = daily_df.xs(t, axis=1, level=1).dropna()
             else:
                 d_df = daily_df.dropna()
-            if len(w_df) < 15 or len(d_df) < 200: continue
-            w_rsi = float(ta.momentum.RSIIndicator(w_df['Close'], window=14).rsi().iloc[-1])
+            if len(d_df) < 200: continue
+            # Resample daily → weekly (last close of each week)
+            w_close = d_df['Close'].resample('W').last().dropna()
+            if len(w_close) < 15: continue
+            w_rsi = float(ta.momentum.RSIIndicator(w_close, window=14).rsi().iloc[-1])
             d_200dma = float(d_df['Close'].tail(200).mean())
             current_price = float(d_df['Close'].iloc[-1])
             if w_rsi < 40 and current_price > d_200dma:
@@ -424,7 +418,329 @@ def get_nifty500_weekly_rsi_scan():
     candidates.sort(key=lambda x: x["Weekly RSI"])
     return candidates[:20]
 
-@st.cache_data(ttl=3600)
+# ─────────────────────────────────────────────────────────────────────────────
+# DCF Intrinsic Value Scanner — Nifty 500
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _dcf(fcf, growth, terminal, discount, years=10):
+    """Present value of projected FCF stream plus terminal value."""
+    if fcf is None or fcf <= 0 or discount <= terminal:
+        return None
+    pv = sum(
+        fcf * ((1 + growth) ** t) / ((1 + discount) ** t)
+        for t in range(1, years + 1)
+    )
+    tv = fcf * ((1 + growth) ** years) * (1 + terminal) / (discount - terminal)
+    pv += tv / ((1 + discount) ** years)
+    return pv
+
+
+def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, ev_ebitda, pfcf, eps_1y, g_base):
+    """Generate expert investor insight string for a stock's DCF valuation."""
+    parts = []
+
+    if pct_off <= -20:
+        parts.append(f"Trades {abs(pct_off):.0f}% below DCF intrinsic value — rare margin of safety; strong accumulation zone for patient, long-term capital.")
+    elif pct_off <= -10:
+        parts.append(f"Meaningful {abs(pct_off):.0f}% discount to intrinsic value — market yet to recognise full earnings power; accumulate in tranches.")
+    elif pct_off <= -3:
+        parts.append(f"Modestly undervalued ({abs(pct_off):.0f}% below DCF base case) — compelling entry as earnings visibility improves.")
+    elif pct_off <= 5:
+        parts.append(f"Fairly valued — DCF and market price are in tight alignment; ideal for SIP-style accumulation without timing risk.")
+    else:
+        parts.append(f"Trading {pct_off:.0f}% above base DCF — market pricing-in future growth; execution risk elevated at this premium.")
+
+    if isinstance(pe, (int, float)):
+        if pe < 10:
+            parts.append(f"Single-digit PE ({pe}x) warrants earnings-quality check — verify whether it reflects a cyclical trough or structural impairment.")
+        elif pe < 18:
+            parts.append(f"Reasonable {pe}x PE leaves room for re-rating as cash flows compound.")
+        elif pe < 30:
+            parts.append(f"Mid-range PE of {pe}x reflects quality franchise; watch for operating-leverage unlock to justify valuation.")
+        else:
+            parts.append(f"Rich {pe}x PE demands consistent double-digit growth to avoid de-rating — monitor quarterly guidance closely.")
+
+    if isinstance(peg, (int, float)):
+        if peg < 0.8:
+            parts.append(f"PEG of {peg}x is sub-1 — growth is gifted at a discount; classic GARP opportunity.")
+        elif peg < 1.5:
+            parts.append(f"PEG of {peg}x sits in fair-value range — growth is reasonably priced for the quality on offer.")
+        elif peg > 2.0:
+            parts.append(f"Elevated PEG of {peg}x — hold only if competitive moat is durable and widening.")
+
+    if isinstance(ev_ebitda, (int, float)) and ev_ebitda > 0:
+        if ev_ebitda < 8:
+            parts.append(f"EV/EBITDA of {ev_ebitda:.1f}x is deeply cheap vs peers — strong enterprise-value case for patient capital.")
+        elif ev_ebitda < 15:
+            parts.append(f"EV/EBITDA of {ev_ebitda:.1f}x is in fair-value territory — reasonable entry for quality-conscious investors.")
+        elif ev_ebitda < 25:
+            parts.append(f"EV/EBITDA of {ev_ebitda:.1f}x carries a premium — justified only by durable competitive advantage or high growth visibility.")
+        else:
+            parts.append(f"Rich EV/EBITDA of {ev_ebitda:.1f}x — market embedding aggressive future earnings; execution must match expectations.")
+
+    if isinstance(pfcf, (int, float)) and pfcf > 0:
+        if pfcf < 10:
+            parts.append(f"P/FCF of {pfcf:.1f}x is exceptionally cheap on a cash-flow basis — strong buyback or dividend capacity.")
+        elif pfcf < 20:
+            parts.append(f"P/FCF of {pfcf:.1f}x is fair — cash generation aligns well with market price.")
+        elif pfcf < 35:
+            parts.append(f"P/FCF of {pfcf:.1f}x reflects a growth premium — monitor FCF conversion trend closely.")
+        else:
+            parts.append(f"Elevated P/FCF of {pfcf:.1f}x — high reinvestment phase or thin FCF; validate capex returns ROI.")
+
+    if isinstance(eps_1y, (int, float)):
+        if eps_1y > 25:
+            parts.append(f"Accelerating {eps_1y:.0f}% EPS growth is the primary re-rating catalyst — momentum will follow earnings.")
+        elif eps_1y > 0:
+            parts.append(f"Steady {eps_1y:.0f}% EPS growth provides confidence in the DCF growth trajectory.")
+        elif eps_1y < -10:
+            parts.append(f"Earnings under pressure ({eps_1y:.0f}% YoY) — DCF assumes recovery; verify if cyclical or structural headwind.")
+
+    return " ".join(parts) if parts else f"Monitor {symbol} for FCF consistency and earnings-visibility improvement before committing capital."
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_dcf_valuation_stocks():
+    """
+    Scans Nifty 500 for stocks near their DCF intrinsic value (AlphaSpread methodology).
+    Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS → Revenue → 7% default.
+    Three scenarios: Base (10% WACC, 3% terminal), Best (9% WACC, 3.5% terminal, 1.5× growth),
+    Worst (11% WACC, 2.5% terminal, 0.5× growth).
+    Filters: -35% to +15% of base-case intrinsic value.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    # Reverse-map: ticker → sector
+    stock_sector = {}
+    for sec, constituents in SECTOR_CONSTITUENTS.items():
+        for t in constituents:
+            stock_sector[t] = sec
+
+    tickers = get_nifty500_tickers()
+
+    def fetch_one(ticker):
+        try:
+            yft  = yf.Ticker(ticker)
+            info = yft.info
+
+            price   = info.get("currentPrice") or info.get("regularMarketPrice") or info.get("previousClose")
+            shares  = info.get("sharesOutstanding")
+            mkt_cap = info.get("marketCap")
+            fcf     = info.get("freeCashflow")
+            op_cf   = info.get("operatingCashflow")
+
+            if not price or price <= 0 or not shares or shares <= 0:
+                return None
+
+            # Fallback: estimate FCF from operating cash flow (conservative 72% conversion)
+            if (fcf is None or fcf <= 0) and op_cf and op_cf > 0:
+                fcf = op_cf * 0.72
+            if not fcf or fcf <= 0:
+                return None
+
+            pe         = info.get("trailingPE")
+            book_value = info.get("bookValue")
+            peg        = info.get("pegRatio")
+            eps_1y_raw = info.get("earningsGrowth")   # decimal
+            rev_growth = info.get("revenueGrowth") or 0.0
+
+            # ── FCF CAGR from annual cash flow statement (AlphaSpread primary driver) ──
+            fcf_5y_cagr, fcf_3y_cagr = None, None
+            eps_3y, eps_5y = None, None
+            try:
+                cf = yft.cashflow
+                if cf is not None and not cf.empty:
+                    opcf_row, capex_row = None, None
+                    for rn in ["Operating Cash Flow", "Total Cash From Operating Activities"]:
+                        if rn in cf.index:
+                            opcf_row = cf.loc[rn].dropna()
+                            break
+                    for rn in ["Capital Expenditure", "Capital Expenditures"]:
+                        if rn in cf.index:
+                            capex_row = cf.loc[rn].dropna()
+                            break
+                    if opcf_row is not None:
+                        fcf_hist = (opcf_row + capex_row) if capex_row is not None else opcf_row
+                        fcf_hist = fcf_hist[fcf_hist > 0]
+                        if len(fcf_hist) >= 4:
+                            f0, f3 = float(fcf_hist.iloc[0]), float(fcf_hist.iloc[3])
+                            if f0 > 0 and f3 > 0:
+                                fcf_3y_cagr = (f0 / f3) ** (1 / 3) - 1
+                        if len(fcf_hist) >= 6:
+                            f5 = float(fcf_hist.iloc[5])
+                            if f0 > 0 and f5 > 0:
+                                fcf_5y_cagr = (f0 / f5) ** (1 / 5) - 1
+            except Exception:
+                pass
+
+            # 3Y / 5Y EPS CAGR from income statement (for display)
+            try:
+                inc = yft.income_stmt
+                if inc is not None and not inc.empty:
+                    ni_row = None
+                    for rn in ["Net Income", "Net Income Common Stockholders", "NetIncome"]:
+                        if rn in inc.index:
+                            ni_row = inc.loc[rn].dropna()
+                            break
+                    if ni_row is not None and len(ni_row) >= 2:
+                        ni_latest = float(ni_row.iloc[0])
+                        if len(ni_row) >= 4:
+                            ni_3ya = float(ni_row.iloc[3])
+                            if ni_latest > 0 and ni_3ya > 0:
+                                eps_3y = (ni_latest / ni_3ya) ** (1 / 3) - 1
+                        if len(ni_row) >= 6:
+                            ni_5ya = float(ni_row.iloc[5])
+                            if ni_latest > 0 and ni_5ya > 0:
+                                eps_5y = (ni_latest / ni_5ya) ** (1 / 5) - 1
+            except Exception:
+                pass
+
+            # ── Base growth rate (AlphaSpread priority: 5Y FCF CAGR first) ──────────
+            if fcf_5y_cagr and fcf_5y_cagr > 0:
+                g_base = min(fcf_5y_cagr, 0.30)
+            elif fcf_3y_cagr and fcf_3y_cagr > 0:
+                g_base = min(fcf_3y_cagr, 0.25)
+            elif eps_1y_raw and eps_1y_raw > 0:
+                g_base = min(eps_1y_raw, 0.25)
+            elif rev_growth > 0:
+                g_base = min(rev_growth, 0.20)
+            else:
+                g_base = 0.07
+            g_base = max(g_base, 0.03)
+
+            # ── Three DCF scenarios (AlphaSpread methodology) ─────────────────────────
+            # Base:  g_base,        10% WACC, 3.0% terminal
+            # Best:  g_base × 1.5,  9% WACC, 3.5% terminal
+            # Worst: g_base × 0.5, 11% WACC, 2.5% terminal
+            base_total  = _dcf(fcf, g_base,                        0.030, 0.100)
+            best_total  = _dcf(fcf, min(g_base * 1.5, 0.35),       0.035, 0.090)
+            worst_total = _dcf(fcf, max(g_base * 0.5,  0.01),      0.025, 0.110)
+
+            if base_total is None or base_total <= 0:
+                return None
+
+            base_iv  = base_total  / shares
+            best_iv  = best_total  / shares if best_total  else None
+            worst_iv = worst_total / shares if worst_total else None
+
+            # Filter: within -35% to +15% of base IV
+            pct_off = (price / base_iv - 1) * 100
+            if pct_off > 15 or pct_off < -35:
+                return None
+
+            # ── EV/EBITDA (replaces FCF yield) ────────────────────────────────────────
+            ev_ebitda = info.get("enterpriseToEbitda")
+            if ev_ebitda is None:
+                try:
+                    ebitda = info.get("ebitda")
+                    ev     = info.get("enterpriseValue")
+                    if ebitda and ev and ebitda > 0:
+                        ev_ebitda = round(ev / ebitda, 1)
+                except Exception:
+                    pass
+
+            # ── P/FCF ratio (replaces FCF margin) ─────────────────────────────────────
+            pfcf = round(mkt_cap / fcf, 1) if mkt_cap and mkt_cap > 0 else None
+
+            eps_1y = eps_1y_raw
+            sector = stock_sector.get(ticker, info.get("sector", "—"))
+            name   = info.get("longName") or info.get("shortName") or ticker.replace(".NS", "")
+
+            return {
+                "_ticker":  ticker,
+                "_sector":  sector,
+                "_g_base":  g_base,
+                "_pct_off": pct_off,
+                "_pe":      pe,
+                "_peg":     peg,
+                "_ev_ebitda": ev_ebitda,
+                "_pfcf":    pfcf,
+                "_eps1y":   (eps_1y * 100) if eps_1y is not None else None,
+                "name":                    name,
+                "price (₹)":               round(price, 2),
+                "base case DCF IV (₹)":    round(base_iv, 2),
+                "best case DCF IV (₹)":    round(best_iv,  2) if best_iv  else "N/A",
+                "worst case DCF IV (₹)":   round(worst_iv, 2) if worst_iv else "N/A",
+                "% to intrinsic value":    round(pct_off, 1),
+                "current PE":              round(pe, 1) if pe else "N/A",
+                "current PEG":             round(peg, 2) if peg else "N/A",
+                "1Y EPS growth %":         round(eps_1y * 100, 1) if eps_1y is not None else "N/A",
+                "3Y EPS CAGR %":           round(eps_3y * 100, 1) if eps_3y is not None else "N/A",
+                "5Y EPS CAGR %":           round(eps_5y * 100, 1) if eps_5y is not None else "N/A",
+                "book value (₹)":          round(book_value, 2)   if book_value else "N/A",
+                "EV/EBITDA":               round(ev_ebitda, 1)    if isinstance(ev_ebitda, (int, float)) else "N/A",
+                "P/FCF ratio":             pfcf if pfcf is not None else "N/A",
+            }
+        except Exception:
+            return None
+
+    # Parallel fetch with 18 workers
+    raw = []
+    with ThreadPoolExecutor(max_workers=18) as ex:
+        futs = {ex.submit(fetch_one, t): t for t in tickers}
+        for f in as_completed(futs):
+            r = f.result()
+            if r:
+                raw.append(r)
+
+    if not raw:
+        return []
+
+    # Compute industry median PE per sector from the results set
+    sector_pes = {}
+    for r in raw:
+        pe_v = r["_pe"]
+        if isinstance(pe_v, (int, float)) and 0 < pe_v < 200:
+            sector_pes.setdefault(r["_sector"], []).append(pe_v)
+    sector_median_pe = {
+        s: round(sorted(v)[len(v) // 2], 1)
+        for s, v in sector_pes.items() if v
+    }
+
+    # Build final display rows
+    results = []
+    for r in raw:
+        symbol = r["_ticker"].replace(".NS", "")
+        remarks = _dcf_remarks(
+            symbol,
+            r["price (₹)"],
+            r["base case DCF IV (₹)"],
+            r["_pct_off"],
+            r["_pe"],
+            r["_peg"],
+            r["_ev_ebitda"],
+            r["_pfcf"],
+            r["_eps1y"],
+            r["_g_base"],
+        )
+        results.append({
+            "name":                   r["name"],
+            "price (₹)":              r["price (₹)"],
+            "base case DCF IV (₹)":   r["base case DCF IV (₹)"],
+            "best case DCF IV (₹)":   r["best case DCF IV (₹)"],
+            "worst case DCF IV (₹)":  r["worst case DCF IV (₹)"],
+            "% to intrinsic value":   r["% to intrinsic value"],
+            "industry PE":            sector_median_pe.get(r["_sector"], "N/A"),
+            "current PE":             r["current PE"],
+            "current PEG":            r["current PEG"],
+            "EV/EBITDA":              r["EV/EBITDA"],
+            "P/FCF ratio":            r["P/FCF ratio"],
+            "1Y EPS growth %":        r["1Y EPS growth %"],
+            "3Y EPS CAGR %":          r["3Y EPS CAGR %"],
+            "5Y EPS CAGR %":          r["5Y EPS CAGR %"],
+            "book value (₹)":         r["book value (₹)"],
+            "remarks":                remarks,
+        })
+
+    # Sort: most undervalued first
+    results.sort(key=lambda x: x["% to intrinsic value"] if isinstance(x["% to intrinsic value"], (int, float)) else 0)
+    for i, r in enumerate(results):
+        r["sr. no."] = i + 1
+
+    return results
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_stock_info():
     info_dict = {}
     for t in NIFTY_50:
@@ -436,7 +752,7 @@ def get_stock_info():
             pass
     return info_dict
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_global_markets_data():
     results = []
     tickers = list(GLOBAL_MARKETS.keys())
@@ -498,7 +814,7 @@ def get_global_markets_data():
         return results
     except Exception:
         return []
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_sector_performers(sector_name):
     if sector_name not in SECTOR_CONSTITUENTS:
         return {"best": [], "worst": []}
@@ -561,9 +877,10 @@ def get_sector_performers(sector_name):
     except Exception:
         return {"best": [], "worst": []}
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_range_breakout_stocks():
-    all_tickers = list(set([t for constituents in SECTOR_CONSTITUENTS.values() for t in constituents] + NIFTY_50 + get_nifty500_tickers()))
+    # Use sector constituents + Nifty 50 only (~200 stocks) — much faster than full Nifty500
+    all_tickers = list(set([t for constituents in SECTOR_CONSTITUENTS.values() for t in constituents] + NIFTY_50))
     ticker_to_sector = {t: s for s, tickers in SECTOR_CONSTITUENTS.items() for t in tickers}
 
     try:
@@ -714,7 +1031,7 @@ def get_range_breakout_stocks():
     except Exception:
         return []
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_top_10_overall_stocks():
     all_tickers = list(set([ticker for constituents in SECTOR_CONSTITUENTS.values() for ticker in constituents]))
     try:
@@ -772,17 +1089,16 @@ def get_top_10_overall_stocks():
     except Exception:
         return []
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_nifty_sensex_levels():
     import time as _time
     res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A"}
 
     for ticker, key in [("^NSEI", "NIFTY 50"), ("^BSESN", "SENSEX"), ("^INDIAVIX", "INDIA VIX")]:
-        for attempt in range(3):
+        for attempt in range(2):
             try:
                 df_t = yf.Ticker(ticker).history(period="2y")
                 if df_t.empty:
-                    _time.sleep(2)
                     continue
                 df_t = df_t.dropna(subset=["Close"])
                 current = float(df_t["Close"].iloc[-1])
@@ -795,15 +1111,14 @@ def get_nifty_sensex_levels():
                     res["NIFTY % to ATH"] = f"{((current / ath) - 1) * 100:.2f}%"
                 break
             except Exception:
-                _time.sleep(2)
-        _time.sleep(0.5)
+                pass
 
     if res["NIFTY 50"] == "N/A":
         get_nifty_sensex_levels.clear()
     return res
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty50_pe():
     """
     Fetch Nifty 50 trailing P/E ratio.
@@ -868,7 +1183,7 @@ def get_nifty50_pe():
 
     return None
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_fiidii():
     # First try nsepython (works locally with Indian IP)
     try:
@@ -912,12 +1227,17 @@ def get_fiidii():
 
     return {"FII": None, "DII": None}
 
+def _fii_json_path():
+    import os
+    here = os.path.dirname(os.path.abspath(__file__)) if '__file__' in dir() else os.getcwd()
+    return os.path.join(here, "fii_stake_data.json")
+
 def _fii_json_mtime():
     import os
-    p = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+    p = _fii_json_path()
     return os.path.getmtime(p) if os.path.exists(p) else 0
 
-@st.cache_data(ttl=86400)  # quarterly data — refresh once a day
+@st.cache_data(ttl=86400, show_spinner=False)  # quarterly data — refresh once a day
 def get_fii_stake_increases(_mtime=None):
     """
     Returns top 10 NIFTY 50 stocks where FII/FPI increased stake last quarter.
@@ -927,7 +1247,7 @@ def get_fii_stake_increases(_mtime=None):
     import json, os, requests
 
     # --- Primary: read from pre-fetched JSON (committed by GitHub Actions) ---
-    json_path = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+    json_path = _fii_json_path()
     if os.path.exists(json_path):
         try:
             with open(json_path) as f:
@@ -1005,7 +1325,7 @@ COMMODITIES = {
     "SI=F":  {"name": "Silver",         "unit": "USD/troy oz"},
 }
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_commodity_data():
     import time as _time
     # Live USD/INR for Gold & Silver INR conversion
@@ -1044,7 +1364,6 @@ def get_commodity_data():
                 "day change %":  round((current / prev - 1) * 100, 2),
                 "% from 5Y high": round((current / ath - 1) * 100, 2),
             })
-            _time.sleep(0.3)
         except Exception:
             pass
     return results
@@ -1080,7 +1399,7 @@ MF_SCHEMES = {
     119775: ("ICICI Pru Balanced Advantage Fund",   "Hybrid"),
 }
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_top_mutual_funds():
     import requests
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -1157,7 +1476,7 @@ CURRENCY_PAIRS = {
     "DX-Y.NYB": "US Dollar Index (DXY)",
 }
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_extended_commodity_data():
     import time as _time
 
@@ -1253,12 +1572,11 @@ def get_extended_commodity_data():
                 "% from 5Y high": pct_ath,
                 "insight":    insight,
             })
-            _time.sleep(0.3)
         except Exception:
             pass
     return results
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_currency_data():
     import time as _time
     results = []
@@ -1316,12 +1634,11 @@ def get_currency_data():
                 "% from 5Y high": pct_ath,
                 "insight":        insight,
             })
-            _time.sleep(0.3)
         except Exception:
             pass
     return results
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=1800, show_spinner=False)
 def get_market_breadth():
     tickers = get_nifty500_tickers()
     res = {
@@ -1373,7 +1690,7 @@ def get_market_breadth():
         pass
     return res
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner=False)
 def get_options_snapshot(symbol="NIFTY"):
     import requests
     session = requests.Session()
@@ -1446,7 +1763,7 @@ def get_options_snapshot(symbol="NIFTY"):
     except Exception as e:
         return {"error": f"Error parsing NSE data: {e}"}
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_earnings_calendar():
     import requests
     from datetime import datetime, timezone
@@ -1748,20 +2065,27 @@ def run_dashboard():
 
     # --- TAB 1: Sector Performance ---
     with tab1:
-        
-        levels = get_nifty_sensex_levels()
-        nifty_lvl = levels.get("NIFTY 50", "N/A")
-        sensex_lvl = levels.get("SENSEX", "N/A")
-        vix_lvl = levels.get("INDIA VIX", "N/A")
-        nifty_rsi = levels.get("NIFTY RSI", "N/A")
-        nifty_ath = levels.get("NIFTY % to ATH", "N/A")
-        _pe = get_nifty50_pe()
-        nifty_pe  = f"{_pe:.2f}" if _pe else "N/A"
-        
-        fiidii = get_fiidii()
 
-        fii_val = fiidii.get("FII")
-        dii_val = fiidii.get("DII")
+        st.session_state['sectors_loaded'] = True
+
+        # Defaults shown before data loads
+        nifty_lvl  = "—"; sensex_lvl = "—"; vix_lvl = "—"
+        nifty_rsi  = "—"; nifty_ath  = "—"; nifty_pe = "—"; gift_nifty_lvl = "—"
+        fii_val    = None; dii_val    = None
+
+        if st.session_state.get('sectors_loaded'):
+            levels     = get_nifty_sensex_levels()
+            nifty_lvl  = levels.get("NIFTY 50", "N/A")
+            sensex_lvl = levels.get("SENSEX", "N/A")
+            vix_lvl    = levels.get("INDIA VIX", "N/A")
+            nifty_rsi  = levels.get("NIFTY RSI", "N/A")
+            nifty_ath  = levels.get("NIFTY % to ATH", "N/A")
+            _pe        = get_nifty50_pe()
+            nifty_pe   = f"{_pe:.2f}" if _pe else "N/A"
+            gift_nifty_lvl = "N/A"
+            fiidii     = get_fiidii()
+            fii_val    = fiidii.get("FII")
+            dii_val    = fiidii.get("DII")
 
         fii_pos    = fii_val is not None and fii_val >= 0
         dii_pos    = dii_val is not None and dii_val >= 0
@@ -1779,7 +2103,7 @@ def run_dashboard():
         dii_tc     = "#00e676" if dii_pos else "#ff5252"
 
         st.markdown(f"""
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px;">
             <div style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);
                         border-radius:14px;padding:14px 10px;text-align:center;">
                 <div style="font-size:11px;color:#ffd700;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY 50</div>
@@ -1810,6 +2134,11 @@ def run_dashboard():
                 <div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY P/E</div>
                 <div style="font-size:22px;font-weight:800;color:#fff;">{nifty_pe}</div>
             </div>
+            <div style="background:rgba(236,72,153,.07);border:1px solid rgba(236,72,153,.2);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#ec4899;font-weight:700;letter-spacing:1px;margin-bottom:5px;">GIFT NIFTY</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{gift_nifty_lvl}</div>
+            </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;">
             <div style="background:{fii_bg};border:1px solid {fii_border};border-radius:14px;
@@ -1831,7 +2160,7 @@ def run_dashboard():
         </div>
         """, unsafe_allow_html=True)
 
-        with st.spinner("Fetching sector data..."):
+        if True:
             s_data = get_sector_data()
             if "NIFTY 50" in s_data:
                 nifty = s_data["NIFTY 50"]
@@ -1880,7 +2209,7 @@ def run_dashboard():
                         if not out_week.empty:
                             best_sector = out_week.iloc[0]["Sector"]
                             _section(f"Best Sector: {best_sector}", "🏆", "Top 10 by weekly return")
-                            with st.spinner(f"Fetching {best_sector}..."):
+                            with _spinner(f"Fetching {best_sector}..."):
                                 perf_best = get_sector_performers(best_sector)
                                 if perf_best["best"]:
                                     df_best = pd.DataFrame(perf_best["best"])
@@ -1894,7 +2223,7 @@ def run_dashboard():
                         if not under_week.empty:
                             worst_sector = under_week.iloc[0]["Sector"]
                             _section(f"Worst Sector: {worst_sector}", "⚠️", "Bottom 10 by weekly return")
-                            with st.spinner(f"Fetching {worst_sector}..."):
+                            with _spinner(f"Fetching {worst_sector}..."):
                                 perf_worst = get_sector_performers(worst_sector)
                                 if perf_worst["worst"]:
                                     df_worst = pd.DataFrame(perf_worst["worst"])
@@ -1937,12 +2266,12 @@ def run_dashboard():
 
                     with col_fii_stake:
                         _section("FII Stake Changes", "🏦", "Nifty 500 — top increases")
-                        with st.spinner("Fetching FII shareholding data..."):
+                        with _spinner("Fetching FII shareholding data..."):
                             fii_stake_data = get_fii_stake_increases(_mtime=_fii_json_mtime())
 
                         # Show last-updated timestamp from JSON if available
                         import json, os
-                        json_path = os.path.join(os.path.dirname(__file__), "fii_stake_data.json")
+                        json_path = _fii_json_path()
                         if os.path.exists(json_path):
                             try:
                                 with open(json_path) as f:
@@ -1964,7 +2293,7 @@ def run_dashboard():
 
                     with col_commodities:
                         _section("Commodities", "🛢")
-                        with st.spinner("Fetching commodity prices..."):
+                        with _spinner("Fetching commodity prices..."):
                             commodity_data = get_commodity_data()
                         if commodity_data:
                             df_comm = pd.DataFrame(commodity_data)
@@ -1977,7 +2306,7 @@ def run_dashboard():
 
                     st.divider()
                     _section("Top 10 Weekly Performers — Indian Market", "🚀", "Across all tracked sector constituents")
-                    with st.spinner("Scanning all tracked Indian sector constituents..."):
+                    with _spinner("Scanning all tracked Indian sector constituents..."):
                         top_overall = get_top_10_overall_stocks()
                         if top_overall:
                             df_overall = pd.DataFrame(top_overall)
@@ -1988,7 +2317,7 @@ def run_dashboard():
 
                     st.divider()
                     _section("Top Mutual Funds — Direct Growth", "💰", "NAV returns sorted by weekly · Source: AMFI via mfapi.in")
-                    with st.spinner("Fetching mutual fund NAV data..."):
+                    with _spinner("Fetching mutual fund NAV data..."):
                         mf_data = get_top_mutual_funds()
                     if mf_data:
                         df_mf = pd.DataFrame(mf_data)
@@ -2000,12 +2329,14 @@ def run_dashboard():
                         st.info("Mutual fund data unavailable. Check internet connectivity to api.mfapi.in.")
 
             else:
-                st.error("Could not fetch NIFTY 50 data.")
+                st.warning("Could not fetch NIFTY 50 sector data — try refreshing.")
 
     # --- TAB 2: Technical Scanners ---
     with tab2:
-        _section("Range Breakout Scanner", "🔍", "Scans sector constituents across 20D / 50D / 52W highs · Ranked by proximity score + volume surge")
-        with st.spinner("Scanning for range breakout candidates..."):
+        st.session_state['scanners_loaded'] = True
+
+        if True:
+            _section("Range Breakout Scanner", "🔍", "Scans sector constituents + Nifty 50 · Ranked by proximity score + volume surge")
             breakout_data = get_range_breakout_stocks()
             if breakout_data:
                 df_breakout = pd.DataFrame(breakout_data)
@@ -2015,22 +2346,18 @@ def run_dashboard():
             else:
                 st.info("No breakout candidates found right now.")
 
-        st.divider()
-        _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is above 200-DMA · Top 20 sorted by lowest RSI")
-        with st.spinner("Scanning Nifty 500 for RSI oversold candidates..."):
+            st.divider()
+            _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is above 200-DMA · Top 20 sorted by lowest RSI")
             rsi_candidates = get_nifty500_weekly_rsi_scan()
-        if rsi_candidates:
-            st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
-        else:
-            st.info("No RSI < 40 candidates found above 200-DMA in Nifty 500 universe.")
+            if rsi_candidates:
+                st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
+            else:
+                st.info("No RSI < 40 candidates found above 200-DMA in Nifty 500 universe.")
 
-        st.divider()
-        _section("Volume Analysis — Nifty 500", "📦", "Buy Vol = Volume × (Close−Low)/(High−Low)  ·  Sell Vol = Volume × (High−Close)/(High−Low)")
-        with st.spinner("Scanning Nifty 500 universe for volume data..."):
+            st.divider()
+            _section("Volume Analysis — Nifty 500", "📦", "Buy Vol = Volume × (Close−Low)/(High−Low)  ·  Sell Vol = Volume × (High−Close)/(High−Low)")
             vol_data = get_volume_split_stocks()
-
             col_buy, col_sell = st.columns(2)
-
             with col_buy:
                 st.markdown("**🟢 Top 10 — Highest Buying Volume (Daily + Weekly)**")
                 if vol_data["buying"]:
@@ -2041,7 +2368,6 @@ def run_dashboard():
                     st.dataframe(_color_pct(df_buy[cols_buy]), use_container_width=True, hide_index=True)
                 else:
                     st.info("No data available.")
-
             with col_sell:
                 st.markdown("**🔴 Top 10 — Highest Selling Volume (Daily + Weekly)**")
                 if vol_data["selling"]:
@@ -2055,27 +2381,45 @@ def run_dashboard():
 
     # --- TAB 3: Fundamental Scanners ---
     with tab3:
-        st.header("Task 6: Undervalued vs Intrinsic Value")
-        with st.spinner("Fetching fundamental data..."):
-            info_dict = get_stock_info()
-            undervalued = []
+        st.header("DCF Intrinsic Value Scanner — Nifty 500")
+        st.caption(
+            "Screens the Nifty 500 universe for stocks whose current market price is within "
+            "**–35% to +15%** of their Base-Case DCF intrinsic value (AlphaSpread methodology). "
+            "Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS growth → Revenue growth → 7% default. "
+            "Three scenarios per stock: "
+            "**Base** (10% WACC · 3% terminal · base growth), "
+            "**Best Case** (9% WACC · 3.5% terminal · 1.5× base growth), "
+            "**Worst Case** (11% WACC · 2.5% terminal · 0.5× base growth). "
+            "**EV/EBITDA** measures enterprise value vs operating earnings. "
+            "**P/FCF** = Market Cap ÷ Free Cash Flow (lower = cheaper on cash basis). "
+            "Results sorted by largest discount to intrinsic value first. "
+            "*1-hour cache · first run takes ~60–90 s.*"
+        )
 
-            for t, info in info_dict.items():
-                pe = info.get("trailingPE", info.get("forwardPE", 999))
-                roe = info.get("returnOnEquity", 0)
-                pb = info.get("priceToBook", 0)
-                
-                # Rule: PE < 20, ROE > 15%
-                if pe and roe and pe < 20 and roe > 0.15:
-                    undervalued.append({
-                        "Ticker": t,
-                        "P/E Ratio": round(pe, 2),
-                        "P/B Ratio": round(pb, 2) if pb else "N/A",
-                        "ROE (%)": round(roe * 100, 2),
-                        "Justification": f"Trading at {round(pe, 1)}x PE despite healthy {round(roe*100, 1)}% ROE."
-                    })
-            
-            st.dataframe(_color_pct(pd.DataFrame(undervalued)) if undervalued else pd.DataFrame([{"Message": "No undervalued bluechips found."}]), use_container_width=True, hide_index=True)
+        st.session_state['dcf_loaded'] = True
+
+        if True:
+            dcf_data = get_dcf_valuation_stocks()
+            if dcf_data:
+                df_dcf = pd.DataFrame(dcf_data)
+                cols_order = [
+                    "sr. no.", "name", "price (₹)",
+                    "base case DCF IV (₹)", "best case DCF IV (₹)", "worst case DCF IV (₹)",
+                    "% to intrinsic value",
+                    "industry PE", "current PE", "current PEG",
+                    "EV/EBITDA", "P/FCF ratio",
+                    "1Y EPS growth %", "3Y EPS CAGR %", "5Y EPS CAGR %",
+                    "book value (₹)", "remarks",
+                ]
+                cols_order = [c for c in cols_order if c in df_dcf.columns]
+                st.success(f"Found **{len(df_dcf)}** Nifty 500 stocks near DCF intrinsic value.")
+                st.dataframe(
+                    _color_pct(df_dcf[cols_order]),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+            else:
+                st.warning("No stocks matched the DCF filter — data may still be loading or all stocks are outside the filter range. Try refreshing.")
 
     # --- TAB 4: News & Macro ---
     with tab4:
@@ -2108,7 +2452,7 @@ def run_dashboard():
     # --- TAB 5: Global Markets ---
     with tab5:
         st.header("Top 20 Global Markets Performance")
-        with st.spinner("Fetching maximum history for global indices to determine ATH..."):
+        with _spinner("Fetching maximum history for global indices to determine ATH..."):
             global_data = get_global_markets_data()
             if global_data:
                 df_global = pd.DataFrame(global_data)
@@ -2124,7 +2468,10 @@ def run_dashboard():
     with tab6:
         st.header("Market Breadth — Nifty 500 Universe")
         st.caption("Scans ~500 NSE stocks. 30-min cache. 52W high/low = within 1.5% of the 52-week extreme.")
-        with st.spinner("Scanning ~500 NSE stocks for breadth indicators..."):
+
+        st.session_state['breadth_loaded'] = True
+
+        if True:
             breadth = get_market_breadth()
 
         total = breadth.get("total", 0)
@@ -2169,7 +2516,7 @@ def run_dashboard():
 
         with col_comm:
             st.subheader("Commodities")
-            with st.spinner("Fetching commodity prices..."):
+            with _spinner("Fetching commodity prices..."):
                 ext_comm = get_extended_commodity_data()
             if ext_comm:
                 st.caption("Gold & Silver: INR price = MCX spot rate (Latur local market reference). "
@@ -2186,7 +2533,7 @@ def run_dashboard():
 
         with col_curr:
             st.subheader("Currencies vs Indian Rupee")
-            with st.spinner("Fetching currency rates..."):
+            with _spinner("Fetching currency rates..."):
                 curr_data = get_currency_data()
             if curr_data:
                 st.dataframe(
@@ -2205,55 +2552,57 @@ def run_dashboard():
 
         symbol_choice = st.radio("Select Index", ["NIFTY", "BANKNIFTY"], horizontal=True, key="opt_symbol")
 
-        with st.spinner(f"Fetching {symbol_choice} option chain from NSE..."):
+        st.session_state['options_loaded'] = True
+
+        if True:
             opt = get_options_snapshot(symbol_choice)
-
-        if opt.get("error"):
-            st.warning(f"⚠️  {opt['error']}")
-            st.info("To use this feature, run the dashboard from a machine with an Indian IP address, "
-                    "or connect via an India-based VPN.")
-        else:
-            spot     = opt["spot"]
-            c1, c2, c3, c4, c5 = st.columns(5)
-            c1.metric("Spot Price",           f"{spot:,.2f}")
-            c2.metric("Nearest Expiry",        opt["expiry"])
-            pcr = opt["pcr"]
-            c3.metric("PCR (All Expiries)",    str(pcr) if pcr else "N/A",
-                      "Bullish >1" if pcr and pcr > 1 else ("Bearish <1" if pcr else ""))
-            c4.metric("Max Pain",              f"{opt['max_pain']:,}" if opt["max_pain"] else "N/A")
-            c5.metric("Total OI (Calls+Puts)", f"{opt['total_call_oi'] + opt['total_put_oi']:,}")
-
-            st.divider()
-            st.subheader(f"{symbol_choice} Option Chain — Expiry: {opt['expiry']}  (ATM ± 10%)")
-            atm_rows = opt["atm_rows"]
-            if atm_rows:
-                df_opt = pd.DataFrame(atm_rows)
-                st.dataframe(
-                    df_opt[["call OI", "call Δ OI", "call LTP", "strike", "put LTP", "put OI", "put Δ OI"]],
-                    use_container_width=True, hide_index=True,
-                )
+            if opt.get("error"):
+                st.warning(f"⚠️  {opt['error']}")
+                st.info("To use this feature, run the dashboard from a machine with an Indian IP address, "
+                        "or connect via an India-based VPN.")
             else:
-                st.info("No option chain rows found near ATM.")
+                spot = opt["spot"]
+                c1, c2, c3, c4, c5 = st.columns(5)
+                c1.metric("Spot Price",           f"{spot:,.2f}")
+                c2.metric("Nearest Expiry",        opt["expiry"])
+                pcr = opt["pcr"]
+                c3.metric("PCR (All Expiries)",    str(pcr) if pcr else "N/A",
+                          "Bullish >1" if pcr and pcr > 1 else ("Bearish <1" if pcr else ""))
+                c4.metric("Max Pain",              f"{opt['max_pain']:,}" if opt["max_pain"] else "N/A")
+                c5.metric("Total OI (Calls+Puts)", f"{opt['total_call_oi'] + opt['total_put_oi']:,}")
+
+                st.divider()
+                st.subheader(f"{symbol_choice} Option Chain — Expiry: {opt['expiry']}  (ATM ± 10%)")
+                atm_rows = opt["atm_rows"]
+                if atm_rows:
+                    df_opt = pd.DataFrame(atm_rows)
+                    st.dataframe(
+                        df_opt[["call OI", "call Δ OI", "call LTP", "strike", "put LTP", "put OI", "put Δ OI"]],
+                        use_container_width=True, hide_index=True,
+                    )
+                else:
+                    st.info("No option chain rows found near ATM.")
 
     # --- TAB 9: Earnings Calendar ---
     with tab9:
         st.header("Earnings Calendar")
         st.caption("Upcoming quarterly results & board meetings. NSE calendar is authoritative but requires an Indian IP; "
                    "falls back to Yahoo Finance estimates automatically.")
-        with st.spinner("Fetching earnings calendar..."):
+
+        st.session_state['earnings_loaded'] = True
+
+        if True:
             earnings = get_earnings_calendar()
-
-        if earnings.get("source"):
-            st.caption(f"Source: **{earnings['source']}**")
-
-        if earnings.get("data"):
-            df_earn = pd.DataFrame(earnings["data"])
-            st.dataframe(df_earn[["company", "date", "event"]],
-                         use_container_width=True, hide_index=True)
-        else:
-            st.warning(f"⚠️  {earnings.get('error', 'No data available.')}")
-            st.info("NSE Event Calendar requires an Indian IP address. "
-                    "Connect via an India-based VPN to see the full calendar.")
+            if earnings.get("source"):
+                st.caption(f"Source: **{earnings['source']}**")
+            if earnings.get("data"):
+                df_earn = pd.DataFrame(earnings["data"])
+                st.dataframe(df_earn[["company", "date", "event"]],
+                             use_container_width=True, hide_index=True)
+            else:
+                st.warning(f"⚠️  {earnings.get('error', 'No data available.')}")
+                st.info("NSE Event Calendar requires an Indian IP address. "
+                        "Connect via an India-based VPN to see the full calendar.")
 
 if __name__ == "__main__":
     run_dashboard()

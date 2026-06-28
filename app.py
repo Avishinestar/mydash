@@ -99,8 +99,8 @@ def get_sector_data():
     for name, ticker in SECTORS.items():
         df = yf.download(ticker, period="1y")
 
-        weekly = (df['Close'].iloc[-1] / df['Close'].iloc[-5]) - 1
-        monthly = (df['Close'].iloc[-1] / df['Close'].iloc[-21]) - 1
+        weekly = (df['Close'].iloc[-1] / df['Close'].iloc[-6]) - 1
+        monthly = (df['Close'].iloc[-1] / df['Close'].iloc[-22]) - 1
         yearly = (df['Close'].iloc[-1] / df['Close'].iloc[0]) - 1
 
         data[name] = {

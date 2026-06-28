@@ -218,9 +218,9 @@ def get_volume_split_stocks():
                 if len(df_t) < 8:
                     continue
 
-                # --- Daily: preceding completed trading day ---
-                row      = df_t.iloc[-2]
-                prev_row = df_t.iloc[-3]
+                # --- Daily: latest trading day ---
+                row      = df_t.iloc[-1]
+                prev_row = df_t.iloc[-2]
 
                 o = float(row['Open'])
                 h = float(row['High'])
@@ -239,8 +239,8 @@ def get_volume_split_stocks():
                 day_change   = round(((c / prev_close) - 1) * 100, 2)
                 candle = "Green ▲" if c >= o else "Red ▼"
 
-                # --- Weekly: sum of last 5 completed trading days ---
-                week_rows = df_t.iloc[-6:-1]  # 5 days, excluding today
+                # --- Weekly: sum of last 5 trading days ---
+                week_rows = df_t.iloc[-5:]  # 5 days, including today
                 week_buy_vol  = 0.0
                 week_sell_vol = 0.0
                 week_total_vol = 0.0
@@ -349,9 +349,9 @@ def get_sector_data():
         try:
             data[name] = {
                 "Daily":     float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-2])  - 1) * 100,
-                "Weekly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-5])  - 1) * 100,
-                "Monthly":   float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-21]) - 1) * 100,
-                "Quarterly": float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-63]) - 1) * 100,
+                "Weekly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-6])  - 1) * 100,
+                "Monthly":   float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-22]) - 1) * 100,
+                "Quarterly": float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-64]) - 1) * 100,
                 "Yearly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[0])   - 1) * 100,
             }
         except Exception:
@@ -405,18 +405,42 @@ def get_nifty500_weekly_rsi_scan():
             w_rsi = float(ta.momentum.RSIIndicator(w_close, window=14).rsi().iloc[-1])
             d_200dma = float(d_df['Close'].tail(200).mean())
             current_price = float(d_df['Close'].iloc[-1])
-            if w_rsi < 40 and current_price > d_200dma:
+            if w_rsi < 40 and current_price < d_200dma:
                 candidates.append({
                     "Ticker": t.replace(".NS", ""),
                     "Weekly RSI": round(w_rsi, 1),
                     "Price": round(current_price, 2),
                     "200-DMA": round(d_200dma, 2),
-                    "% Above 200-DMA": round((current_price / d_200dma - 1) * 100, 1),
+                    "% Below 200-DMA": round((1 - current_price / d_200dma) * 100, 1),
                 })
         except Exception:
             pass
     candidates.sort(key=lambda x: x["Weekly RSI"])
-    return candidates[:20]
+    top_candidates = candidates[:20]
+    
+    # Calculate Graham Intrinsic Value and Market Cap for the top candidates
+    for c in top_candidates:
+        try:
+            info = yf.Ticker(f"{c['Ticker']}.NS").info
+            eps = info.get("trailingEps")
+            bv = info.get("bookValue")
+            mcap = info.get("marketCap")
+            
+            if eps and bv and eps > 0 and bv > 0:
+                iv = (22.5 * eps * bv) ** 0.5
+                c["Intrinsic Value (Graham)"] = round(iv, 2)
+            else:
+                c["Intrinsic Value (Graham)"] = "N/A"
+                
+            if mcap:
+                c["Market Cap (Cr)"] = round(mcap / 1e7, 2)
+            else:
+                c["Market Cap (Cr)"] = "N/A"
+        except Exception:
+            c["Intrinsic Value (Graham)"] = "N/A"
+            c["Market Cap (Cr)"] = "N/A"
+            
+    return top_candidates
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DCF Intrinsic Value Scanner — Nifty 500
@@ -659,17 +683,17 @@ def get_dcf_valuation_stocks():
                 "name":                    name,
                 "price (₹)":               round(price, 2),
                 "base case DCF IV (₹)":    round(base_iv, 2),
-                "best case DCF IV (₹)":    round(best_iv,  2) if best_iv  else "N/A",
-                "worst case DCF IV (₹)":   round(worst_iv, 2) if worst_iv else "N/A",
+                "best case DCF IV (₹)":    round(best_iv,  2) if best_iv  else None,
+                "worst case DCF IV (₹)":   round(worst_iv, 2) if worst_iv else None,
                 "% to intrinsic value":    round(pct_off, 1),
-                "current PE":              round(pe, 1) if pe else "N/A",
-                "current PEG":             round(peg, 2) if peg else "N/A",
-                "1Y EPS growth %":         round(eps_1y * 100, 1) if eps_1y is not None else "N/A",
-                "3Y EPS CAGR %":           round(eps_3y * 100, 1) if eps_3y is not None else "N/A",
-                "5Y EPS CAGR %":           round(eps_5y * 100, 1) if eps_5y is not None else "N/A",
-                "book value (₹)":          round(book_value, 2)   if book_value else "N/A",
-                "EV/EBITDA":               round(ev_ebitda, 1)    if isinstance(ev_ebitda, (int, float)) else "N/A",
-                "P/FCF ratio":             pfcf if pfcf is not None else "N/A",
+                "current PE":              round(pe, 1) if pe else None,
+                "current PEG":             round(peg, 2) if peg else None,
+                "1Y EPS growth %":         round(eps_1y * 100, 1) if eps_1y is not None else None,
+                "3Y EPS CAGR %":           round(eps_3y * 100, 1) if eps_3y is not None else None,
+                "5Y EPS CAGR %":           round(eps_5y * 100, 1) if eps_5y is not None else None,
+                "book value (₹)":          round(book_value, 2)   if book_value else None,
+                "EV/EBITDA":               round(ev_ebitda, 1)    if isinstance(ev_ebitda, (int, float)) else None,
+                "P/FCF ratio":             pfcf if pfcf is not None else None,
             }
         except Exception:
             return None
@@ -720,7 +744,7 @@ def get_dcf_valuation_stocks():
             "best case DCF IV (₹)":   r["best case DCF IV (₹)"],
             "worst case DCF IV (₹)":  r["worst case DCF IV (₹)"],
             "% to intrinsic value":   r["% to intrinsic value"],
-            "industry PE":            sector_median_pe.get(r["_sector"], "N/A"),
+            "industry PE":            sector_median_pe.get(r["_sector"], None),
             "current PE":             r["current PE"],
             "current PEG":            r["current PEG"],
             "EV/EBITDA":              r["EV/EBITDA"],
@@ -772,8 +796,8 @@ def get_global_markets_data():
                 ath = float(df_t['High'].max())
                 
                 pct_day = ((current / prev) - 1) * 100
-                pct_month = ((current / float(df_t['Close'].iloc[-21])) - 1) * 100 if len(df_t) >= 21 else 0
-                pct_quarter = ((current / float(df_t['Close'].iloc[-63])) - 1) * 100 if len(df_t) >= 63 else 0
+                pct_month = ((current / float(df_t['Close'].iloc[-22])) - 1) * 100 if len(df_t) >= 22 else 0
+                pct_quarter = ((current / float(df_t['Close'].iloc[-64])) - 1) * 100 if len(df_t) >= 64 else 0
                 pct_year = ((current / float(df_t['Close'].iloc[-252])) - 1) * 100 if len(df_t) >= 252 else 0
                 pct_3year = ((current / float(df_t['Close'].iloc[-756])) - 1) * 100 if len(df_t) >= 756 else 0
                 
@@ -837,9 +861,9 @@ def get_sector_performers(sector_name):
                 current = float(df_t['Close'].iloc[-1])
                 
                 daily = ((current / float(df_t['Close'].iloc[-2])) - 1) * 100 if len(df_t) >= 2 else 0
-                weekly = ((current / float(df_t['Close'].iloc[-5])) - 1) * 100 if len(df_t) >= 5 else 0
-                monthly = ((current / float(df_t['Close'].iloc[-21])) - 1) * 100 if len(df_t) >= 21 else 0
-                quarterly = ((current / float(df_t['Close'].iloc[-63])) - 1) * 100 if len(df_t) >= 63 else 0
+                weekly = ((current / float(df_t['Close'].iloc[-6])) - 1) * 100 if len(df_t) >= 6 else 0
+                monthly = ((current / float(df_t['Close'].iloc[-22])) - 1) * 100 if len(df_t) >= 22 else 0
+                quarterly = ((current / float(df_t['Close'].iloc[-64])) - 1) * 100 if len(df_t) >= 64 else 0
                 yearly = ((current / float(df_t['Close'].iloc[0])) - 1) * 100
                 
                 if weekly >= 5:
@@ -1050,9 +1074,9 @@ def get_top_10_overall_stocks():
                 current = float(df_t['Close'].iloc[-1])
                 
                 daily = ((current / float(df_t['Close'].iloc[-2])) - 1) * 100 if len(df_t) >= 2 else 0
-                weekly = ((current / float(df_t['Close'].iloc[-5])) - 1) * 100 if len(df_t) >= 5 else 0
-                monthly = ((current / float(df_t['Close'].iloc[-21])) - 1) * 100 if len(df_t) >= 21 else 0
-                quarterly = ((current / float(df_t['Close'].iloc[-63])) - 1) * 100 if len(df_t) >= 63 else 0
+                weekly = ((current / float(df_t['Close'].iloc[-6])) - 1) * 100 if len(df_t) >= 6 else 0
+                monthly = ((current / float(df_t['Close'].iloc[-22])) - 1) * 100 if len(df_t) >= 22 else 0
+                quarterly = ((current / float(df_t['Close'].iloc[-64])) - 1) * 100 if len(df_t) >= 64 else 0
                 yearly = ((current / float(df_t['Close'].iloc[0])) - 1) * 100
                 
                 if weekly >= 5: remark = "Stellar breakout momentum driving entire market."
@@ -1690,6 +1714,172 @@ def get_market_breadth():
         pass
     return res
 
+@st.cache_data(ttl=600, show_spinner=False)
+def get_corporate_announcements():
+    import urllib.request
+    import json
+    import ssl
+    import re
+    from datetime import datetime
+    import yfinance as yf
+    from concurrent.futures import ThreadPoolExecutor
+
+    ssl._create_default_https_context = ssl._create_unverified_context
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+    }
+
+    raw_deals = []
+    val_pattern = r"(?:Rs\.?|₹|INR)?\s*([\d,]+(?:\.\d+)?)\s*(Cr|Crore|Lakh|Lakhs|Million|Billion|Mn|Bn)"
+    pos_words = ["win", "order", "contract", "award", "deal", "bid", "bagged"]
+    neg_words = ["penalty", "default", "show cause", "fine"]
+
+    # 1. Fetch NSE Data
+    try:
+        url = "https://www.nseindia.com/api/corporate-announcements?index=equities"
+        req_main = urllib.request.Request("https://www.nseindia.com", headers=headers)
+        with urllib.request.urlopen(req_main, timeout=10) as response:
+            cookie = response.headers.get('Set-Cookie')
+            
+        nse_headers = headers.copy()
+        if cookie:
+            nse_headers['Cookie'] = cookie
+            
+        req = urllib.request.Request(url, headers=nse_headers)
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            
+        announcements = data.get("data", data) if isinstance(data, dict) else data
+        
+        for item in announcements:
+            raw_text = str(item.get("attchmntText", "")) + " " + str(item.get("desc", ""))
+            text_lower = raw_text.lower()
+            
+            is_pos = any(w in text_lower for w in pos_words)
+            is_neg = any(w in text_lower for w in neg_words)
+            is_reg30 = "regulation 30" in text_lower
+            
+            if not is_pos and not is_neg and not is_reg30:
+                continue 
+                
+            sentiment = "pos" if is_pos else ("neg" if is_neg else "reg30")
+            
+            deal_value = "N/A"
+            match = re.search(val_pattern, raw_text, re.IGNORECASE)
+            if match:
+                deal_value = match.group(0).strip()
+                
+            clean_text = raw_text.replace("\n", " ").replace("\r", " ").strip()
+            if len(clean_text) > 140:
+                clean_text = clean_text[:137] + "..."
+                
+            obj = {
+                "symbol": item.get("symbol", "N/A"),
+                "company": item.get("sm_name", "N/A"),
+                "text": clean_text,
+                "date": item.get("an_dt", "").split(" ")[0] if item.get("an_dt") else "",
+                "link": item.get("attchmntFile", "#"),
+                "sentiment": sentiment,
+                "deal_value": deal_value,
+                "market_cap": "N/A",
+                "source": "NSE"
+            }
+            raw_deals.append(obj)
+    except Exception as e:
+        print("NSE API ERROR:", e)
+
+    # 2. Fetch BSE Data
+    try:
+        today_str = datetime.now().strftime("%Y%m%d")
+        bse_url = f"https://api.bseindia.com/BseIndiaAPI/api/AnnSubCategoryGetData/w?pageno=1&strCat=-1&strPrevDate={today_str}&strScrip=&strSearch=P&strToDate={today_str}&strType=C"
+        bse_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+            'Accept': 'application/json, text/plain, */*',
+            'Origin': 'https://www.bseindia.com',
+            'Referer': 'https://www.bseindia.com/',
+        }
+        req_bse = urllib.request.Request(bse_url, headers=bse_headers)
+        with urllib.request.urlopen(req_bse, timeout=10) as response:
+            bse_data = json.loads(response.read().decode('utf-8'))
+            if "Table" in bse_data:
+                for item in bse_data["Table"]:
+                    raw_text = str(item.get("HEADLINE", "")) + " " + str(item.get("NEWSSUB", ""))
+                    text_lower = raw_text.lower()
+                    
+                    is_pos = any(w in text_lower for w in pos_words)
+                    is_neg = any(w in text_lower for w in neg_words)
+                    is_reg30 = "regulation 30" in text_lower
+                    
+                    if not is_pos and not is_neg and not is_reg30:
+                        continue
+                        
+                    sentiment = "pos" if is_pos else ("neg" if is_neg else "reg30")
+                    
+                    deal_value = "N/A"
+                    match = re.search(val_pattern, raw_text, re.IGNORECASE)
+                    if match:
+                        deal_value = match.group(0).strip()
+                        
+                    clean_text = raw_text.replace("\n", " ").replace("\r", " ").strip()
+                    if len(clean_text) > 140:
+                        clean_text = clean_text[:137] + "..."
+                        
+                    scrip = str(item.get("SCRIP_CD", "N/A"))
+                    
+                    company_name = "BSE Co."
+                    if item.get("NEWSSUB"):
+                        parts = item["NEWSSUB"].split("-")
+                        if len(parts) > 0:
+                            company_name = parts[0].strip()
+                            
+                    obj = {
+                        "symbol": f"{scrip}.BO" if scrip != "N/A" else "N/A",
+                        "company": company_name,
+                        "text": clean_text,
+                        "date": item.get("NEWS_DT", "").split("T")[0] if item.get("NEWS_DT") else "",
+                        "link": f"https://www.bseindia.com/xml-data/corpfiling/AttachLive/{item.get('ATTACHMENTNAME', '')}",
+                        "sentiment": sentiment,
+                        "deal_value": deal_value,
+                        "market_cap": "N/A",
+                        "source": "BSE"
+                    }
+                    raw_deals.append(obj)
+    except Exception as e:
+        print("BSE API ERROR:", e)
+
+    # 3. Fetch Market Caps concurrently
+    try:
+        symbols_to_fetch = list(set([d["symbol"] for d in raw_deals if d["symbol"] != "N/A"]))
+        mcap_cache = {}
+        
+        def fetch_mcap(sym):
+            try:
+                fetch_sym = sym if sym.endswith(".BO") else f"{sym}.NS"
+                info = yf.Ticker(fetch_sym).info
+                mcap = info.get("marketCap")
+                if mcap:
+                    if mcap >= 1e7:
+                        return f"₹{mcap/1e7:,.2f} Cr"
+                    return f"₹{mcap:,}"
+            except Exception:
+                pass
+            return "N/A"
+            
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            results = executor.map(fetch_mcap, symbols_to_fetch)
+            for sym, mcap in zip(symbols_to_fetch, results):
+                mcap_cache[sym] = mcap
+                
+        for d in raw_deals:
+            if d["symbol"] in mcap_cache:
+                d["market_cap"] = mcap_cache[d["symbol"]]
+    except Exception as e:
+        print("MCAP ERROR:", e)
+        
+    return {"deals": raw_deals}
+
 @st.cache_data(ttl=300, show_spinner=False)
 def get_options_snapshot(symbol="NIFTY"):
     import requests
@@ -2059,19 +2249,18 @@ def run_dashboard():
         "🌐  Global Markets",
         "📡  Market Breadth",
         "🛢  Commodities",
-        "⚡  Options",
+        "🤝 Bids and Deals",
         "📅  Earnings",
     ])
 
     # --- TAB 1: Sector Performance ---
     with tab1:
 
-        if st.button("▶ Load Market Data", key="run_sectors", type="primary"):
-            st.session_state['sectors_loaded'] = True
+        st.session_state['sectors_loaded'] = True
 
         # Defaults shown before data loads
         nifty_lvl  = "—"; sensex_lvl = "—"; vix_lvl = "—"
-        nifty_rsi  = "—"; nifty_ath  = "—"; nifty_pe = "—"
+        nifty_rsi  = "—"; nifty_ath  = "—"; nifty_pe = "—"; gift_nifty_lvl = "—"
         fii_val    = None; dii_val    = None
 
         if st.session_state.get('sectors_loaded'):
@@ -2083,6 +2272,7 @@ def run_dashboard():
             nifty_ath  = levels.get("NIFTY % to ATH", "N/A")
             _pe        = get_nifty50_pe()
             nifty_pe   = f"{_pe:.2f}" if _pe else "N/A"
+            gift_nifty_lvl = "N/A"
             fiidii     = get_fiidii()
             fii_val    = fiidii.get("FII")
             dii_val    = fiidii.get("DII")
@@ -2103,7 +2293,7 @@ def run_dashboard():
         dii_tc     = "#00e676" if dii_pos else "#ff5252"
 
         st.markdown(f"""
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px;">
             <div style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);
                         border-radius:14px;padding:14px 10px;text-align:center;">
                 <div style="font-size:11px;color:#ffd700;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY 50</div>
@@ -2134,6 +2324,11 @@ def run_dashboard():
                 <div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY P/E</div>
                 <div style="font-size:22px;font-weight:800;color:#fff;">{nifty_pe}</div>
             </div>
+            <div style="background:rgba(236,72,153,.07);border:1px solid rgba(236,72,153,.2);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#ec4899;font-weight:700;letter-spacing:1px;margin-bottom:5px;">GIFT NIFTY</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{gift_nifty_lvl}</div>
+            </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;">
             <div style="background:{fii_bg};border:1px solid {fii_border};border-radius:14px;
@@ -2155,9 +2350,7 @@ def run_dashboard():
         </div>
         """, unsafe_allow_html=True)
 
-        if not st.session_state.get('sectors_loaded'):
-            st.info("Click **▶ Load Market Data** above to fetch live indices, sector performance, and FII/DII data.")
-        elif True:
+        if True:
             s_data = get_sector_data()
             if "NIFTY 50" in s_data:
                 nifty = s_data["NIFTY 50"]
@@ -2330,12 +2523,9 @@ def run_dashboard():
 
     # --- TAB 2: Technical Scanners ---
     with tab2:
-        if st.button("▶ Run Technical Scans", key="run_scanners", type="primary"):
-            st.session_state['scanners_loaded'] = True
+        st.session_state['scanners_loaded'] = True
 
-        if not st.session_state.get('scanners_loaded'):
-            st.info("Click **▶ Run Technical Scans** above to load breakout, RSI oversold, and volume data.")
-        else:
+        if True:
             _section("Range Breakout Scanner", "🔍", "Scans sector constituents + Nifty 50 · Ranked by proximity score + volume surge")
             breakout_data = get_range_breakout_stocks()
             if breakout_data:
@@ -2347,12 +2537,12 @@ def run_dashboard():
                 st.info("No breakout candidates found right now.")
 
             st.divider()
-            _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is above 200-DMA · Top 20 sorted by lowest RSI")
+            _section("Weekly RSI Oversold — Nifty 500", "📉", "Weekly RSI < 40 while price is below 200-DMA · Top 20 sorted by lowest RSI")
             rsi_candidates = get_nifty500_weekly_rsi_scan()
             if rsi_candidates:
                 st.dataframe(_color_pct(pd.DataFrame(rsi_candidates)), use_container_width=True, hide_index=True)
             else:
-                st.info("No RSI < 40 candidates found above 200-DMA in Nifty 500 universe.")
+                st.info("No RSI < 40 candidates found below 200-DMA in Nifty 500 universe.")
 
             st.divider()
             _section("Volume Analysis — Nifty 500", "📦", "Buy Vol = Volume × (Close−Low)/(High−Low)  ·  Sell Vol = Volume × (High−Close)/(High−Low)")
@@ -2396,12 +2586,9 @@ def run_dashboard():
             "*1-hour cache · first run takes ~60–90 s.*"
         )
 
-        if st.button("▶ Run DCF Scanner", key="run_dcf", type="primary"):
-            st.session_state['dcf_loaded'] = True
+        st.session_state['dcf_loaded'] = True
 
-        if not st.session_state.get('dcf_loaded'):
-            st.info("Click **▶ Run DCF Scanner** above to scan Nifty 500 for undervalued stocks. This may take 60–90 seconds on first run.")
-        else:
+        if True:
             dcf_data = get_dcf_valuation_stocks()
             if dcf_data:
                 df_dcf = pd.DataFrame(dcf_data)
@@ -2472,13 +2659,9 @@ def run_dashboard():
         st.header("Market Breadth — Nifty 500 Universe")
         st.caption("Scans ~500 NSE stocks. 30-min cache. 52W high/low = within 1.5% of the 52-week extreme.")
 
-        if st.button("▶ Load Market Breadth", key="run_breadth", type="primary"):
-            st.session_state['breadth_loaded'] = True
+        st.session_state['breadth_loaded'] = True
 
-        if not st.session_state.get('breadth_loaded'):
-            st.info("Click **▶ Load Market Breadth** above to scan Nifty 500 for advance/decline data.")
-            breadth = {"total": 0}
-        else:
+        if True:
             breadth = get_market_breadth()
 
         total = breadth.get("total", 0)
@@ -2552,46 +2735,106 @@ def run_dashboard():
             else:
                 st.info("Currency data unavailable.")
 
-    # --- TAB 8: Options Snapshot ---
+    # --- TAB 8: Bids and Deals ---
     with tab8:
-        st.header("Options Snapshot — Nifty & BankNifty")
-        st.caption("PCR, Max Pain, and full OI chain for the nearest expiry. Sourced from NSE — requires an Indian IP address.")
-
-        symbol_choice = st.radio("Select Index", ["NIFTY", "BANKNIFTY"], horizontal=True, key="opt_symbol")
-
-        if st.button("▶ Load Option Chain", key="run_options", type="primary"):
-            st.session_state['options_loaded'] = True
-
-        if not st.session_state.get('options_loaded'):
-            st.info("Click **▶ Load Option Chain** above to fetch live NSE option data.")
+        st.header("Bids, Contracts and Deals Dashboard")
+        st.caption("Animated, glassmorphism-styled dashboard tracking live Order Wins, Block deals, Bids, and Contracts of companies.")
+        
+        # Glassmorphism CSS with Grid Layout
+        st.markdown("""
+        <style>
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            aspect-ratio: 1 / 1;
+            position: relative;
+        }
+        .top-right-badges {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+        .top-right-badges .pill-badge {
+            margin: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pill-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+        .pill-pos { background: rgba(39, 174, 96, 0.2); border: 1px solid #27ae60; color: #2ecc71; }
+        .pill-neg { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #e74c3c; }
+        .pill-reg30 { background: rgba(52, 152, 219, 0.2); border: 1px solid #3498db; color: #3498db; }
+        .pill-val { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 1px solid #764ba2; }
+        .deal-link {
+            text-decoration: none;
+            color: #3498db;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .deal-link:hover { text-decoration: underline; }
+        .deal-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; color: #fff; padding-right: 100px; }
+        .deal-date { font-size: 0.85rem; color: #aaa; margin-bottom: 10px; }
+        .deal-text { flex-grow: 1; overflow: hidden; margin-bottom: 10px; }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        deals_data = get_corporate_announcements()
+        
+        if deals_data.get("error"):
+            st.warning(f"⚠️ Could not fetch deals data: {deals_data['error']}")
         else:
-            opt = get_options_snapshot(symbol_choice)
-            if opt.get("error"):
-                st.warning(f"⚠️  {opt['error']}")
-                st.info("To use this feature, run the dashboard from a machine with an Indian IP address, "
-                        "or connect via an India-based VPN.")
+            if not deals_data["deals"]:
+                st.info("No significant wins or penalties found.")
             else:
-                spot = opt["spot"]
-                c1, c2, c3, c4, c5 = st.columns(5)
-                c1.metric("Spot Price",           f"{spot:,.2f}")
-                c2.metric("Nearest Expiry",        opt["expiry"])
-                pcr = opt["pcr"]
-                c3.metric("PCR (All Expiries)",    str(pcr) if pcr else "N/A",
-                          "Bullish >1" if pcr and pcr > 1 else ("Bearish <1" if pcr else ""))
-                c4.metric("Max Pain",              f"{opt['max_pain']:,}" if opt["max_pain"] else "N/A")
-                c5.metric("Total OI (Calls+Puts)", f"{opt['total_call_oi'] + opt['total_put_oi']:,}")
-
-                st.divider()
-                st.subheader(f"{symbol_choice} Option Chain — Expiry: {opt['expiry']}  (ATM ± 10%)")
-                atm_rows = opt["atm_rows"]
-                if atm_rows:
-                    df_opt = pd.DataFrame(atm_rows)
-                    st.dataframe(
-                        df_opt[["call OI", "call Δ OI", "call LTP", "strike", "put LTP", "put OI", "put Δ OI"]],
-                        use_container_width=True, hide_index=True,
-                    )
-                else:
-                    st.info("No option chain rows found near ATM.")
+                html_cards = '<div class="deals-grid">'
+                for deal in deals_data["deals"]:
+                    if deal["sentiment"] == "pos":
+                        sent_class = "pill-pos"
+                        sent_icon = "👍 Win / Order"
+                    elif deal["sentiment"] == "neg":
+                        sent_class = "pill-neg"
+                        sent_icon = "👎 Penalty / Default"
+                    else:
+                        sent_class = "pill-reg30"
+                        sent_icon = "📜 Regulation 30"
+                    val_badge = f'<span class="pill-badge pill-val">💰 Deal Value: {deal["deal_value"]}</span>' if deal["deal_value"] != "N/A" else ""
+                    mcap_badge = f'<span class="pill-badge" style="background: rgba(255,255,255,0.1); border: 1px solid #aaa;">🏢 MCap: {deal["market_cap"]}</span>' if deal["market_cap"] != "N/A" else ""
+                    
+                    html_cards += f'<div class="glass-card"><div class="top-right-badges"><span class="pill-badge {sent_class}">{sent_icon}</span>{val_badge}</div><div class="deal-title">{deal["company"]} ({deal["symbol"]})</div><div class="deal-date">{deal["date"]}</div><div class="deal-text">{deal["text"]}</div><div>{mcap_badge}<span class="pill-badge pill-val" style="opacity: 0.6;">Total Order Book: N/A</span></div><a class="deal-link" href="{deal["link"]}" target="_blank">📄 View Official Filing (PDF)</a></div>'
+                
+                html_cards += '</div>'
+                st.markdown(html_cards, unsafe_allow_html=True)
 
     # --- TAB 9: Earnings Calendar ---
     with tab9:
@@ -2599,12 +2842,9 @@ def run_dashboard():
         st.caption("Upcoming quarterly results & board meetings. NSE calendar is authoritative but requires an Indian IP; "
                    "falls back to Yahoo Finance estimates automatically.")
 
-        if st.button("▶ Load Earnings Calendar", key="run_earnings", type="primary"):
-            st.session_state['earnings_loaded'] = True
+        st.session_state['earnings_loaded'] = True
 
-        if not st.session_state.get('earnings_loaded'):
-            st.info("Click **▶ Load Earnings Calendar** above to fetch upcoming result dates.")
-        else:
+        if True:
             earnings = get_earnings_calendar()
             if earnings.get("source"):
                 st.caption(f"Source: **{earnings['source']}**")
