@@ -7,7 +7,7 @@ import io
 import warnings
 from contextlib import nullcontext as _spinner
 try:
-    from nsepython import nse_eq_symbols
+    from nsepython import nse_eq_symbols, nse_marketStatus
     _NSE_AVAILABLE = True
 except Exception:
     _NSE_AVAILABLE = False
@@ -1220,6 +1220,20 @@ def get_nifty_sensex_levels():
         get_nifty_sensex_levels.clear()
     return res
 
+@st.cache_data(ttl=300, show_spinner=False)
+def get_gift_nifty_data():
+    """Fetch GIFT Nifty level and day change."""
+    if _NSE_AVAILABLE:
+        try:
+            status = nse_marketStatus()
+            gift = status.get("giftnifty", {})
+            last_price = gift.get("LASTPRICE")
+            day_change = gift.get("DAYCHANGE")
+            if last_price is not None and day_change is not None:
+                return last_price, day_change
+        except Exception:
+            pass
+    return None, None
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty50_pe():
@@ -2352,7 +2366,15 @@ def run_dashboard():
             nifty_ath  = levels.get("NIFTY % to ATH", "N/A")
             _pe        = get_nifty50_pe()
             nifty_pe   = f"{_pe:.2f}" if _pe else "N/A"
-            gift_nifty_lvl = "N/A"
+            
+            gift_price, gift_change = get_gift_nifty_data()
+            if gift_price is not None:
+                sign = "+" if gift_change >= 0 else ""
+                color = "#00e676" if gift_change >= 0 else "#ff5252"
+                gift_nifty_lvl = f"{gift_price:,.0f} <span style='font-size:14px;color:{color};'>({sign}{gift_change:,.0f})</span>"
+            else:
+                gift_nifty_lvl = "N/A"
+                
             fiidii     = get_fiidii()
             fii_val    = fiidii.get("FII")
             dii_val    = fiidii.get("DII")
