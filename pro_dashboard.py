@@ -71,7 +71,8 @@ ET_RSS_FEEDS = {
     "Markets": "https://economictimes.indiatimes.com/markets/rssfeeds/2146842.cms",
     "Macro Economy": "https://economictimes.indiatimes.com/news/economy/macro-economy/rssfeeds/1373380680.cms",
     "Earnings": "https://economictimes.indiatimes.com/markets/stocks/earnings/rssfeeds/514120.cms",
-    "Companies": "https://economictimes.indiatimes.com/industry/rssfeeds/13352306.cms"
+    "Companies": "https://economictimes.indiatimes.com/industry/rssfeeds/13352306.cms",
+    "Reuters India": "https://news.google.com/rss/search?q=site:reuters.com+India&hl=en-IN&gl=IN&ceid=IN:en"
 }
 
 GLOBAL_MARKETS = {
@@ -383,6 +384,84 @@ def get_stock_data_weekly():
     df = yf.download(NIFTY_50, period="2y", interval="1wk", progress=False)
     return df
 
+@st.cache_data(ttl=1790, show_spinner=False)
+def get_dhamala_stocks(tickers):
+    import requests
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    data = yf.download(tickers, period="5d", progress=False)
+    if data.empty:
+        return []
+    
+    closes = data['Close']
+    candidates = []
+    
+    for ticker in tickers:
+        try:
+            col_data = closes[ticker].dropna()
+            if len(col_data) >= 2:
+                prev_close = col_data.iloc[-2]
+                curr_close = col_data.iloc[-1]
+                pct_change = (curr_close / prev_close) - 1
+                
+                if pct_change >= 0.03:
+                    candidates.append({"symbol": ticker, "change_pct": pct_change * 100})
+        except Exception:
+            continue
+
+    def fetch_data(cand):
+        ticker = cand["symbol"]
+        symbol_no_ns = ticker.replace(".NS", "")
+        
+        try:
+            info = yf.Ticker(ticker).info
+            mcap = info.get('marketCap', 0)
+            if mcap:
+                mcap_cr = mcap / 10000000
+                if mcap_cr >= 20000: cap_category = 'Large Cap'
+                elif mcap_cr >= 5000: cap_category = 'Mid Cap'
+                else: cap_category = 'Small Cap'
+            else:
+                cap_category = 'Small Cap'
+        except:
+            cap_category = 'Small Cap'
+            
+        cand["category"] = cap_category
+        
+        news_url = f"https://news-headlines.tradingview.com/headlines/?category=stock&symbol=NSE:{symbol_no_ns}"
+        try:
+            resp = requests.get(news_url, timeout=5)
+            news_data = resp.json()
+            news_list = []
+            for item in news_data[:3]:
+                news_list.append({
+                    "title": item.get("title", ""),
+                    "link": item.get("link", ""),
+                    "published": item.get("published", "")
+                })
+            cand["news"] = news_list
+        except Exception:
+            cand["news"] = []
+            
+        return cand
+
+    fetched = []
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        futs = [executor.submit(fetch_data, c) for c in candidates]
+        for f in as_completed(futs):
+            fetched.append(f.result())
+            
+    fetched.sort(key=lambda x: x["change_pct"], reverse=True)
+    
+    results = []
+    counts = {'Large Cap': 0, 'Mid Cap': 0, 'Small Cap': 0}
+    for r in fetched:
+        cat = r["category"]
+        if counts[cat] < 25:
+            results.append(r)
+            counts[cat] += 1
+
+    return results
+
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty500_weekly_rsi_scan():
     """Scan Nifty 500 universe for stocks with weekly RSI < 40 and price above 200-DMA.
@@ -526,7 +605,7 @@ def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, ev_ebitda, pfcf, eps_
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_dcf_valuation_stocks():
     """
-    Scans Nifty 500 for stocks near their DCF intrinsic value (AlphaSpread methodology).
+    Scans Nifty 50 for stocks near their DCF intrinsic value (AlphaSpread methodology).
     Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS → Revenue → 7% default.
     Three scenarios: Base (10% WACC, 3% terminal), Best (9% WACC, 3.5% terminal, 1.5× growth),
     Worst (11% WACC, 2.5% terminal, 0.5× growth).
@@ -540,7 +619,7 @@ def get_dcf_valuation_stocks():
         for t in constituents:
             stock_sector[t] = sec
 
-    tickers = get_nifty500_tickers()
+    tickers = NIFTY_50
 
     def fetch_one(ticker):
         try:
@@ -2241,16 +2320,17 @@ def run_dashboard():
             st.cache_data.clear()
             st.rerun()
 
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+    tab1, tab10, tab2, tab4, tab5, tab6, tab3, tab7, tab8, tab9 = st.tabs([
         "🏭  Sectors",
+        "🚀 Dhamala",
         "📊  Scanners",
-        "💎  Fundamentals",
         "📰  News & Macro",
         "🌐  Global Markets",
         "📡  Market Breadth",
+        "💎  Fundamentals",
         "🛢  Commodities",
         "🤝 Bids and Deals",
-        "📅  Earnings",
+        "📅  Earnings"
     ])
 
     # --- TAB 1: Sector Performance ---
@@ -2571,7 +2651,7 @@ def run_dashboard():
 
     # --- TAB 3: Fundamental Scanners ---
     with tab3:
-        st.header("DCF Intrinsic Value Scanner — Nifty 500")
+        st.header("DCF Intrinsic Value Scanner — Nifty 50")
         st.caption(
             "Screens the Nifty 500 universe for stocks whose current market price is within "
             "**–35% to +15%** of their Base-Case DCF intrinsic value (AlphaSpread methodology). "
@@ -2602,7 +2682,7 @@ def run_dashboard():
                     "book value (₹)", "remarks",
                 ]
                 cols_order = [c for c in cols_order if c in df_dcf.columns]
-                st.success(f"Found **{len(df_dcf)}** Nifty 500 stocks near DCF intrinsic value.")
+                st.success(f"Found **{len(df_dcf)}** Nifty 50 stocks near DCF intrinsic value.")
                 st.dataframe(
                     _color_pct(df_dcf[cols_order]),
                     use_container_width=True,
@@ -2637,6 +2717,11 @@ def run_dashboard():
             st.subheader("8. Best & Worst Q2 Results (Earnings News)")
             earn_news = fetch_rss_news(ET_RSS_FEEDS["Earnings"])
             for n in earn_news:
+                st.markdown(f"- **[{n['Title']}]({n['Link']})** ({n['Published']})")
+
+            st.subheader("Reuters India News")
+            reuters_news = fetch_rss_news(ET_RSS_FEEDS["Reuters India"])
+            for n in reuters_news:
                 st.markdown(f"- **[{n['Title']}]({n['Link']})** ({n['Published']})")
 
     # --- TAB 5: Global Markets ---
@@ -2856,6 +2941,65 @@ def run_dashboard():
                 st.warning(f"⚠️  {earnings.get('error', 'No data available.')}")
                 st.info("NSE Event Calendar requires an Indian IP address. "
                         "Connect via an India-based VPN to see the full calendar.")
+
+
+    # --- TAB 10: Dhamala ---
+    with tab10:
+        st.header("🚀 Dhamala: 3%+ Nifty 500 Movers & Latest News")
+        st.write("Fetching Nifty 500 stocks up 3% or more today, grouped by market cap...")
+        
+        @st.fragment(run_every="30m")
+        def render_dhamala_fragment():
+            with _spinner("Analyzing Nifty 500 and fetching news from TradingView..."):
+                tickers = get_nifty500_tickers()
+                dhamala_results = get_dhamala_stocks(tickers)
+                
+                if not dhamala_results:
+                    st.info("No Nifty 500 stocks are up 3% or more today, or data is unavailable.")
+                else:
+                    dhamala_large = [r for r in dhamala_results if r['category'] == 'Large Cap']
+                    dhamala_mid = [r for r in dhamala_results if r['category'] == 'Mid Cap']
+                    dhamala_small = [r for r in dhamala_results if r['category'] == 'Small Cap']
+                    
+                    tab_large, tab_mid, tab_small = st.tabs(["Large Cap", "Mid Cap", "Small Cap"])
+                    
+                    with tab_large:
+                        if not dhamala_large:
+                            st.write("No Large Cap stocks up 3% or more today.")
+                        for res in dhamala_large:
+                            st.subheader(f"📈 {res['symbol']} — Up {res['change_pct']:.2f}%")
+                            if res['news']:
+                                for n in res['news']:
+                                    st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
+                            else:
+                                st.write("- *No recent TradingView news found.*")
+                            st.divider()
+                            
+                    with tab_mid:
+                        if not dhamala_mid:
+                            st.write("No Mid Cap stocks up 3% or more today.")
+                        for res in dhamala_mid:
+                            st.subheader(f"📈 {res['symbol']} — Up {res['change_pct']:.2f}%")
+                            if res['news']:
+                                for n in res['news']:
+                                    st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
+                            else:
+                                st.write("- *No recent TradingView news found.*")
+                            st.divider()
+                            
+                    with tab_small:
+                        if not dhamala_small:
+                            st.write("No Small Cap stocks up 3% or more today.")
+                        for res in dhamala_small:
+                            st.subheader(f"📈 {res['symbol']} — Up {res['change_pct']:.2f}%")
+                            if res['news']:
+                                for n in res['news']:
+                                    st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
+                            else:
+                                st.write("- *No recent TradingView news found.*")
+                            st.divider()
+
+        render_dhamala_fragment()
 
 if __name__ == "__main__":
     run_dashboard()
