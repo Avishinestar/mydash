@@ -1,114 +1,114 @@
 {
-  "fetched_at": "2026-07-13 06:07 UTC",
+  "fetched_at": "2026-07-14 05:29 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
     {
       "sr. no.": 1,
-      "company": "AXISBANK",
-      "current FII %": 42.04,
-      "prev quarter %": 42.58,
-      "change (pp)": "-0.54"
-    },
-    {
-      "sr. no.": 2,
       "company": "HDFCBANK",
       "current FII %": 41.82,
       "prev quarter %": 44.05,
       "change (pp)": "-2.23"
     },
     {
-      "sr. no.": 3,
+      "sr. no.": 2,
       "company": "ITC",
       "current FII %": 34.83,
       "prev quarter %": 36.11,
       "change (pp)": "-1.28"
     },
     {
-      "sr. no.": 4,
+      "sr. no.": 3,
       "company": "ICICIBANK",
       "current FII %": 34.48,
       "prev quarter %": 43.87,
       "change (pp)": "-9.39"
     },
     {
-      "sr. no.": 5,
+      "sr. no.": 4,
       "company": "INFY",
       "current FII %": 28.45,
       "prev quarter %": 30.27,
       "change (pp)": "-1.82"
     },
     {
-      "sr. no.": 6,
+      "sr. no.": 5,
       "company": "BHARTIARTL",
       "current FII %": 26.51,
       "prev quarter %": 27.79,
       "change (pp)": "-1.28"
     },
     {
-      "sr. no.": 7,
+      "sr. no.": 6,
       "company": "KOTAKBANK",
       "current FII %": 26.4,
       "prev quarter %": 29.36,
       "change (pp)": "-2.96"
     },
     {
+      "sr. no.": 7,
+      "company": "BAJFINANCE",
+      "current FII %": 21.33,
+      "prev quarter %": 21.49,
+      "change (pp)": "-0.16"
+    },
+    {
       "sr. no.": 8,
-      "company": "FEDERALBNK",
-      "current FII %": 26.05,
-      "prev quarter %": 24.94,
-      "change (pp)": "+1.11"
+      "company": "PFC",
+      "current FII %": 19.64,
+      "prev quarter %": 18.33,
+      "change (pp)": "+1.31"
     },
     {
       "sr. no.": 9,
-      "company": "CHOLAFIN",
-      "current FII %": 24.87,
-      "prev quarter %": 26.56,
-      "change (pp)": "-1.69"
+      "company": "LT",
+      "current FII %": 18.78,
+      "prev quarter %": 20.06,
+      "change (pp)": "-1.28"
     },
     {
       "sr. no.": 10,
-      "company": "COFORGE",
-      "current FII %": 24.66,
-      "prev quarter %": 30.66,
-      "change (pp)": "-6.0"
+      "company": "RELIANCE",
+      "current FII %": 18.67,
+      "prev quarter %": 19.09,
+      "change (pp)": "-0.42"
     }
   ],
   "failed_symbols": [
     "TATAMOTORS",
+    "AXISBANK",
     "POWERGRID",
     "M&M",
-    "ULTRACEMCO",
     "ASIANPAINT",
+    "BAJAJFINSV",
     "WIPRO",
-    "NESTLEIND",
     "TECHM",
+    "BAJAJ-AUTO",
     "INDUSINDBK",
-    "BANKBARODA",
     "PNB",
+    "FEDERALBNK",
     "IDFCFIRSTB",
     "CANBK",
-    "UNIONBANK",
+    "CHOLAFIN",
     "MUTHOOTFIN",
     "RECLTD",
-    "PFC",
+    "HDFCAMC",
     "SBICARD",
     "SHRIRAMFIN",
     "LICHSGFIN",
-    "PNBHOUSING",
     "LTIM",
+    "COFORGE",
     "PERSISTENT",
     "MPHASIS",
-    "KPITTECH",
+    "LTTS",
     "OFSS",
-    "CYIENT",
     "TATAELXSI",
     "BIRLASOFT",
-    "HEROMOTOCO",
     "TANLA",
+    "HEROMOTOCO",
     "EICHERMOT",
-    "TVSMOTOR",
     "ASHOKLEY",
+    "TVSMOTOR",
     "MOTHERSON",
     "BOSCHLTD",
     "APOLLOTYRE",
