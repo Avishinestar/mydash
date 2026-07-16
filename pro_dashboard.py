@@ -27,6 +27,26 @@ def get_nifty500_tickers():
     # Fallback to hardcoded list if NSE fetch fails
     return NIFTY_500
 
+@st.cache_data(ttl=86400, show_spinner=False)  # refresh once a day
+def get_top2000_tickers():
+    """Fetch all NSE active equities, approximating Top 2000 stocks."""
+    try:
+        import os
+        import json
+        if os.path.exists("top_2000_tickers.json"):
+            with open("top_2000_tickers.json", "r") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    try:
+        if _NSE_AVAILABLE:
+            symbols = nse_eq_symbols()
+            if symbols and len(symbols) > 100:
+                return [s.strip() + ".NS" for s in symbols]
+    except Exception:
+        pass
+    return NIFTY_500
+
 st.set_page_config(page_title="Advanced Investor Dashboard", layout="wide")
 
 NIFTY_50 = [
@@ -388,7 +408,7 @@ def get_stock_data_weekly():
 def get_dhamala_stocks(tickers):
     import requests
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    data = yf.download(tickers, period="5d", progress=False)
+    data = yf.download(tickers, period="5d", progress=False, threads=2)
     if data.empty:
         return []
     
@@ -399,8 +419,9 @@ def get_dhamala_stocks(tickers):
         try:
             col_data = closes[ticker].dropna()
             if len(col_data) >= 2:
-                prev_close = col_data.iloc[-2]
                 curr_close = col_data.iloc[-1]
+                prev_close = col_data.iloc[-2]
+                
                 pct_change = (curr_close / prev_close) - 1
                 
                 if pct_change >= 0.03:
@@ -413,19 +434,48 @@ def get_dhamala_stocks(tickers):
         symbol_no_ns = ticker.replace(".NS", "")
         
         try:
-            info = yf.Ticker(ticker).info
+            info = yf.Ticker(ticker).fast_info
             mcap = info.get('marketCap', 0)
             if mcap:
                 mcap_cr = mcap / 10000000
-                if mcap_cr >= 20000: cap_category = 'Large Cap'
-                elif mcap_cr >= 5000: cap_category = 'Mid Cap'
-                else: cap_category = 'Small Cap'
+                if mcap_cr >= 80000: cap_category = 'Large Cap'
+                elif mcap_cr >= 25000: cap_category = 'Mid Cap'
+                elif mcap_cr >= 5000: cap_category = 'Small Cap'
+                else: cap_category = 'Micro Cap'
             else:
-                cap_category = 'Small Cap'
+                cap_category = 'Micro Cap'
         except:
-            cap_category = 'Small Cap'
+            cap_category = 'Micro Cap'
             
+        if cap_category == 'Micro Cap':
+            return None
+
         cand["category"] = cap_category
+        
+        try:
+            hist = yf.download(ticker, period="1y", progress=False)
+            if not hist.empty and len(hist) >= 14:
+                import ta
+                import pandas as pd
+                close_series = hist['Close'].iloc[:, 0] if isinstance(hist['Close'], pd.DataFrame) else hist['Close']
+                rsi_d = ta.momentum.RSIIndicator(close_series, window=14).rsi().iloc[-1]
+                curr_price = close_series.iloc[-1]
+                
+                dma_200 = close_series.rolling(window=200).mean().iloc[-1] if len(hist) >= 200 else None
+                
+                hist_w = close_series.resample('W').last()
+                rsi_w = ta.momentum.RSIIndicator(hist_w, window=14).rsi().iloc[-1] if len(hist_w) >= 14 else None
+                
+                flags = []
+                if pd.notna(rsi_d) and rsi_d < 40: flags.append("Daily RSI < 40")
+                if pd.notna(rsi_w) and rsi_w < 40: flags.append("Weekly RSI < 40")
+                if pd.notna(dma_200) and pd.notna(curr_price) and curr_price < dma_200: flags.append("Price < 200 DMA")
+                
+                cand["tech_flag_str"] = " | ".join(flags) if flags else ""
+            else:
+                cand["tech_flag_str"] = ""
+        except Exception:
+            cand["tech_flag_str"] = ""
         
         news_url = f"https://news-headlines.tradingview.com/headlines/?category=stock&symbol=NSE:{symbol_no_ns}"
         try:
@@ -448,17 +498,13 @@ def get_dhamala_stocks(tickers):
     with ThreadPoolExecutor(max_workers=20) as executor:
         futs = [executor.submit(fetch_data, c) for c in candidates]
         for f in as_completed(futs):
-            fetched.append(f.result())
+            res = f.result()
+            if res is not None:
+                fetched.append(res)
             
     fetched.sort(key=lambda x: x["change_pct"], reverse=True)
     
-    results = []
-    counts = {'Large Cap': 0, 'Mid Cap': 0, 'Small Cap': 0}
-    for r in fetched:
-        cat = r["category"]
-        if counts[cat] < 25:
-            results.append(r)
-            counts[cat] += 1
+    results = fetched
 
     return results
 
@@ -1195,7 +1241,8 @@ def get_top_10_overall_stocks():
 @st.cache_data(ttl=300, show_spinner=False)
 def get_nifty_sensex_levels():
     import time as _time
-    res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A"}
+    import ta
+    res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A", "NIFTY 50 RAW": None, "NIFTY 50 DIFF": None}
 
     for ticker, key in [("^NSEI", "NIFTY 50"), ("^BSESN", "SENSEX"), ("^INDIAVIX", "INDIA VIX")]:
         for attempt in range(2):
@@ -1205,11 +1252,28 @@ def get_nifty_sensex_levels():
                     continue
                 df_t = df_t.dropna(subset=["Close"])
                 current = float(df_t["Close"].iloc[-1])
-                res[key] = f"{current:,.2f}"
+                diff_str = ""
+                diff_val = None
+                if len(df_t) >= 2:
+                    diff_val = current - float(df_t["Close"].iloc[-2])
+                    sign = "+" if diff_val >= 0 else ""
+                    color = "#00e676" if diff_val >= 0 else "#ff5252"
+                    diff_str = f" <span style='font-size:14px;color:{color};'>({sign}{diff_val:,.2f})</span>"
+                
+                res[key] = f"{current:,.2f}{diff_str}"
                 if key == "NIFTY 50":
+                    res["NIFTY 50 RAW"] = current
+                    res["NIFTY 50 DIFF"] = diff_val
                     rsi_s = ta.momentum.RSIIndicator(df_t["Close"], window=14).rsi().dropna()
                     if not rsi_s.empty:
-                        res["NIFTY RSI"] = f"{rsi_s.iloc[-1]:.1f}"
+                        rsi_current = rsi_s.iloc[-1]
+                        rsi_diff_str = ""
+                        if len(rsi_s) >= 2:
+                            rsi_diff = rsi_current - rsi_s.iloc[-2]
+                            r_sign = "+" if rsi_diff >= 0 else ""
+                            r_color = "#00e676" if rsi_diff >= 0 else "#ff5252"
+                            rsi_diff_str = f" <span style='font-size:14px;color:{r_color};'>({r_sign}{rsi_diff:,.2f})</span>"
+                        res["NIFTY RSI"] = f"{rsi_current:.1f}{rsi_diff_str}"
                     ath = float(df_t["High"].max())
                     res["NIFTY % to ATH"] = f"{((current / ath) - 1) * 100:.2f}%"
                 break
@@ -2366,6 +2430,16 @@ def run_dashboard():
             nifty_ath  = levels.get("NIFTY % to ATH", "N/A")
             _pe        = get_nifty50_pe()
             nifty_pe   = f"{_pe:.2f}" if _pe else "N/A"
+            if _pe and levels.get("NIFTY 50 RAW") and levels.get("NIFTY 50 DIFF") is not None:
+                current_p = levels["NIFTY 50 RAW"]
+                diff_p = levels["NIFTY 50 DIFF"]
+                prev_p = current_p - diff_p
+                E = current_p / _pe
+                prev_pe = prev_p / E if E else _pe
+                pe_diff = _pe - prev_pe
+                sign = "+" if pe_diff >= 0 else ""
+                color = "#00e676" if pe_diff >= 0 else "#ff5252"
+                nifty_pe += f" <span style='font-size:14px;color:{color};'>({sign}{pe_diff:.2f})</span>"
             
             gift_price, gift_change = get_gift_nifty_data()
             if gift_price is not None:
@@ -2967,29 +3041,36 @@ def run_dashboard():
 
     # --- TAB 10: Dhamala ---
     with tab10:
-        st.header("🚀 Dhamala: 3%+ Nifty 500 Movers & Latest News")
-        st.write("Fetching Nifty 500 stocks up 3% or more today, grouped by market cap...")
+        st.header("🚀 Dhamala: 3%+ Top 2000 Movers & Latest News")
+        st.write("Fetching Top 2000 stocks up 3% or more today, grouped by market cap...")
         
         @st.fragment(run_every="30m")
         def render_dhamala_fragment():
-            with _spinner("Analyzing Nifty 500 and fetching news from TradingView..."):
-                tickers = get_nifty500_tickers()
+            with _spinner("Analyzing Top 2000 stocks and fetching news from TradingView..."):
+                tickers = get_top2000_tickers()
                 dhamala_results = get_dhamala_stocks(tickers)
                 
                 if not dhamala_results:
-                    st.info("No Nifty 500 stocks are up 3% or more today, or data is unavailable.")
+                    st.info("No Top 2000 stocks were up 3% or more today, or data is unavailable.")
                 else:
                     dhamala_large = [r for r in dhamala_results if r['category'] == 'Large Cap']
                     dhamala_mid = [r for r in dhamala_results if r['category'] == 'Mid Cap']
                     dhamala_small = [r for r in dhamala_results if r['category'] == 'Small Cap']
                     
-                    tab_large, tab_mid, tab_small = st.tabs(["Large Cap", "Mid Cap", "Small Cap"])
+                    st.write(f"**Found {len(dhamala_results)} stocks up 3% or more today.**")
+                    tab_large, tab_mid, tab_small = st.tabs([f"Large Cap ({len(dhamala_large)})", f"Mid Cap ({len(dhamala_mid)})", f"Small Cap ({len(dhamala_small)})"])
                     
                     with tab_large:
                         if not dhamala_large:
                             st.write("No Large Cap stocks up 3% or more today.")
                         for res in dhamala_large:
                             st.subheader(f"📈 {res['symbol']} — Up {res['change_pct']:.2f}%")
+                            symbol_no_ns = res['symbol'].replace('.NS', '')
+                            tv_link = f"https://in.tradingview.com/chart/?symbol=NSE:{symbol_no_ns}"
+                            screener_link = f"https://www.screener.in/company/{symbol_no_ns}/consolidated/"
+                            st.markdown(f"[View on TradingView]({tv_link}) | [View on Screener.in]({screener_link})")
+                            if res.get('tech_flag_str'):
+                                st.markdown(f"<span style='background-color:red;color:white;padding:2px 6px;border-radius:4px;font-size:0.85em;font-weight:bold;'>⚠️ {res['tech_flag_str']}</span>", unsafe_allow_html=True)
                             if res['news']:
                                 for n in res['news']:
                                     st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
@@ -3002,6 +3083,12 @@ def run_dashboard():
                             st.write("No Mid Cap stocks up 3% or more today.")
                         for res in dhamala_mid:
                             st.subheader(f"📈 {res['symbol']} — Up {res['change_pct']:.2f}%")
+                            symbol_no_ns = res['symbol'].replace('.NS', '')
+                            tv_link = f"https://in.tradingview.com/chart/?symbol=NSE:{symbol_no_ns}"
+                            screener_link = f"https://www.screener.in/company/{symbol_no_ns}/consolidated/"
+                            st.markdown(f"[View on TradingView]({tv_link}) | [View on Screener.in]({screener_link})")
+                            if res.get('tech_flag_str'):
+                                st.markdown(f"<span style='background-color:red;color:white;padding:2px 6px;border-radius:4px;font-size:0.85em;font-weight:bold;'>⚠️ {res['tech_flag_str']}</span>", unsafe_allow_html=True)
                             if res['news']:
                                 for n in res['news']:
                                     st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
@@ -3014,6 +3101,12 @@ def run_dashboard():
                             st.write("No Small Cap stocks up 3% or more today.")
                         for res in dhamala_small:
                             st.subheader(f"📈 {res['symbol']} — Up {res['change_pct']:.2f}%")
+                            symbol_no_ns = res['symbol'].replace('.NS', '')
+                            tv_link = f"https://in.tradingview.com/chart/?symbol=NSE:{symbol_no_ns}"
+                            screener_link = f"https://www.screener.in/company/{symbol_no_ns}/consolidated/"
+                            st.markdown(f"[View on TradingView]({tv_link}) | [View on Screener.in]({screener_link})")
+                            if res.get('tech_flag_str'):
+                                st.markdown(f"<span style='background-color:red;color:white;padding:2px 6px;border-radius:4px;font-size:0.85em;font-weight:bold;'>⚠️ {res['tech_flag_str']}</span>", unsafe_allow_html=True)
                             if res['news']:
                                 for n in res['news']:
                                     st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
