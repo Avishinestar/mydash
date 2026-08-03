@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-31 06:05 UTC",
+  "fetched_at": "2026-08-03 06:12 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -19,90 +19,97 @@
     },
     {
       "sr. no.": 3,
-      "company": "AXISBANK",
-      "current FII %": 39.91,
-      "prev quarter %": 42.04,
-      "change (pp)": "-2.13"
-    },
-    {
-      "sr. no.": 4,
-      "company": "IDFCFIRSTB",
-      "current FII %": 36.1,
-      "prev quarter %": 36.52,
-      "change (pp)": "-0.42"
-    },
-    {
-      "sr. no.": 5,
-      "company": "M&M",
-      "current FII %": 34.89,
-      "prev quarter %": 36.23,
-      "change (pp)": "-1.34"
-    },
-    {
-      "sr. no.": 6,
       "company": "ITC",
       "current FII %": 34.23,
       "prev quarter %": 34.83,
       "change (pp)": "-0.6"
     },
     {
-      "sr. no.": 7,
+      "sr. no.": 4,
       "company": "ICICIBANK",
       "current FII %": 33.79,
       "prev quarter %": 34.48,
       "change (pp)": "-0.69"
     },
     {
-      "sr. no.": 8,
+      "sr. no.": 5,
       "company": "INFY",
       "current FII %": 27.09,
       "prev quarter %": 28.45,
       "change (pp)": "-1.36"
     },
     {
-      "sr. no.": 9,
+      "sr. no.": 6,
       "company": "BHARTIARTL",
       "current FII %": 26.48,
       "prev quarter %": 27.79,
       "change (pp)": "-1.31"
     },
     {
-      "sr. no.": 10,
+      "sr. no.": 7,
       "company": "KOTAKBANK",
       "current FII %": 25.21,
       "prev quarter %": 26.4,
       "change (pp)": "-1.19"
+    },
+    {
+      "sr. no.": 8,
+      "company": "BAJFINANCE",
+      "current FII %": 20.2,
+      "prev quarter %": 21.33,
+      "change (pp)": "-1.13"
+    },
+    {
+      "sr. no.": 9,
+      "company": "LT",
+      "current FII %": 19.13,
+      "prev quarter %": 18.78,
+      "change (pp)": "+0.35"
+    },
+    {
+      "sr. no.": 10,
+      "company": "TECHM",
+      "current FII %": 18.66,
+      "prev quarter %": 18.59,
+      "change (pp)": "+0.07"
     }
   ],
   "failed_symbols": [
     "TATAMOTORS",
+    "AXISBANK",
+    "POWERGRID",
+    "M&M",
     "ULTRACEMCO",
     "BAJAJFINSV",
     "WIPRO",
-    "TECHM",
+    "NESTLEIND",
     "BAJAJ-AUTO",
     "INDUSINDBK",
-    "PNB",
+    "BANKBARODA",
     "FEDERALBNK",
     "CANBK",
+    "IDFCFIRSTB",
     "UNIONBANK",
-    "MUTHOOTFIN",
+    "CHOLAFIN",
+    "PFC",
     "RECLTD",
     "HDFCAMC",
-    "SBICARD",
     "LICHSGFIN",
+    "SBICARD",
     "PNBHOUSING",
     "LTIM",
     "COFORGE",
     "PERSISTENT",
+    "MPHASIS",
     "KPITTECH",
-    "LTTS",
+    "OFSS",
     "TATAELXSI",
     "CYIENT",
     "BIRLASOFT",
     "TANLA",
     "HEROMOTOCO",
     "EICHERMOT",
+    "TVSMOTOR",
     "ASHOKLEY",
     "MOTHERSON",
     "BOSCHLTD",
