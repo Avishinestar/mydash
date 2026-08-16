@@ -224,7 +224,7 @@ def get_volume_split_stocks():
     """
     try:
         live_tickers = get_nifty500_tickers()
-        df = yf.download(live_tickers, period="30d", interval="1d", progress=False)
+        df = yf.download(live_tickers, period="30d", interval="1d", progress=False, threads=2)
         all_results = []
 
         for t in live_tickers:
@@ -341,7 +341,7 @@ def get_sector_data():
     batch_df = pd.DataFrame()
     for attempt in range(2):
         try:
-            batch_df = yf.download(tickers, period="1y", interval="1d", progress=False)
+            batch_df = yf.download(tickers, period="1y", interval="1d", progress=False, threads=2)
             if not batch_df.empty:
                 break
         except Exception:
@@ -379,7 +379,7 @@ def get_sector_data():
             pass
 
     if "NIFTY 50" not in data:
-        get_sector_data.clear()
+        pass # Don't clear cache inside cached function
     return data
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -396,12 +396,12 @@ def fetch_rss_news(feed_url):
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_stock_data_daily():
-    df = yf.download(NIFTY_50, period="1y", interval="1d", progress=False)
+    df = yf.download(NIFTY_50, period="1y", interval="1d", progress=False, threads=2)
     return df
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_stock_data_weekly():
-    df = yf.download(NIFTY_50, period="2y", interval="1wk", progress=False)
+    df = yf.download(NIFTY_50, period="2y", interval="1wk", progress=False, threads=2)
     return df
 
 @st.cache_data(ttl=1790, show_spinner=False)
@@ -514,7 +514,7 @@ def get_nifty500_weekly_rsi_scan():
     Single 2Y daily download — resampled to weekly for RSI, used directly for 200-DMA."""
     tickers = get_nifty500_tickers()
     # One download instead of two: 2Y daily covers both weekly RSI and 200-DMA needs
-    daily_df = yf.download(tickers, period="2y", interval="1d", progress=False)
+    daily_df = yf.download(tickers, period="2y", interval="1d", progress=False, threads=2)
     candidates = []
     for t in tickers:
         try:
@@ -906,7 +906,7 @@ def get_global_markets_data():
     results = []
     tickers = list(GLOBAL_MARKETS.keys())
     try:
-        df = yf.download(tickers, period="max", interval="1d", progress=False)
+        df = yf.download(tickers, period="5y", interval="1d", progress=False, threads=2)
         for t in tickers:
             try:
                 if isinstance(df.columns, pd.MultiIndex):
@@ -970,7 +970,7 @@ def get_sector_performers(sector_name):
     
     tickers = SECTOR_CONSTITUENTS[sector_name]
     try:
-        df = yf.download(tickers, period="1y", interval="1d", progress=False)
+        df = yf.download(tickers, period="1y", interval="1d", progress=False, threads=2)
         results = []
         for t in tickers:
             try:
@@ -1033,7 +1033,7 @@ def get_range_breakout_stocks():
     ticker_to_sector = {t: s for s, tickers in SECTOR_CONSTITUENTS.items() for t in tickers}
 
     try:
-        df = yf.download(all_tickers, period="1y", interval="1d", progress=False)
+        df = yf.download(all_tickers, period="1y", interval="1d", progress=False, threads=2)
         results = []
 
         for t in all_tickers:
@@ -1184,7 +1184,7 @@ def get_range_breakout_stocks():
 def get_top_10_overall_stocks():
     all_tickers = list(set([ticker for constituents in SECTOR_CONSTITUENTS.values() for ticker in constituents]))
     try:
-        df = yf.download(all_tickers, period="1y", interval="1d", progress=False)
+        df = yf.download(all_tickers, period="1y", interval="1d", progress=False, threads=2)
         results = []
         for t in all_tickers:
             try:
@@ -1281,7 +1281,7 @@ def get_nifty_sensex_levels():
                 pass
 
     if res["NIFTY 50"] == "N/A":
-        get_nifty_sensex_levels.clear()
+        pass # Don't clear cache inside cached function
     return res
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -1829,7 +1829,7 @@ def get_market_breadth():
         "high_stocks": [], "low_stocks": [],
     }
     try:
-        df = yf.download(tickers, period="1y", interval="1d", progress=False)
+        df = yf.download(tickers, period="1y", interval="1d", progress=False, threads=2)
         for t in tickers:
             try:
                 if isinstance(df.columns, pd.MultiIndex):

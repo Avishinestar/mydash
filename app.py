@@ -131,7 +131,10 @@ def sector_alpha(data):
 # ================= FII/DII =================
 def get_fii_dii():
     try:
-        tables = pd.read_html("https://www.moneycontrol.com/stocks/marketstats/fii_dii_activity/index.php")
+        import requests
+        url = "https://www.moneycontrol.com/stocks/marketstats/fii_dii_activity/index.php"
+        html = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5).text
+        tables = pd.read_html(html)
         df = tables[0]
         latest = df.iloc[0]
         return latest[3], latest[6]
@@ -184,7 +187,7 @@ st.title("📊 PRO MARKET DASHBOARD")
 def get_nifty_sensex():
     res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A"}
     try:
-        df = yf.download(["^NSEI", "^BSESN", "^INDIAVIX"], period="max", interval="1d", progress=False)
+        df = yf.download(["^NSEI", "^BSESN", "^INDIAVIX"], period="5y", interval="1d", progress=False)
         for name, ticker in [("NIFTY 50", "^NSEI"), ("SENSEX", "^BSESN"), ("INDIA VIX", "^INDIAVIX")]:
             try:
                 if isinstance(df.columns, pd.MultiIndex):
@@ -221,7 +224,7 @@ def get_nifty_sensex():
         pass
         
     if res["NIFTY 50"] == "N/A":
-        get_nifty_sensex.clear()
+        pass # Cache clearing inside a cached function can cause Streamlit to crash
         
     return res
 
@@ -234,7 +237,6 @@ def get_fiidii():
         fii_net = float(df[df["category"] == "FII/FPI"]["netValue"].iloc[0])
         return {"FII": fii_net, "DII": dii_net}
     except Exception:
-        get_fiidii.clear()
         return {"FII": None, "DII": None}
 
 levels = get_nifty_sensex()

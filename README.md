@@ -1,3 +1,13 @@
+---
+title: Advanced Investor Dashboard
+emoji: 📈
+colorFrom: blue
+colorTo: indigo
+sdk: streamlit
+app_file: pro_dashboard.py
+pinned: false
+---
+
 # Advanced Investor Dashboard
 
 A Streamlit dashboard for Indian stock market analysis — built for active investors tracking Nifty 50, Nifty 500, sector trends, technical setups, and global markets.
