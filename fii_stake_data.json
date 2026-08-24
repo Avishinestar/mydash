@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-08-21 03:45 UTC",
+  "fetched_at": "2026-08-24 03:47 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -47,10 +47,10 @@
     },
     {
       "sr. no.": 7,
-      "company": "HDFCAMC",
-      "current FII %": 24.1,
-      "prev quarter %": 24.45,
-      "change (pp)": "-0.35"
+      "company": "PFC",
+      "current FII %": 20.54,
+      "prev quarter %": 19.64,
+      "change (pp)": "+0.9"
     },
     {
       "sr. no.": 8,
@@ -61,17 +61,17 @@
     },
     {
       "sr. no.": 9,
-      "company": "MPHASIS",
-      "current FII %": 19.5,
-      "prev quarter %": 19.51,
-      "change (pp)": "-0.01"
-    },
-    {
-      "sr. no.": 10,
       "company": "LT",
       "current FII %": 19.13,
       "prev quarter %": 18.78,
       "change (pp)": "+0.35"
+    },
+    {
+      "sr. no.": 10,
+      "company": "RELIANCE",
+      "current FII %": 17.19,
+      "prev quarter %": 18.67,
+      "change (pp)": "-1.48"
     }
   ],
   "failed_symbols": [
@@ -85,21 +85,22 @@
     "TECHM",
     "BAJAJ-AUTO",
     "INDUSINDBK",
-    "PNB",
-    "IDFCFIRSTB",
+    "BANKBARODA",
     "FEDERALBNK",
+    "IDFCFIRSTB",
     "CANBK",
     "CHOLAFIN",
     "MUTHOOTFIN",
     "RECLTD",
-    "PFC",
+    "HDFCAMC",
     "SBICARD",
     "SHRIRAMFIN",
     "LICHSGFIN",
+    "PNBHOUSING",
     "LTIM",
     "COFORGE",
     "PERSISTENT",
-    "KPITTECH",
+    "MPHASIS",
     "LTTS",
     "OFSS",
     "TATAELXSI",
