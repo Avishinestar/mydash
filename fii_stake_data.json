@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-09-07 07:45 UTC",
+  "fetched_at": "2026-09-08 07:38 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -12,24 +12,24 @@
     },
     {
       "sr. no.": 2,
-      "company": "IDFCFIRSTB",
-      "current FII %": 36.1,
-      "prev quarter %": 36.52,
-      "change (pp)": "-0.42"
-    },
-    {
-      "sr. no.": 3,
       "company": "ITC",
       "current FII %": 34.23,
       "prev quarter %": 34.83,
       "change (pp)": "-0.6"
     },
     {
-      "sr. no.": 4,
+      "sr. no.": 3,
       "company": "ICICIBANK",
       "current FII %": 33.79,
       "prev quarter %": 34.48,
       "change (pp)": "-0.69"
+    },
+    {
+      "sr. no.": 4,
+      "company": "FEDERALBNK",
+      "current FII %": 27.71,
+      "prev quarter %": 26.05,
+      "change (pp)": "+1.66"
     },
     {
       "sr. no.": 5,
@@ -54,17 +54,17 @@
     },
     {
       "sr. no.": 8,
-      "company": "POWERGRID",
-      "current FII %": 24.33,
-      "prev quarter %": 25.02,
-      "change (pp)": "-0.69"
+      "company": "CHOLAFIN",
+      "current FII %": 24.46,
+      "prev quarter %": 24.87,
+      "change (pp)": "-0.41"
     },
     {
       "sr. no.": 9,
-      "company": "LICHSGFIN",
-      "current FII %": 21.47,
-      "prev quarter %": 21.39,
-      "change (pp)": "+0.08"
+      "company": "HDFCAMC",
+      "current FII %": 24.1,
+      "prev quarter %": 24.45,
+      "change (pp)": "-0.35"
     },
     {
       "sr. no.": 10,
@@ -76,8 +76,8 @@
   ],
   "failed_symbols": [
     "TATAMOTORS",
-    "NTPC",
     "AXISBANK",
+    "POWERGRID",
     "M&M",
     "ULTRACEMCO",
     "ASIANPAINT",
@@ -87,32 +87,33 @@
     "INDUSINDBK",
     "BANKBARODA",
     "PNB",
-    "FEDERALBNK",
+    "IDFCFIRSTB",
     "CANBK",
     "UNIONBANK",
-    "CHOLAFIN",
+    "MUTHOOTFIN",
     "RECLTD",
     "PFC",
-    "HDFCAMC",
-    "SHRIRAMFIN",
     "SBICARD",
+    "SHRIRAMFIN",
+    "LICHSGFIN",
     "PNBHOUSING",
-    "COFORGE",
     "LTIM",
+    "COFORGE",
     "PERSISTENT",
+    "MPHASIS",
     "KPITTECH",
     "LTTS",
-    "OFSS",
+    "TATAELXSI",
     "CYIENT",
     "BIRLASOFT",
     "TANLA",
-    "EICHERMOT",
     "HEROMOTOCO",
+    "EICHERMOT",
     "TVSMOTOR",
     "ASHOKLEY",
-    "APOLLOTYRE",
     "MOTHERSON",
     "BOSCHLTD",
+    "APOLLOTYRE",
     "MRF",
     "BALKRISIND",
     "EXIDEIND",
