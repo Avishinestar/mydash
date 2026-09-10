@@ -47,6 +47,61 @@ def get_top2000_tickers():
         pass
     return NIFTY_500
 
+@st.cache_data(ttl=86400, show_spinner=False)  # refresh once a day
+def get_usa_tickers_data():
+    """Fetch Russell 1000 and Nasdaq 100 constituents with index mapping."""
+    import os
+    import json
+    if os.path.exists("usa_tickers.json"):
+        try:
+            with open("usa_tickers.json", "r") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    # Fallback to scraping Wikipedia
+    try:
+        import requests
+        import io
+        import pandas as pd
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        resp_rui = requests.get("https://en.wikipedia.org/wiki/List_of_Russell_1000_companies", headers=headers, timeout=10)
+        tables_rui = pd.read_html(io.StringIO(resp_rui.text))
+        rui_symbols = tables_rui[0]['Symbol'].dropna().astype(str).str.strip().tolist()
+        rui_clean = [s.replace('.', '-') for s in rui_symbols if s and s != 'nan']
+
+        resp_ndx = requests.get("https://en.wikipedia.org/wiki/List_of_NASDAQ-100_companies", headers=headers, timeout=10)
+        tables_ndx = pd.read_html(io.StringIO(resp_ndx.text))
+        ndx_symbols = tables_ndx[0]['Ticker'].dropna().astype(str).str.strip().tolist()
+        ndx_clean = [s.replace('.', '-') for s in ndx_symbols if s and s != 'nan']
+
+        combined = list(dict.fromkeys(rui_clean + ndx_clean))
+        index_map = {}
+        for s in rui_clean:
+            index_map[s] = ["Russell 1000"]
+        for s in ndx_clean:
+            if s in index_map:
+                index_map[s].append("Nasdaq 100")
+            else:
+                index_map[s] = ["Nasdaq 100"]
+
+        result = {
+            "tickers": combined,
+            "russell_1000": rui_clean,
+            "nasdaq_100": ndx_clean,
+            "index_map": index_map
+        }
+        with open("usa_tickers.json", "w") as f:
+            json.dump(result, f, indent=2)
+        return result
+    except Exception:
+        ndx_core = ["AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA", "AVGO", "COST", "NFLX", "AMD", "ADBE", "QCOM", "TXN", "INTC", "AMAT", "HON", "BKNG", "ISRG", "SBUX"]
+        return {
+            "tickers": ndx_core,
+            "russell_1000": ndx_core,
+            "nasdaq_100": ndx_core,
+            "index_map": {t: ["Nasdaq 100", "Russell 1000"] for t in ndx_core}
+        }
+
 st.set_page_config(page_title="Advanced Investor Dashboard", layout="wide")
 
 NIFTY_50 = [
@@ -348,19 +403,34 @@ def get_sector_data():
             pass
 
     # ── Step 2: extract per-ticker series; fall back to individual fetch if missing ──
+    # First, get the common trading days from NIFTY 50 to align dates
+    valid_dates = None
+    if not batch_df.empty and isinstance(batch_df.columns, pd.MultiIndex):
+        try:
+            valid_dates = batch_df.xs('^NSEI', axis=1, level=1).dropna(subset=["Close"]).index
+        except:
+            pass
+
     for ticker, name in name_by_ticker.items():
         df_t = pd.DataFrame()
         try:
             if not batch_df.empty and isinstance(batch_df.columns, pd.MultiIndex):
                 if ticker in batch_df.columns.get_level_values(1):
-                    df_t = batch_df.xs(ticker, axis=1, level=1).dropna(subset=["Close"])
+                    df_t = batch_df.xs(ticker, axis=1, level=1)
+                    if valid_dates is not None:
+                        df_t = df_t.reindex(valid_dates)
+                    df_t = df_t.dropna(subset=["Close"])
         except Exception:
             pass
 
         # Individual fallback if batch missed this ticker
         if len(df_t) < 64:
             try:
-                df_t = yf.Ticker(ticker).history(period="1y").dropna(subset=["Close"])
+                df_t = yf.Ticker(ticker).history(period="1y")
+                if valid_dates is not None:
+                    # Align to valid_dates if available, to avoid missing dates inflating returns
+                    df_t = df_t.reindex(valid_dates)
+                df_t = df_t.dropna(subset=["Close"])
             except Exception:
                 pass
 
@@ -368,12 +438,18 @@ def get_sector_data():
             continue
 
         try:
+            # Check if the last date in df_t matches the last valid date to avoid stale data
+            is_stale = False
+            if valid_dates is not None and len(valid_dates) > 0:
+                if df_t.index[-1] != valid_dates[-1]:
+                    is_stale = True
+
             data[name] = {
-                "Daily":     float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-2])  - 1) * 100,
-                "Weekly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-6])  - 1) * 100,
-                "Monthly":   float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-22]) - 1) * 100,
-                "Quarterly": float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-64]) - 1) * 100,
-                "Yearly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[0])   - 1) * 100,
+                "Daily":     float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-2])  - 1) * 100 if not is_stale and len(df_t) >= 2 else 0.0,
+                "Weekly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-6])  - 1) * 100 if len(df_t) >= 6 else 0.0,
+                "Monthly":   float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-22]) - 1) * 100 if len(df_t) >= 22 else 0.0,
+                "Quarterly": float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-64]) - 1) * 100 if len(df_t) >= 64 else 0.0,
+                "Yearly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[0])   - 1) * 100 if len(df_t) > 0 else 0.0,
             }
         except Exception:
             pass
@@ -507,6 +583,214 @@ def get_dhamala_stocks(tickers):
     results = fetched
 
     return results
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_usa_indices_data():
+    """Fetch live data and technicals for Russell 1000 and Nasdaq 100."""
+    indices = {
+        "Nasdaq 100": {"symbol": "^NDX", "fallback": "QQQ", "name": "Nasdaq 100"},
+        "Russell 1000": {"symbol": "^RUI", "fallback": "IWB", "name": "Russell 1000"}
+    }
+    result = {}
+    for key, cfg in indices.items():
+        try:
+            df = yf.download(cfg["symbol"], period="1y", progress=False)
+            if df.empty or len(df) < 5:
+                df = yf.download(cfg["fallback"], period="1y", progress=False)
+            if not df.empty and len(df) >= 2:
+                close = df['Close'].iloc[:, 0] if isinstance(df['Close'], pd.DataFrame) else df['Close']
+                curr = float(close.iloc[-1])
+                prev = float(close.iloc[-2])
+                chg = curr - prev
+                pct = (chg / prev) * 100
+                rsi = float(ta.momentum.RSIIndicator(close, window=14).rsi().iloc[-1]) if len(close) >= 14 else None
+                dma50 = float(close.rolling(50).mean().iloc[-1]) if len(close) >= 50 else None
+                dma200 = float(close.rolling(200).mean().iloc[-1]) if len(close) >= 200 else None
+                ath = float(close.max())
+                ath_dist = ((curr - ath) / ath) * 100
+                low52 = float(close.min())
+                high52 = ath
+                result[key] = {
+                    "price": curr,
+                    "change": chg,
+                    "change_pct": pct,
+                    "rsi": round(rsi, 1) if rsi is not None else "—",
+                    "dma50": round(dma50, 2) if dma50 is not None else "—",
+                    "dma200": round(dma200, 2) if dma200 is not None else "—",
+                    "ath_dist": round(ath_dist, 2) if ath_dist is not None else "—",
+                    "low52": round(low52, 2),
+                    "high52": round(high52, 2)
+                }
+        except Exception:
+            pass
+    return result
+
+@st.cache_data(ttl=1790, show_spinner=False)
+def get_usa_dhamala_stocks(tickers, index_map=None):
+    """Screen Russell 1000 & Nasdaq 100 stocks up 3%+ today with RSI, DMA & TradingView news."""
+    import requests
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from datetime import datetime
+    
+    if index_map is None:
+        index_map = {}
+        
+    data = yf.download(tickers, period="5d", progress=False, threads=4)
+    if data.empty:
+        return []
+        
+    closes = data['Close']
+    candidates = []
+    
+    for ticker in tickers:
+        try:
+            if isinstance(closes, pd.DataFrame):
+                if ticker not in closes.columns:
+                    continue
+                col_data = closes[ticker].dropna()
+            elif isinstance(closes, pd.Series):
+                col_data = closes.dropna()
+            else:
+                continue
+
+            if len(col_data) >= 2:
+                curr_close = float(col_data.iloc[-1])
+                prev_close = float(col_data.iloc[-2])
+                pct_change = (curr_close / prev_close) - 1
+                if pct_change >= 0.03:
+                    candidates.append({
+                        "symbol": ticker,
+                        "change_pct": pct_change * 100,
+                        "curr_price": curr_close,
+                        "indices": index_map.get(ticker, ["Russell 1000"])
+                    })
+        except Exception:
+            continue
+
+    def fetch_usa_data(cand):
+        ticker = cand["symbol"]
+        try:
+            info = yf.Ticker(ticker).fast_info
+            mcap = info.get('marketCap', 0)
+            ex = info.get('exchange', '')
+        except Exception:
+            mcap = 0
+            ex = ''
+            
+        # Market Cap categorization for US stocks:
+        # Large Cap >= $10B, Mid Cap >= $2B, Small Cap >= $300M, Micro Cap < $300M
+        if mcap and mcap > 0:
+            if mcap >= 10_000_000_000:
+                cap_category = 'Large Cap'
+            elif mcap >= 2_000_000_000:
+                cap_category = 'Mid Cap'
+            elif mcap >= 300_000_000:
+                cap_category = 'Small Cap'
+            else:
+                cap_category = 'Micro Cap'
+        else:
+            # Fallback for established index constituents
+            if "Nasdaq 100" in cand.get("indices", []):
+                cap_category = 'Large Cap'
+            else:
+                cap_category = 'Mid Cap'
+            
+        if cap_category == 'Micro Cap':
+            return None
+            
+        cand["category"] = cap_category
+        cand["market_cap"] = mcap
+        
+        # Determine exchange prefix for TradingView
+        ex_str = str(ex).upper()
+        if any(x in ex_str for x in ['NMS', 'NGM', 'NCM', 'NAS']):
+            tv_ex = 'NASDAQ'
+        elif any(x in ex_str for x in ['NYQ', 'NYSE']):
+            tv_ex = 'NYSE'
+        elif any(x in ex_str for x in ['ASE', 'AMX']):
+            tv_ex = 'AMEX'
+        else:
+            tv_ex = 'NASDAQ'
+        cand["exchange"] = tv_ex
+        
+        # Technicals: RSI & DMA
+        try:
+            hist = yf.download(ticker, period="1y", progress=False)
+            if not hist.empty and len(hist) >= 14:
+                import ta
+                close_series = hist['Close'].iloc[:, 0] if isinstance(hist['Close'], pd.DataFrame) else hist['Close']
+                rsi_d = ta.momentum.RSIIndicator(close_series, window=14).rsi().iloc[-1]
+                curr_price = close_series.iloc[-1]
+                
+                dma_200 = close_series.rolling(window=200).mean().iloc[-1] if len(close_series) >= 200 else None
+                dma_50 = close_series.rolling(window=50).mean().iloc[-1] if len(close_series) >= 50 else None
+                
+                hist_w = close_series.resample('W').last().dropna()
+                rsi_w = ta.momentum.RSIIndicator(hist_w, window=14).rsi().iloc[-1] if len(hist_w) >= 14 else None
+                
+                flags = []
+                if pd.notna(rsi_d) and rsi_d < 40: flags.append("Daily RSI < 40")
+                if pd.notna(rsi_w) and rsi_w < 40: flags.append("Weekly RSI < 40")
+                if pd.notna(dma_200) and pd.notna(curr_price) and curr_price < dma_200: flags.append("Price < 200 DMA")
+                
+                cand["rsi_d"] = round(rsi_d, 1) if pd.notna(rsi_d) else None
+                cand["rsi_w"] = round(rsi_w, 1) if pd.notna(rsi_w) else None
+                cand["dma_50"] = round(dma_50, 2) if pd.notna(dma_50) else None
+                cand["dma_200"] = round(dma_200, 2) if pd.notna(dma_200) else None
+                cand["curr_price"] = round(curr_price, 2) if pd.notna(curr_price) else cand.get("curr_price", 0)
+                cand["tech_flag_str"] = " | ".join(flags) if flags else ""
+            else:
+                cand["tech_flag_str"] = ""
+        except Exception:
+            cand["tech_flag_str"] = ""
+            
+        # Latest 3 news from Tradingview portal
+        news_list = []
+        for ex_try in [tv_ex, 'NASDAQ', 'NYSE']:
+            url = f"https://news-headlines.tradingview.com/headlines/?category=stock&symbol={ex_try}:{ticker.replace('-', '.')}"
+            try:
+                resp = requests.get(url, timeout=4)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data:
+                        for item in data[:3]:
+                            pub = item.get("published", "")
+                            if isinstance(pub, (int, float)):
+                                pub_str = datetime.fromtimestamp(pub).strftime('%Y-%m-%d %H:%M')
+                            else:
+                                pub_str = str(pub)
+                            
+                            # Construct direct link: external link -> storyPath -> symbols news page
+                            item_link = item.get("link")
+                            if not item_link:
+                                story = item.get("storyPath", "")
+                                if story:
+                                    item_link = f"https://www.tradingview.com{story}"
+                                else:
+                                    item_link = f"https://www.tradingview.com/symbols/{ex_try}-{ticker}/news/"
+                                    
+                            news_list.append({
+                                "title": item.get("title", ""),
+                                "link": item_link,
+                                "published": pub_str
+                            })
+                        cand["exchange"] = ex_try
+                        break
+            except Exception:
+                pass
+        cand["news"] = news_list
+        return cand
+
+    fetched = []
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        futs = [executor.submit(fetch_usa_data, c) for c in candidates]
+        for f in as_completed(futs):
+            res = f.result()
+            if res is not None:
+                fetched.append(res)
+                
+    fetched.sort(key=lambda x: x["change_pct"], reverse=True)
+    return fetched
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_nifty500_weekly_rsi_scan():
@@ -2398,9 +2682,10 @@ def run_dashboard():
             st.cache_data.clear()
             st.rerun()
 
-    tab1, tab10, tab2, tab4, tab5, tab6, tab3, tab7, tab8, tab9 = st.tabs([
+    tab1, tab10, tab_usa, tab2, tab4, tab5, tab6, tab3, tab7, tab8, tab9 = st.tabs([
         "🏭  Sectors",
         "🚀 Dhamala",
+        "🇺🇸 USA",
         "📊  Scanners",
         "📰  News & Macro",
         "🌐  Global Markets",
@@ -3115,6 +3400,150 @@ def run_dashboard():
                             st.divider()
 
         render_dhamala_fragment()
+
+
+    # --- TAB USA: Russell 1000 & Nasdaq 100 Movers ---
+    with tab_usa:
+        st.header("🇺🇸 USA: Russell 1000 & Nasdaq 100 (3%+ Movers)")
+        st.write("Tracking Russell 1000 and Nasdaq 100 indices and screening stocks up 3% or more today with TradingView news, RSI & DMA levels.")
+        
+        @st.fragment(run_every="30m")
+        def render_usa_fragment():
+            # 1. Index Tracking Header Cards
+            indices_data = get_usa_indices_data()
+            if indices_data:
+                col_ndx, col_rui = st.columns(2)
+                with col_ndx:
+                    ndx = indices_data.get("Nasdaq 100")
+                    if ndx:
+                        sign = "+" if ndx["change"] >= 0 else ""
+                        chg_color = "#4ade80" if ndx["change"] >= 0 else "#f87171"
+                        st.markdown(f"""
+                        <div style="background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95)); border-radius: 8px; padding: 14px 18px; border: 1px solid #334155; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 1.1em; font-weight: 700; color: #38bdf8;">🌐 Nasdaq 100 (^NDX)</span>
+                                <span style="font-size: 1.2em; font-weight: 800; color: {chg_color};">
+                                    {ndx['price']:,.2f} ({sign}{ndx['change_pct']:.2f}%)
+                                </span>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.85em; color: #94a3b8; display: flex; gap: 16px; flex-wrap: wrap;">
+                                <span><b>Daily RSI:</b> {ndx['rsi']}</span>
+                                <span><b>50-DMA:</b> {ndx['dma50']}</span>
+                                <span><b>200-DMA:</b> {ndx['dma200']}</span>
+                                <span><b>From ATH:</b> {ndx['ath_dist']}%</span>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                with col_rui:
+                    rui = indices_data.get("Russell 1000")
+                    if rui:
+                        sign = "+" if rui["change"] >= 0 else ""
+                        chg_color = "#4ade80" if rui["change"] >= 0 else "#f87171"
+                        st.markdown(f"""
+                        <div style="background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95)); border-radius: 8px; padding: 14px 18px; border: 1px solid #334155; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 1.1em; font-weight: 700; color: #a78bfa;">🇺🇸 Russell 1000 (^RUI)</span>
+                                <span style="font-size: 1.2em; font-weight: 800; color: {chg_color};">
+                                    {rui['price']:,.2f} ({sign}{rui['change_pct']:.2f}%)
+                                </span>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.85em; color: #94a3b8; display: flex; gap: 16px; flex-wrap: wrap;">
+                                <span><b>Daily RSI:</b> {rui['rsi']}</span>
+                                <span><b>50-DMA:</b> {rui['dma50']}</span>
+                                <span><b>200-DMA:</b> {rui['dma200']}</span>
+                                <span><b>From ATH:</b> {rui['ath_dist']}%</span>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+            # 2. Index Filter Selector
+            usa_raw = get_usa_tickers_data()
+            all_tickers = usa_raw.get("tickers", [])
+            index_map = usa_raw.get("index_map", {})
+            rui_list = usa_raw.get("russell_1000", [])
+            ndx_list = usa_raw.get("nasdaq_100", [])
+
+            col_sel, _ = st.columns([6, 4])
+            with col_sel:
+                filter_choice = st.radio(
+                    "Track Index Constituents:",
+                    [f"All US Stocks ({len(all_tickers)})", f"Nasdaq 100 ({len(ndx_list)})", f"Russell 1000 ({len(rui_list)})"],
+                    horizontal=True
+                )
+
+            if "Nasdaq 100" in filter_choice:
+                selected_tickers = ndx_list
+            elif "Russell 1000" in filter_choice:
+                selected_tickers = rui_list
+            else:
+                selected_tickers = all_tickers
+
+            with _spinner("Analyzing US stocks (Russell 1000 & Nasdaq 100) and fetching news from TradingView..."):
+                usa_results = get_usa_dhamala_stocks(selected_tickers, index_map)
+                
+                if not usa_results:
+                    st.info("No stocks were up 3% or more today in the selected US universe, or market data is unavailable.")
+                else:
+                    usa_large = [r for r in usa_results if r['category'] == 'Large Cap']
+                    usa_mid   = [r for r in usa_results if r['category'] == 'Mid Cap']
+                    usa_small = [r for r in usa_results if r['category'] == 'Small Cap']
+                    
+                    st.write(f"**Found {len(usa_results)} stocks up 3% or more today.** (Universe: {len(selected_tickers)} stocks)")
+                    tab_u_large, tab_u_mid, tab_u_small = st.tabs([
+                        f"Large Cap ({len(usa_large)})",
+                        f"Mid Cap ({len(usa_mid)})",
+                        f"Small Cap ({len(usa_small)})"
+                    ])
+                    
+                    def render_usa_cards(stock_list, cap_label):
+                        if not stock_list:
+                            st.write(f"No {cap_label} stocks up 3% or more today.")
+                            return
+                        for res in stock_list:
+                            sym = res['symbol']
+                            ex = res.get('exchange', 'NASDAQ')
+                            st.subheader(f"📈 {sym} — Up {res['change_pct']:.2f}% (${res.get('curr_price', 0):.2f})")
+                            
+                            tv_link = f"https://www.tradingview.com/chart/?symbol={ex}:{sym}"
+                            finviz_link = f"https://finviz.com/quote.ashx?t={sym}"
+                            yahoo_link = f"https://finance.yahoo.com/quote/{sym}"
+                            indices_badges = " &bull; ".join(res.get("indices", []))
+                            
+                            st.markdown(f"**Tracked In:** `{indices_badges}` &nbsp;|&nbsp; [View on TradingView]({tv_link}) | [View on Finviz]({finviz_link}) | [View on Yahoo Finance]({yahoo_link})")
+                            
+                            # Technical Indicators & Levels Display
+                            tech_info_parts = []
+                            if res.get('rsi_d') is not None:
+                                tech_info_parts.append(f"**Daily RSI (14):** `{res['rsi_d']}`")
+                            if res.get('rsi_w') is not None:
+                                tech_info_parts.append(f"**Weekly RSI (14):** `{res['rsi_w']}`")
+                            if res.get('dma_50') is not None:
+                                tech_info_parts.append(f"**50-DMA:** `${res['dma_50']}`")
+                            if res.get('dma_200') is not None:
+                                tech_info_parts.append(f"**200-DMA:** `${res['dma_200']}`")
+                                
+                            if tech_info_parts:
+                                st.markdown(" &nbsp;&bull;&nbsp; ".join(tech_info_parts))
+                                
+                            if res.get('tech_flag_str'):
+                                st.markdown(f"<span style='background-color:red;color:white;padding:2px 6px;border-radius:4px;font-size:0.85em;font-weight:bold;'>⚠️ {res['tech_flag_str']}</span>", unsafe_allow_html=True)
+                                
+                            if res.get('news'):
+                                st.markdown("**Latest TradingView News:**")
+                                for n in res['news']:
+                                    st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
+                            else:
+                                st.write("- *No recent TradingView news found.*")
+                            st.divider()
+
+                    with tab_u_large:
+                        render_usa_cards(usa_large, "Large Cap")
+                    with tab_u_mid:
+                        render_usa_cards(usa_mid, "Mid Cap")
+                    with tab_u_small:
+                        render_usa_cards(usa_small, "Small Cap")
+
+        render_usa_fragment()
 
 if __name__ == "__main__":
     run_dashboard()

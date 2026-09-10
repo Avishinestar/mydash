@@ -1,0 +1,5352 @@
+{
+  "tickers": [
+    "MMM",
+    "AOS",
+    "AAON",
+    "ABT",
+    "ABBV",
+    "ACN",
+    "AYI",
+    "ADBE",
+    "ADT",
+    "WMS",
+    "AEIS",
+    "AMD",
+    "ACM",
+    "AVAV",
+    "AES",
+    "AMG",
+    "AFRM",
+    "AFL",
+    "AGCO",
+    "A",
+    "ADC",
+    "AGNC",
+    "APD",
+    "ABNB",
+    "AKAM",
+    "ALK",
+    "ALB",
+    "ACI",
+    "AA",
+    "ARE",
+    "ALGN",
+    "ALLE",
+    "ALGM",
+    "LNT",
+    "ALSN",
+    "ALL",
+    "ALLY",
+    "ALM",
+    "ALNY",
+    "GOOGL",
+    "GOOG",
+    "MO",
+    "AMZN",
+    "AMCR",
+    "DOX",
+    "AMTM",
+    "AS",
+    "AEE",
+    "AAL",
+    "AEP",
+    "AXP",
+    "AFG",
+    "AHR",
+    "AMH",
+    "AIG",
+    "AMT",
+    "AWK",
+    "COLD",
+    "AMP",
+    "AME",
+    "AMGN",
+    "AMKR",
+    "APH",
+    "ADI",
+    "AU",
+    "NLY",
+    "AM",
+    "AR",
+    "AON",
+    "APA",
+    "APG",
+    "APO",
+    "APPF",
+    "AAPL",
+    "APLD",
+    "AIT",
+    "AMAT",
+    "AAOI",
+    "APP",
+    "ATR",
+    "APTV",
+    "ARMK",
+    "ACGL",
+    "ADM",
+    "ARES",
+    "ANET",
+    "AWI",
+    "ARW",
+    "ARWR",
+    "AJG",
+    "ASND",
+    "AIZ",
+    "AGO",
+    "ALAB",
+    "ASTS",
+    "T",
+    "ATI",
+    "TEAM",
+    "ATO",
+    "AUGO",
+    "AUR",
+    "ADSK",
+    "ADP",
+    "AN",
+    "AZO",
+    "AVTR",
+    "AVY",
+    "CAR",
+    "AVT",
+    "AXTA",
+    "AXS",
+    "AXON",
+    "AXSM",
+    "BKR",
+    "BALL",
+    "BAC",
+    "OZK",
+    "BBWI",
+    "BAX",
+    "BDX",
+    "BSY",
+    "BRK-B",
+    "BBY",
+    "BILL",
+    "BIO",
+    "TECH",
+    "BIIB",
+    "BMRN",
+    "BIRK",
+    "BMNR",
+    "BJ",
+    "BLK",
+    "BX",
+    "HRB",
+    "XYZ",
+    "BE",
+    "OWL",
+    "BNY",
+    "BA",
+    "BOKF",
+    "BKNG",
+    "BAH",
+    "BWA",
+    "BSX",
+    "BYD",
+    "BBIO",
+    "BFAM",
+    "BHF",
+    "BMY",
+    "BRX",
+    "AVGO",
+    "BR",
+    "BAM",
+    "BEPC",
+    "BRO",
+    "BF-A",
+    "BF-B",
+    "BRKR",
+    "BC",
+    "BLDR",
+    "BLSH",
+    "BG",
+    "BURL",
+    "BWXT",
+    "BXP",
+    "CHRW",
+    "CACI",
+    "CDNS",
+    "CZR",
+    "CPT",
+    "CPB",
+    "COF",
+    "CAH",
+    "CAI",
+    "CSL",
+    "CG",
+    "KMX",
+    "CCL",
+    "CRS",
+    "CARR",
+    "CVNA",
+    "CASY",
+    "CAT",
+    "CAVA",
+    "CBOE",
+    "CBRE",
+    "CCC",
+    "CDW",
+    "CE",
+    "CELH",
+    "COR",
+    "CNC",
+    "CNP",
+    "CBC",
+    "CF",
+    "CRL",
+    "SCHW",
+    "CHTR",
+    "CHE",
+    "LNG",
+    "CVX",
+    "CHWY",
+    "CHYM",
+    "CMG",
+    "CHH",
+    "CHRD",
+    "CB",
+    "CHD",
+    "CHDN",
+    "CIEN",
+    "CI",
+    "CINF",
+    "CTAS",
+    "CRCL",
+    "CRUS",
+    "CSCO",
+    "C",
+    "CFG",
+    "CLH",
+    "CWEN",
+    "CLF",
+    "CLX",
+    "NET",
+    "CME",
+    "CMS",
+    "CNA",
+    "CNH",
+    "KO",
+    "COKE",
+    "CDE",
+    "CGNX",
+    "CTSH",
+    "COHR",
+    "COIN",
+    "CL",
+    "COLB",
+    "COLM",
+    "CMCSA",
+    "FIX",
+    "CBSH",
+    "CAG",
+    "COP",
+    "ED",
+    "STZ",
+    "CEG",
+    "COO",
+    "CPRT",
+    "CORT",
+    "CNM",
+    "CRBG",
+    "CRWV",
+    "GLW",
+    "CPAY",
+    "CTVA",
+    "CSGP",
+    "COST",
+    "CPNG",
+    "CUZ",
+    "CR",
+    "CACC",
+    "CRDO",
+    "CRH",
+    "CROX",
+    "CRWD",
+    "CCI",
+    "CCK",
+    "CSX",
+    "CUBE",
+    "CMI",
+    "CW",
+    "CVS",
+    "DHI",
+    "DHR",
+    "DRI",
+    "DAR",
+    "DDOG",
+    "DVA",
+    "DECK",
+    "DE",
+    "DAL",
+    "DELL",
+    "DVN",
+    "DXCM",
+    "FANG",
+    "DKS",
+    "DLR",
+    "DOCN",
+    "DDS",
+    "DOCU",
+    "DLB",
+    "DG",
+    "DLTR",
+    "D",
+    "DPZ",
+    "DCI",
+    "DASH",
+    "DOV",
+    "DOW",
+    "DOCS",
+    "DKNG",
+    "DBX",
+    "DTM",
+    "DTE",
+    "DUK",
+    "DUOL",
+    "DD",
+    "BROS",
+    "DY",
+    "DT",
+    "ELF",
+    "EXP",
+    "EWBC",
+    "EGP",
+    "EMN",
+    "ETN",
+    "EBAY",
+    "ECHO",
+    "ECL",
+    "EIX",
+    "EW",
+    "ELAN",
+    "ESTC",
+    "ESI",
+    "ELV",
+    "EME",
+    "EMR",
+    "EHC",
+    "ENPH",
+    "ENSG",
+    "ENTG",
+    "ETR",
+    "NVST",
+    "EOG",
+    "EPAM",
+    "EPR",
+    "EQT",
+    "EFX",
+    "EQIX",
+    "EQH",
+    "ELS",
+    "ESAB",
+    "WTRG",
+    "ESS",
+    "EL",
+    "ETSY",
+    "EEFT",
+    "EVR",
+    "EG",
+    "EVRG",
+    "P",
+    "ES",
+    "ECG",
+    "EXEL",
+    "EXC",
+    "EXLS",
+    "EXE",
+    "EXPE",
+    "EXPD",
+    "EXR",
+    "XOM",
+    "FFIV",
+    "FN",
+    "FDS",
+    "FICO",
+    "FAST",
+    "FRT",
+    "FDX",
+    "FDXF",
+    "FERG",
+    "FRMI",
+    "FNF",
+    "FIS",
+    "FITB",
+    "FIG",
+    "FIGR",
+    "FAF",
+    "FCNCA",
+    "FHB",
+    "FHN",
+    "FR",
+    "FSLR",
+    "FE",
+    "FISV",
+    "FIVE",
+    "FLEX",
+    "FND",
+    "FLS",
+    "FLUT",
+    "FNB",
+    "F",
+    "FPS",
+    "FORM",
+    "FTNT",
+    "FTV",
+    "FBIN",
+    "FOXA",
+    "FOX",
+    "BEN",
+    "FRHC",
+    "FCX",
+    "FRPT",
+    "CFR",
+    "FTAI",
+    "FCN",
+    "GLXY",
+    "GME",
+    "GLPI",
+    "GAP",
+    "GRMN",
+    "IT",
+    "GTES",
+    "GE",
+    "GEHC",
+    "GEV",
+    "GEN",
+    "GNRC",
+    "GD",
+    "GIS",
+    "GM",
+    "G",
+    "GNTX",
+    "GPC",
+    "GFL",
+    "GILD",
+    "GTLB",
+    "GPN",
+    "GFS",
+    "GSAT",
+    "GL",
+    "GMED",
+    "GDDY",
+    "GS",
+    "GGG",
+    "LOPE",
+    "GPK",
+    "GH",
+    "GWRE",
+    "GXO",
+    "HAL",
+    "HALO",
+    "HLNE",
+    "THG",
+    "HIG",
+    "HAS",
+    "HAYW",
+    "HCA",
+    "HR",
+    "DOC",
+    "HL",
+    "HEI-A",
+    "HEI",
+    "JKHY",
+    "HSY",
+    "HPE",
+    "HXL",
+    "DINO",
+    "HLT",
+    "HD",
+    "HONA",
+    "HON",
+    "HRL",
+    "HST",
+    "HLI",
+    "HHH",
+    "HWM",
+    "HPQ",
+    "HUBB",
+    "HUBS",
+    "HUM",
+    "HBAN",
+    "HII",
+    "H",
+    "IBM",
+    "IDA",
+    "IEX",
+    "IDXX",
+    "IESC",
+    "ITW",
+    "ILMN",
+    "INCY",
+    "IR",
+    "INGM",
+    "INGR",
+    "INSM",
+    "PODD",
+    "INTC",
+    "IBKR",
+    "ICE",
+    "IFF",
+    "IP",
+    "INTU",
+    "ISRG",
+    "IVZ",
+    "INVH",
+    "IONS",
+    "IONQ",
+    "IPGP",
+    "IQV",
+    "IREN",
+    "IRDM",
+    "IRM",
+    "ITT",
+    "JBHT",
+    "JBL",
+    "J",
+    "JHX",
+    "JAN",
+    "JAZZ",
+    "JBS",
+    "JEF",
+    "JNJ",
+    "JCI",
+    "JLL",
+    "JPM",
+    "KRMN",
+    "KBR",
+    "KVUE",
+    "KDP",
+    "KEY",
+    "KEYS",
+    "KRC",
+    "KMB",
+    "KIM",
+    "KMI",
+    "KNSL",
+    "KEX",
+    "KKR",
+    "KLAC",
+    "KVYO",
+    "KNX",
+    "KHC",
+    "KTOS",
+    "KR",
+    "KD",
+    "LHX",
+    "LH",
+    "LRCX",
+    "LAMR",
+    "LW",
+    "LSTR",
+    "LVS",
+    "LSCC",
+    "LAZ",
+    "LEA",
+    "LDOS",
+    "LEN",
+    "LEN-B",
+    "LII",
+    "DRS",
+    "LBRDA",
+    "LBRDK",
+    "LBTYA",
+    "LBTYK",
+    "FWONA",
+    "FWONK",
+    "LLYVA",
+    "LLYVK",
+    "LLY",
+    "LECO",
+    "LNC",
+    "LIN",
+    "LINE",
+    "LAD",
+    "LFUS",
+    "LYV",
+    "LKQ",
+    "LOAR",
+    "LMT",
+    "L",
+    "LPX",
+    "LOW",
+    "LPLA",
+    "LULU",
+    "LITE",
+    "LYFT",
+    "LYB",
+    "MTB",
+    "MTSI",
+    "M",
+    "MSGS",
+    "MDGL",
+    "MANH",
+    "CART",
+    "MPC",
+    "MKL",
+    "MKTX",
+    "MAR",
+    "MRSH",
+    "MLM",
+    "MRVL",
+    "MAS",
+    "MTZ",
+    "MA",
+    "MTDR",
+    "MTCH",
+    "MAT",
+    "MKC",
+    "MCD",
+    "MCK",
+    "MDU",
+    "MPT",
+    "MDLN",
+    "MEDP",
+    "MDT",
+    "MRK",
+    "META",
+    "MET",
+    "MTD",
+    "MTG",
+    "MGM",
+    "MCHP",
+    "MU",
+    "MSFT",
+    "MSTR",
+    "MAA",
+    "MFP",
+    "MIDD",
+    "TIGO",
+    "MRP",
+    "MKSI",
+    "MBGL",
+    "MRNA",
+    "MOD",
+    "MHK",
+    "MOH",
+    "TAP",
+    "MDLZ",
+    "MDB",
+    "MPWR",
+    "MNST",
+    "MCO",
+    "MS",
+    "MORN",
+    "MOS",
+    "MSI",
+    "MP",
+    "MSA",
+    "MSM",
+    "MSCI",
+    "MLI",
+    "MUSA",
+    "NDAQ",
+    "NTRA",
+    "NFG",
+    "NTAP",
+    "NFLX",
+    "NBIX",
+    "NYT",
+    "NEU",
+    "NEM",
+    "NWSA",
+    "NWS",
+    "NXST",
+    "NEE",
+    "NXT",
+    "NIQ",
+    "NKE",
+    "NI",
+    "NNN",
+    "NDSN",
+    "NSC",
+    "NTRS",
+    "NOC",
+    "NCLH",
+    "NOV",
+    "NRG",
+    "NU",
+    "NUE",
+    "NTNX",
+    "NVT",
+    "NVDA",
+    "NVR",
+    "ORLY",
+    "OXY",
+    "OGE",
+    "OKLO",
+    "OKTA",
+    "ODFL",
+    "ORI",
+    "OLN",
+    "OLLI",
+    "OHI",
+    "OMC",
+    "ONON",
+    "ON",
+    "OMF",
+    "OKE",
+    "ONTO",
+    "ORCL",
+    "OGN",
+    "OSK",
+    "OTIS",
+    "OVV",
+    "OC",
+    "PCAR",
+    "PKG",
+    "PLTR",
+    "PANW",
+    "PH",
+    "PSN",
+    "PAYX",
+    "PAYC",
+    "PCTY",
+    "PYPL",
+    "PEGA",
+    "PAG",
+    "PNR",
+    "PEN",
+    "PPLI",
+    "PEP",
+    "PFGC",
+    "PR",
+    "PFE",
+    "PCG",
+    "PM",
+    "PSX",
+    "PPC",
+    "PNFP",
+    "PNW",
+    "PINS",
+    "PLNT",
+    "PL",
+    "PNC",
+    "POOL",
+    "BPOP",
+    "POST",
+    "POWL",
+    "PPG",
+    "PPL",
+    "TROW",
+    "PRI",
+    "PRMB",
+    "PRIM",
+    "PFG",
+    "PCOR",
+    "PG",
+    "PGR",
+    "PLD",
+    "PB",
+    "PRU",
+    "PTC",
+    "PSA",
+    "PEG",
+    "PHM",
+    "PVH",
+    "QGEN",
+    "Q",
+    "QRVO",
+    "QCOM",
+    "PWR",
+    "QS",
+    "DGX",
+    "QXO",
+    "RAL",
+    "RL",
+    "RMBS",
+    "RRC",
+    "RJF",
+    "RYN",
+    "RBA",
+    "RBC",
+    "O",
+    "RDDT",
+    "RRX",
+    "REG",
+    "REGN",
+    "RF",
+    "RGA",
+    "RS",
+    "RNR",
+    "RGEN",
+    "RSG",
+    "RMD",
+    "QSR",
+    "RVMD",
+    "RVTY",
+    "REXR",
+    "REYN",
+    "RNG",
+    "RITM",
+    "RIVN",
+    "RLI",
+    "RHI",
+    "HOOD",
+    "RBLX",
+    "RKT",
+    "RKLB",
+    "ROK",
+    "ROIV",
+    "ROKU",
+    "ROL",
+    "ROP",
+    "ROST",
+    "RCL",
+    "RGLD",
+    "RPRX",
+    "RPM",
+    "RTX",
+    "RBRK",
+    "RYAN",
+    "R",
+    "SPGI",
+    "SAIA",
+    "SAIL",
+    "SANM",
+    "SAIC",
+    "CRM",
+    "SLM",
+    "IOT",
+    "SNDK",
+    "SBAC",
+    "HSIC",
+    "SLB",
+    "SNDR",
+    "SMG",
+    "SEB",
+    "SEIC",
+    "SRE",
+    "SMTC",
+    "ST",
+    "S",
+    "SCI",
+    "NOW",
+    "SN",
+    "SHW",
+    "FOUR",
+    "SLGN",
+    "SPG",
+    "SSD",
+    "SIRI",
+    "SITE",
+    "SITM",
+    "SWKS",
+    "SFD",
+    "SJM",
+    "SW",
+    "SNA",
+    "SNOW",
+    "SOFI",
+    "SOLS",
+    "MWH",
+    "SOLV",
+    "SGI",
+    "SON",
+    "SHC",
+    "SO",
+    "SCCO",
+    "SSB",
+    "LUV",
+    "SPCX",
+    "SPOT",
+    "SFM",
+    "SPXC",
+    "SSNC",
+    "STAG",
+    "SARO",
+    "SWK",
+    "SBUX",
+    "STWD",
+    "STT",
+    "STLD",
+    "STE",
+    "STRL",
+    "SF",
+    "SYK",
+    "SMMT",
+    "SUI",
+    "SUNB",
+    "SMCI",
+    "SYF",
+    "SNPS",
+    "SYY",
+    "TMUS",
+    "TTWO",
+    "TLN",
+    "TPR",
+    "TRGP",
+    "TGT",
+    "SNX",
+    "FTI",
+    "TDY",
+    "TFX",
+    "TEM",
+    "THC",
+    "TER",
+    "WULF",
+    "TSLA",
+    "TTEK",
+    "TXN",
+    "TPL",
+    "TXRH",
+    "TXT",
+    "TMO",
+    "TFSL",
+    "THO",
+    "TKR",
+    "TJX",
+    "TKO",
+    "TOST",
+    "TOL",
+    "TTC",
+    "TPG",
+    "TSCO",
+    "TTD",
+    "TW",
+    "TT",
+    "TDG",
+    "TRU",
+    "TNL",
+    "TRV",
+    "TREX",
+    "TRMB",
+    "TFC",
+    "TTMI",
+    "TWLO",
+    "TYL",
+    "TSN",
+    "UHAL",
+    "UHAL-B",
+    "USB",
+    "UBER",
+    "UI",
+    "UDR",
+    "UGI",
+    "PATH",
+    "ULS",
+    "ULTA",
+    "UNP",
+    "UAL",
+    "UPS",
+    "URI",
+    "UTHR",
+    "UWMC",
+    "UNH",
+    "U",
+    "OLED",
+    "UHS",
+    "UNM",
+    "USFD",
+    "MTN",
+    "VLO",
+    "VMI",
+    "VVV",
+    "VEEV",
+    "VTR",
+    "VLTO",
+    "VRSN",
+    "VRSK",
+    "VZ",
+    "VSNT",
+    "VRTX",
+    "VRT",
+    "VFC",
+    "VTRS",
+    "VIAV",
+    "VICI",
+    "VICR",
+    "VIK",
+    "VKTX",
+    "VNOM",
+    "VIRT",
+    "V",
+    "VST",
+    "VMRK",
+    "VNT",
+    "VNO",
+    "VOYA",
+    "VMC",
+    "WPC",
+    "WRB",
+    "GWW",
+    "WAB",
+    "WMT",
+    "DIS",
+    "WBD",
+    "WM",
+    "WAT",
+    "WSO",
+    "WTS",
+    "W",
+    "WFRD",
+    "WBS",
+    "WEC",
+    "WFC",
+    "WELL",
+    "WCC",
+    "WST",
+    "WAL",
+    "WDC",
+    "WU",
+    "WLK",
+    "WEX",
+    "WY",
+    "WHR",
+    "WTM",
+    "WMB",
+    "WSM",
+    "WTW",
+    "WSC",
+    "WING",
+    "WTFC",
+    "WWD",
+    "WDAY",
+    "WH",
+    "WYNN",
+    "XE",
+    "XEL",
+    "XP",
+    "XPO",
+    "XYL",
+    "YETI",
+    "YUM",
+    "ZBRA",
+    "ZG",
+    "Z",
+    "ZBH",
+    "ZION",
+    "ZTS",
+    "ZM",
+    "GTM",
+    "ZS",
+    "ARM",
+    "ASML",
+    "CCEP",
+    "FER",
+    "MELI",
+    "NBIS",
+    "NXPI",
+    "PDD",
+    "STX",
+    "SHOP",
+    "TRI"
+  ],
+  "russell_1000": [
+    "MMM",
+    "AOS",
+    "AAON",
+    "ABT",
+    "ABBV",
+    "ACN",
+    "AYI",
+    "ADBE",
+    "ADT",
+    "WMS",
+    "AEIS",
+    "AMD",
+    "ACM",
+    "AVAV",
+    "AES",
+    "AMG",
+    "AFRM",
+    "AFL",
+    "AGCO",
+    "A",
+    "ADC",
+    "AGNC",
+    "APD",
+    "ABNB",
+    "AKAM",
+    "ALK",
+    "ALB",
+    "ACI",
+    "AA",
+    "ARE",
+    "ALGN",
+    "ALLE",
+    "ALGM",
+    "LNT",
+    "ALSN",
+    "ALL",
+    "ALLY",
+    "ALM",
+    "ALNY",
+    "GOOGL",
+    "GOOG",
+    "MO",
+    "AMZN",
+    "AMCR",
+    "DOX",
+    "AMTM",
+    "AS",
+    "AEE",
+    "AAL",
+    "AEP",
+    "AXP",
+    "AFG",
+    "AHR",
+    "AMH",
+    "AIG",
+    "AMT",
+    "AWK",
+    "COLD",
+    "AMP",
+    "AME",
+    "AMGN",
+    "AMKR",
+    "APH",
+    "ADI",
+    "AU",
+    "NLY",
+    "AM",
+    "AR",
+    "AON",
+    "APA",
+    "APG",
+    "APO",
+    "APPF",
+    "AAPL",
+    "APLD",
+    "AIT",
+    "AMAT",
+    "AAOI",
+    "APP",
+    "ATR",
+    "APTV",
+    "ARMK",
+    "ACGL",
+    "ADM",
+    "ARES",
+    "ANET",
+    "AWI",
+    "ARW",
+    "ARWR",
+    "AJG",
+    "ASND",
+    "AIZ",
+    "AGO",
+    "ALAB",
+    "ASTS",
+    "T",
+    "ATI",
+    "TEAM",
+    "ATO",
+    "AUGO",
+    "AUR",
+    "ADSK",
+    "ADP",
+    "AN",
+    "AZO",
+    "AVTR",
+    "AVY",
+    "CAR",
+    "AVT",
+    "AXTA",
+    "AXS",
+    "AXON",
+    "AXSM",
+    "BKR",
+    "BALL",
+    "BAC",
+    "OZK",
+    "BBWI",
+    "BAX",
+    "BDX",
+    "BSY",
+    "BRK-B",
+    "BBY",
+    "BILL",
+    "BIO",
+    "TECH",
+    "BIIB",
+    "BMRN",
+    "BIRK",
+    "BMNR",
+    "BJ",
+    "BLK",
+    "BX",
+    "HRB",
+    "XYZ",
+    "BE",
+    "OWL",
+    "BNY",
+    "BA",
+    "BOKF",
+    "BKNG",
+    "BAH",
+    "BWA",
+    "BSX",
+    "BYD",
+    "BBIO",
+    "BFAM",
+    "BHF",
+    "BMY",
+    "BRX",
+    "AVGO",
+    "BR",
+    "BAM",
+    "BEPC",
+    "BRO",
+    "BF-A",
+    "BF-B",
+    "BRKR",
+    "BC",
+    "BLDR",
+    "BLSH",
+    "BG",
+    "BURL",
+    "BWXT",
+    "BXP",
+    "CHRW",
+    "CACI",
+    "CDNS",
+    "CZR",
+    "CPT",
+    "CPB",
+    "COF",
+    "CAH",
+    "CAI",
+    "CSL",
+    "CG",
+    "KMX",
+    "CCL",
+    "CRS",
+    "CARR",
+    "CVNA",
+    "CASY",
+    "CAT",
+    "CAVA",
+    "CBOE",
+    "CBRE",
+    "CCC",
+    "CDW",
+    "CE",
+    "CELH",
+    "COR",
+    "CNC",
+    "CNP",
+    "CBC",
+    "CF",
+    "CRL",
+    "SCHW",
+    "CHTR",
+    "CHE",
+    "LNG",
+    "CVX",
+    "CHWY",
+    "CHYM",
+    "CMG",
+    "CHH",
+    "CHRD",
+    "CB",
+    "CHD",
+    "CHDN",
+    "CIEN",
+    "CI",
+    "CINF",
+    "CTAS",
+    "CRCL",
+    "CRUS",
+    "CSCO",
+    "C",
+    "CFG",
+    "CLH",
+    "CWEN",
+    "CLF",
+    "CLX",
+    "NET",
+    "CME",
+    "CMS",
+    "CNA",
+    "CNH",
+    "KO",
+    "COKE",
+    "CDE",
+    "CGNX",
+    "CTSH",
+    "COHR",
+    "COIN",
+    "CL",
+    "COLB",
+    "COLM",
+    "CMCSA",
+    "FIX",
+    "CBSH",
+    "CAG",
+    "COP",
+    "ED",
+    "STZ",
+    "CEG",
+    "COO",
+    "CPRT",
+    "CORT",
+    "CNM",
+    "CRBG",
+    "CRWV",
+    "GLW",
+    "CPAY",
+    "CTVA",
+    "CSGP",
+    "COST",
+    "CPNG",
+    "CUZ",
+    "CR",
+    "CACC",
+    "CRDO",
+    "CRH",
+    "CROX",
+    "CRWD",
+    "CCI",
+    "CCK",
+    "CSX",
+    "CUBE",
+    "CMI",
+    "CW",
+    "CVS",
+    "DHI",
+    "DHR",
+    "DRI",
+    "DAR",
+    "DDOG",
+    "DVA",
+    "DECK",
+    "DE",
+    "DAL",
+    "DELL",
+    "DVN",
+    "DXCM",
+    "FANG",
+    "DKS",
+    "DLR",
+    "DOCN",
+    "DDS",
+    "DOCU",
+    "DLB",
+    "DG",
+    "DLTR",
+    "D",
+    "DPZ",
+    "DCI",
+    "DASH",
+    "DOV",
+    "DOW",
+    "DOCS",
+    "DKNG",
+    "DBX",
+    "DTM",
+    "DTE",
+    "DUK",
+    "DUOL",
+    "DD",
+    "BROS",
+    "DY",
+    "DT",
+    "ELF",
+    "EXP",
+    "EWBC",
+    "EGP",
+    "EMN",
+    "ETN",
+    "EBAY",
+    "ECHO",
+    "ECL",
+    "EIX",
+    "EW",
+    "ELAN",
+    "ESTC",
+    "ESI",
+    "ELV",
+    "EME",
+    "EMR",
+    "EHC",
+    "ENPH",
+    "ENSG",
+    "ENTG",
+    "ETR",
+    "NVST",
+    "EOG",
+    "EPAM",
+    "EPR",
+    "EQT",
+    "EFX",
+    "EQIX",
+    "EQH",
+    "ELS",
+    "ESAB",
+    "WTRG",
+    "ESS",
+    "EL",
+    "ETSY",
+    "EEFT",
+    "EVR",
+    "EG",
+    "EVRG",
+    "P",
+    "ES",
+    "ECG",
+    "EXEL",
+    "EXC",
+    "EXLS",
+    "EXE",
+    "EXPE",
+    "EXPD",
+    "EXR",
+    "XOM",
+    "FFIV",
+    "FN",
+    "FDS",
+    "FICO",
+    "FAST",
+    "FRT",
+    "FDX",
+    "FDXF",
+    "FERG",
+    "FRMI",
+    "FNF",
+    "FIS",
+    "FITB",
+    "FIG",
+    "FIGR",
+    "FAF",
+    "FCNCA",
+    "FHB",
+    "FHN",
+    "FR",
+    "FSLR",
+    "FE",
+    "FISV",
+    "FIVE",
+    "FLEX",
+    "FND",
+    "FLS",
+    "FLUT",
+    "FNB",
+    "F",
+    "FPS",
+    "FORM",
+    "FTNT",
+    "FTV",
+    "FBIN",
+    "FOXA",
+    "FOX",
+    "BEN",
+    "FRHC",
+    "FCX",
+    "FRPT",
+    "CFR",
+    "FTAI",
+    "FCN",
+    "GLXY",
+    "GME",
+    "GLPI",
+    "GAP",
+    "GRMN",
+    "IT",
+    "GTES",
+    "GE",
+    "GEHC",
+    "GEV",
+    "GEN",
+    "GNRC",
+    "GD",
+    "GIS",
+    "GM",
+    "G",
+    "GNTX",
+    "GPC",
+    "GFL",
+    "GILD",
+    "GTLB",
+    "GPN",
+    "GFS",
+    "GSAT",
+    "GL",
+    "GMED",
+    "GDDY",
+    "GS",
+    "GGG",
+    "LOPE",
+    "GPK",
+    "GH",
+    "GWRE",
+    "GXO",
+    "HAL",
+    "HALO",
+    "HLNE",
+    "THG",
+    "HIG",
+    "HAS",
+    "HAYW",
+    "HCA",
+    "HR",
+    "DOC",
+    "HL",
+    "HEI-A",
+    "HEI",
+    "JKHY",
+    "HSY",
+    "HPE",
+    "HXL",
+    "DINO",
+    "HLT",
+    "HD",
+    "HONA",
+    "HON",
+    "HRL",
+    "HST",
+    "HLI",
+    "HHH",
+    "HWM",
+    "HPQ",
+    "HUBB",
+    "HUBS",
+    "HUM",
+    "HBAN",
+    "HII",
+    "H",
+    "IBM",
+    "IDA",
+    "IEX",
+    "IDXX",
+    "IESC",
+    "ITW",
+    "ILMN",
+    "INCY",
+    "IR",
+    "INGM",
+    "INGR",
+    "INSM",
+    "PODD",
+    "INTC",
+    "IBKR",
+    "ICE",
+    "IFF",
+    "IP",
+    "INTU",
+    "ISRG",
+    "IVZ",
+    "INVH",
+    "IONS",
+    "IONQ",
+    "IPGP",
+    "IQV",
+    "IREN",
+    "IRDM",
+    "IRM",
+    "ITT",
+    "JBHT",
+    "JBL",
+    "J",
+    "JHX",
+    "JAN",
+    "JAZZ",
+    "JBS",
+    "JEF",
+    "JNJ",
+    "JCI",
+    "JLL",
+    "JPM",
+    "KRMN",
+    "KBR",
+    "KVUE",
+    "KDP",
+    "KEY",
+    "KEYS",
+    "KRC",
+    "KMB",
+    "KIM",
+    "KMI",
+    "KNSL",
+    "KEX",
+    "KKR",
+    "KLAC",
+    "KVYO",
+    "KNX",
+    "KHC",
+    "KTOS",
+    "KR",
+    "KD",
+    "LHX",
+    "LH",
+    "LRCX",
+    "LAMR",
+    "LW",
+    "LSTR",
+    "LVS",
+    "LSCC",
+    "LAZ",
+    "LEA",
+    "LDOS",
+    "LEN",
+    "LEN-B",
+    "LII",
+    "DRS",
+    "LBRDA",
+    "LBRDK",
+    "LBTYA",
+    "LBTYK",
+    "FWONA",
+    "FWONK",
+    "LLYVA",
+    "LLYVK",
+    "LLY",
+    "LECO",
+    "LNC",
+    "LIN",
+    "LINE",
+    "LAD",
+    "LFUS",
+    "LYV",
+    "LKQ",
+    "LOAR",
+    "LMT",
+    "L",
+    "LPX",
+    "LOW",
+    "LPLA",
+    "LULU",
+    "LITE",
+    "LYFT",
+    "LYB",
+    "MTB",
+    "MTSI",
+    "M",
+    "MSGS",
+    "MDGL",
+    "MANH",
+    "CART",
+    "MPC",
+    "MKL",
+    "MKTX",
+    "MAR",
+    "MRSH",
+    "MLM",
+    "MRVL",
+    "MAS",
+    "MTZ",
+    "MA",
+    "MTDR",
+    "MTCH",
+    "MAT",
+    "MKC",
+    "MCD",
+    "MCK",
+    "MDU",
+    "MPT",
+    "MDLN",
+    "MEDP",
+    "MDT",
+    "MRK",
+    "META",
+    "MET",
+    "MTD",
+    "MTG",
+    "MGM",
+    "MCHP",
+    "MU",
+    "MSFT",
+    "MSTR",
+    "MAA",
+    "MFP",
+    "MIDD",
+    "TIGO",
+    "MRP",
+    "MKSI",
+    "MBGL",
+    "MRNA",
+    "MOD",
+    "MHK",
+    "MOH",
+    "TAP",
+    "MDLZ",
+    "MDB",
+    "MPWR",
+    "MNST",
+    "MCO",
+    "MS",
+    "MORN",
+    "MOS",
+    "MSI",
+    "MP",
+    "MSA",
+    "MSM",
+    "MSCI",
+    "MLI",
+    "MUSA",
+    "NDAQ",
+    "NTRA",
+    "NFG",
+    "NTAP",
+    "NFLX",
+    "NBIX",
+    "NYT",
+    "NEU",
+    "NEM",
+    "NWSA",
+    "NWS",
+    "NXST",
+    "NEE",
+    "NXT",
+    "NIQ",
+    "NKE",
+    "NI",
+    "NNN",
+    "NDSN",
+    "NSC",
+    "NTRS",
+    "NOC",
+    "NCLH",
+    "NOV",
+    "NRG",
+    "NU",
+    "NUE",
+    "NTNX",
+    "NVT",
+    "NVDA",
+    "NVR",
+    "ORLY",
+    "OXY",
+    "OGE",
+    "OKLO",
+    "OKTA",
+    "ODFL",
+    "ORI",
+    "OLN",
+    "OLLI",
+    "OHI",
+    "OMC",
+    "ONON",
+    "ON",
+    "OMF",
+    "OKE",
+    "ONTO",
+    "ORCL",
+    "OGN",
+    "OSK",
+    "OTIS",
+    "OVV",
+    "OC",
+    "PCAR",
+    "PKG",
+    "PLTR",
+    "PANW",
+    "PH",
+    "PSN",
+    "PAYX",
+    "PAYC",
+    "PCTY",
+    "PYPL",
+    "PEGA",
+    "PAG",
+    "PNR",
+    "PEN",
+    "PPLI",
+    "PEP",
+    "PFGC",
+    "PR",
+    "PFE",
+    "PCG",
+    "PM",
+    "PSX",
+    "PPC",
+    "PNFP",
+    "PNW",
+    "PINS",
+    "PLNT",
+    "PL",
+    "PNC",
+    "POOL",
+    "BPOP",
+    "POST",
+    "POWL",
+    "PPG",
+    "PPL",
+    "TROW",
+    "PRI",
+    "PRMB",
+    "PRIM",
+    "PFG",
+    "PCOR",
+    "PG",
+    "PGR",
+    "PLD",
+    "PB",
+    "PRU",
+    "PTC",
+    "PSA",
+    "PEG",
+    "PHM",
+    "PVH",
+    "QGEN",
+    "Q",
+    "QRVO",
+    "QCOM",
+    "PWR",
+    "QS",
+    "DGX",
+    "QXO",
+    "RAL",
+    "RL",
+    "RMBS",
+    "RRC",
+    "RJF",
+    "RYN",
+    "RBA",
+    "RBC",
+    "O",
+    "RDDT",
+    "RRX",
+    "REG",
+    "REGN",
+    "RF",
+    "RGA",
+    "RS",
+    "RNR",
+    "RGEN",
+    "RSG",
+    "RMD",
+    "QSR",
+    "RVMD",
+    "RVTY",
+    "REXR",
+    "REYN",
+    "RNG",
+    "RITM",
+    "RIVN",
+    "RLI",
+    "RHI",
+    "HOOD",
+    "RBLX",
+    "RKT",
+    "RKLB",
+    "ROK",
+    "ROIV",
+    "ROKU",
+    "ROL",
+    "ROP",
+    "ROST",
+    "RCL",
+    "RGLD",
+    "RPRX",
+    "RPM",
+    "RTX",
+    "RBRK",
+    "RYAN",
+    "R",
+    "SPGI",
+    "SAIA",
+    "SAIL",
+    "SANM",
+    "SAIC",
+    "CRM",
+    "SLM",
+    "IOT",
+    "SNDK",
+    "SBAC",
+    "HSIC",
+    "SLB",
+    "SNDR",
+    "SMG",
+    "SEB",
+    "SEIC",
+    "SRE",
+    "SMTC",
+    "ST",
+    "S",
+    "SCI",
+    "NOW",
+    "SN",
+    "SHW",
+    "FOUR",
+    "SLGN",
+    "SPG",
+    "SSD",
+    "SIRI",
+    "SITE",
+    "SITM",
+    "SWKS",
+    "SFD",
+    "SJM",
+    "SW",
+    "SNA",
+    "SNOW",
+    "SOFI",
+    "SOLS",
+    "MWH",
+    "SOLV",
+    "SGI",
+    "SON",
+    "SHC",
+    "SO",
+    "SCCO",
+    "SSB",
+    "LUV",
+    "SPCX",
+    "SPOT",
+    "SFM",
+    "SPXC",
+    "SSNC",
+    "STAG",
+    "SARO",
+    "SWK",
+    "SBUX",
+    "STWD",
+    "STT",
+    "STLD",
+    "STE",
+    "STRL",
+    "SF",
+    "SYK",
+    "SMMT",
+    "SUI",
+    "SUNB",
+    "SMCI",
+    "SYF",
+    "SNPS",
+    "SYY",
+    "TMUS",
+    "TTWO",
+    "TLN",
+    "TPR",
+    "TRGP",
+    "TGT",
+    "SNX",
+    "FTI",
+    "TDY",
+    "TFX",
+    "TEM",
+    "THC",
+    "TER",
+    "WULF",
+    "TSLA",
+    "TTEK",
+    "TXN",
+    "TPL",
+    "TXRH",
+    "TXT",
+    "TMO",
+    "TFSL",
+    "THO",
+    "TKR",
+    "TJX",
+    "TKO",
+    "TOST",
+    "TOL",
+    "TTC",
+    "TPG",
+    "TSCO",
+    "TTD",
+    "TW",
+    "TT",
+    "TDG",
+    "TRU",
+    "TNL",
+    "TRV",
+    "TREX",
+    "TRMB",
+    "TFC",
+    "TTMI",
+    "TWLO",
+    "TYL",
+    "TSN",
+    "UHAL",
+    "UHAL-B",
+    "USB",
+    "UBER",
+    "UI",
+    "UDR",
+    "UGI",
+    "PATH",
+    "ULS",
+    "ULTA",
+    "UNP",
+    "UAL",
+    "UPS",
+    "URI",
+    "UTHR",
+    "UWMC",
+    "UNH",
+    "U",
+    "OLED",
+    "UHS",
+    "UNM",
+    "USFD",
+    "MTN",
+    "VLO",
+    "VMI",
+    "VVV",
+    "VEEV",
+    "VTR",
+    "VLTO",
+    "VRSN",
+    "VRSK",
+    "VZ",
+    "VSNT",
+    "VRTX",
+    "VRT",
+    "VFC",
+    "VTRS",
+    "VIAV",
+    "VICI",
+    "VICR",
+    "VIK",
+    "VKTX",
+    "VNOM",
+    "VIRT",
+    "V",
+    "VST",
+    "VMRK",
+    "VNT",
+    "VNO",
+    "VOYA",
+    "VMC",
+    "WPC",
+    "WRB",
+    "GWW",
+    "WAB",
+    "WMT",
+    "DIS",
+    "WBD",
+    "WM",
+    "WAT",
+    "WSO",
+    "WTS",
+    "W",
+    "WFRD",
+    "WBS",
+    "WEC",
+    "WFC",
+    "WELL",
+    "WCC",
+    "WST",
+    "WAL",
+    "WDC",
+    "WU",
+    "WLK",
+    "WEX",
+    "WY",
+    "WHR",
+    "WTM",
+    "WMB",
+    "WSM",
+    "WTW",
+    "WSC",
+    "WING",
+    "WTFC",
+    "WWD",
+    "WDAY",
+    "WH",
+    "WYNN",
+    "XE",
+    "XEL",
+    "XP",
+    "XPO",
+    "XYL",
+    "YETI",
+    "YUM",
+    "ZBRA",
+    "ZG",
+    "Z",
+    "ZBH",
+    "ZION",
+    "ZTS",
+    "ZM",
+    "GTM",
+    "ZS"
+  ],
+  "nasdaq_100": [
+    "ADBE",
+    "AMD",
+    "ABNB",
+    "ALNY",
+    "GOOGL",
+    "GOOG",
+    "AMZN",
+    "AEP",
+    "AMGN",
+    "ADI",
+    "AAPL",
+    "AMAT",
+    "APP",
+    "ARM",
+    "ASML",
+    "ALAB",
+    "ADSK",
+    "ADP",
+    "AXON",
+    "BKR",
+    "BKNG",
+    "AVGO",
+    "CDNS",
+    "CTAS",
+    "CSCO",
+    "CCEP",
+    "CMCSA",
+    "CEG",
+    "CPRT",
+    "CRWV",
+    "COST",
+    "CRWD",
+    "CSX",
+    "DDOG",
+    "DXCM",
+    "FANG",
+    "DASH",
+    "EXC",
+    "FAST",
+    "FER",
+    "FTNT",
+    "GEHC",
+    "GILD",
+    "HONA",
+    "HON",
+    "IDXX",
+    "INTC",
+    "INTU",
+    "ISRG",
+    "KDP",
+    "KLAC",
+    "KHC",
+    "LRCX",
+    "LIN",
+    "LITE",
+    "MAR",
+    "MRVL",
+    "MELI",
+    "META",
+    "MCHP",
+    "MU",
+    "MSFT",
+    "MSTR",
+    "MDLZ",
+    "MPWR",
+    "MNST",
+    "NBIS",
+    "NFLX",
+    "NVDA",
+    "NXPI",
+    "ORLY",
+    "ODFL",
+    "PCAR",
+    "PLTR",
+    "PANW",
+    "PAYX",
+    "PYPL",
+    "PDD",
+    "PEP",
+    "QCOM",
+    "REGN",
+    "RKLB",
+    "ROP",
+    "ROST",
+    "SNDK",
+    "STX",
+    "SHOP",
+    "SPCX",
+    "SBUX",
+    "SNPS",
+    "TMUS",
+    "TTWO",
+    "TER",
+    "TSLA",
+    "TXN",
+    "TRI",
+    "VRTX",
+    "WMT",
+    "WBD",
+    "WDC",
+    "WDAY",
+    "XEL"
+  ],
+  "index_map": {
+    "MMM": [
+      "Russell 1000"
+    ],
+    "AOS": [
+      "Russell 1000"
+    ],
+    "AAON": [
+      "Russell 1000"
+    ],
+    "ABT": [
+      "Russell 1000"
+    ],
+    "ABBV": [
+      "Russell 1000"
+    ],
+    "ACN": [
+      "Russell 1000"
+    ],
+    "AYI": [
+      "Russell 1000"
+    ],
+    "ADBE": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ADT": [
+      "Russell 1000"
+    ],
+    "WMS": [
+      "Russell 1000"
+    ],
+    "AEIS": [
+      "Russell 1000"
+    ],
+    "AMD": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ACM": [
+      "Russell 1000"
+    ],
+    "AVAV": [
+      "Russell 1000"
+    ],
+    "AES": [
+      "Russell 1000"
+    ],
+    "AMG": [
+      "Russell 1000"
+    ],
+    "AFRM": [
+      "Russell 1000"
+    ],
+    "AFL": [
+      "Russell 1000"
+    ],
+    "AGCO": [
+      "Russell 1000"
+    ],
+    "A": [
+      "Russell 1000"
+    ],
+    "ADC": [
+      "Russell 1000"
+    ],
+    "AGNC": [
+      "Russell 1000"
+    ],
+    "APD": [
+      "Russell 1000"
+    ],
+    "ABNB": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AKAM": [
+      "Russell 1000"
+    ],
+    "ALK": [
+      "Russell 1000"
+    ],
+    "ALB": [
+      "Russell 1000"
+    ],
+    "ACI": [
+      "Russell 1000"
+    ],
+    "AA": [
+      "Russell 1000"
+    ],
+    "ARE": [
+      "Russell 1000"
+    ],
+    "ALGN": [
+      "Russell 1000"
+    ],
+    "ALLE": [
+      "Russell 1000"
+    ],
+    "ALGM": [
+      "Russell 1000"
+    ],
+    "LNT": [
+      "Russell 1000"
+    ],
+    "ALSN": [
+      "Russell 1000"
+    ],
+    "ALL": [
+      "Russell 1000"
+    ],
+    "ALLY": [
+      "Russell 1000"
+    ],
+    "ALM": [
+      "Russell 1000"
+    ],
+    "ALNY": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "GOOGL": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "GOOG": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MO": [
+      "Russell 1000"
+    ],
+    "AMZN": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AMCR": [
+      "Russell 1000"
+    ],
+    "DOX": [
+      "Russell 1000"
+    ],
+    "AMTM": [
+      "Russell 1000"
+    ],
+    "AS": [
+      "Russell 1000"
+    ],
+    "AEE": [
+      "Russell 1000"
+    ],
+    "AAL": [
+      "Russell 1000"
+    ],
+    "AEP": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AXP": [
+      "Russell 1000"
+    ],
+    "AFG": [
+      "Russell 1000"
+    ],
+    "AHR": [
+      "Russell 1000"
+    ],
+    "AMH": [
+      "Russell 1000"
+    ],
+    "AIG": [
+      "Russell 1000"
+    ],
+    "AMT": [
+      "Russell 1000"
+    ],
+    "AWK": [
+      "Russell 1000"
+    ],
+    "COLD": [
+      "Russell 1000"
+    ],
+    "AMP": [
+      "Russell 1000"
+    ],
+    "AME": [
+      "Russell 1000"
+    ],
+    "AMGN": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AMKR": [
+      "Russell 1000"
+    ],
+    "APH": [
+      "Russell 1000"
+    ],
+    "ADI": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AU": [
+      "Russell 1000"
+    ],
+    "NLY": [
+      "Russell 1000"
+    ],
+    "AM": [
+      "Russell 1000"
+    ],
+    "AR": [
+      "Russell 1000"
+    ],
+    "AON": [
+      "Russell 1000"
+    ],
+    "APA": [
+      "Russell 1000"
+    ],
+    "APG": [
+      "Russell 1000"
+    ],
+    "APO": [
+      "Russell 1000"
+    ],
+    "APPF": [
+      "Russell 1000"
+    ],
+    "AAPL": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "APLD": [
+      "Russell 1000"
+    ],
+    "AIT": [
+      "Russell 1000"
+    ],
+    "AMAT": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AAOI": [
+      "Russell 1000"
+    ],
+    "APP": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ATR": [
+      "Russell 1000"
+    ],
+    "APTV": [
+      "Russell 1000"
+    ],
+    "ARMK": [
+      "Russell 1000"
+    ],
+    "ACGL": [
+      "Russell 1000"
+    ],
+    "ADM": [
+      "Russell 1000"
+    ],
+    "ARES": [
+      "Russell 1000"
+    ],
+    "ANET": [
+      "Russell 1000"
+    ],
+    "AWI": [
+      "Russell 1000"
+    ],
+    "ARW": [
+      "Russell 1000"
+    ],
+    "ARWR": [
+      "Russell 1000"
+    ],
+    "AJG": [
+      "Russell 1000"
+    ],
+    "ASND": [
+      "Russell 1000"
+    ],
+    "AIZ": [
+      "Russell 1000"
+    ],
+    "AGO": [
+      "Russell 1000"
+    ],
+    "ALAB": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ASTS": [
+      "Russell 1000"
+    ],
+    "T": [
+      "Russell 1000"
+    ],
+    "ATI": [
+      "Russell 1000"
+    ],
+    "TEAM": [
+      "Russell 1000"
+    ],
+    "ATO": [
+      "Russell 1000"
+    ],
+    "AUGO": [
+      "Russell 1000"
+    ],
+    "AUR": [
+      "Russell 1000"
+    ],
+    "ADSK": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ADP": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AN": [
+      "Russell 1000"
+    ],
+    "AZO": [
+      "Russell 1000"
+    ],
+    "AVTR": [
+      "Russell 1000"
+    ],
+    "AVY": [
+      "Russell 1000"
+    ],
+    "CAR": [
+      "Russell 1000"
+    ],
+    "AVT": [
+      "Russell 1000"
+    ],
+    "AXTA": [
+      "Russell 1000"
+    ],
+    "AXS": [
+      "Russell 1000"
+    ],
+    "AXON": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "AXSM": [
+      "Russell 1000"
+    ],
+    "BKR": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "BALL": [
+      "Russell 1000"
+    ],
+    "BAC": [
+      "Russell 1000"
+    ],
+    "OZK": [
+      "Russell 1000"
+    ],
+    "BBWI": [
+      "Russell 1000"
+    ],
+    "BAX": [
+      "Russell 1000"
+    ],
+    "BDX": [
+      "Russell 1000"
+    ],
+    "BSY": [
+      "Russell 1000"
+    ],
+    "BRK-B": [
+      "Russell 1000"
+    ],
+    "BBY": [
+      "Russell 1000"
+    ],
+    "BILL": [
+      "Russell 1000"
+    ],
+    "BIO": [
+      "Russell 1000"
+    ],
+    "TECH": [
+      "Russell 1000"
+    ],
+    "BIIB": [
+      "Russell 1000"
+    ],
+    "BMRN": [
+      "Russell 1000"
+    ],
+    "BIRK": [
+      "Russell 1000"
+    ],
+    "BMNR": [
+      "Russell 1000"
+    ],
+    "BJ": [
+      "Russell 1000"
+    ],
+    "BLK": [
+      "Russell 1000"
+    ],
+    "BX": [
+      "Russell 1000"
+    ],
+    "HRB": [
+      "Russell 1000"
+    ],
+    "XYZ": [
+      "Russell 1000"
+    ],
+    "BE": [
+      "Russell 1000"
+    ],
+    "OWL": [
+      "Russell 1000"
+    ],
+    "BNY": [
+      "Russell 1000"
+    ],
+    "BA": [
+      "Russell 1000"
+    ],
+    "BOKF": [
+      "Russell 1000"
+    ],
+    "BKNG": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "BAH": [
+      "Russell 1000"
+    ],
+    "BWA": [
+      "Russell 1000"
+    ],
+    "BSX": [
+      "Russell 1000"
+    ],
+    "BYD": [
+      "Russell 1000"
+    ],
+    "BBIO": [
+      "Russell 1000"
+    ],
+    "BFAM": [
+      "Russell 1000"
+    ],
+    "BHF": [
+      "Russell 1000"
+    ],
+    "BMY": [
+      "Russell 1000"
+    ],
+    "BRX": [
+      "Russell 1000"
+    ],
+    "AVGO": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "BR": [
+      "Russell 1000"
+    ],
+    "BAM": [
+      "Russell 1000"
+    ],
+    "BEPC": [
+      "Russell 1000"
+    ],
+    "BRO": [
+      "Russell 1000"
+    ],
+    "BF-A": [
+      "Russell 1000"
+    ],
+    "BF-B": [
+      "Russell 1000"
+    ],
+    "BRKR": [
+      "Russell 1000"
+    ],
+    "BC": [
+      "Russell 1000"
+    ],
+    "BLDR": [
+      "Russell 1000"
+    ],
+    "BLSH": [
+      "Russell 1000"
+    ],
+    "BG": [
+      "Russell 1000"
+    ],
+    "BURL": [
+      "Russell 1000"
+    ],
+    "BWXT": [
+      "Russell 1000"
+    ],
+    "BXP": [
+      "Russell 1000"
+    ],
+    "CHRW": [
+      "Russell 1000"
+    ],
+    "CACI": [
+      "Russell 1000"
+    ],
+    "CDNS": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "CZR": [
+      "Russell 1000"
+    ],
+    "CPT": [
+      "Russell 1000"
+    ],
+    "CPB": [
+      "Russell 1000"
+    ],
+    "COF": [
+      "Russell 1000"
+    ],
+    "CAH": [
+      "Russell 1000"
+    ],
+    "CAI": [
+      "Russell 1000"
+    ],
+    "CSL": [
+      "Russell 1000"
+    ],
+    "CG": [
+      "Russell 1000"
+    ],
+    "KMX": [
+      "Russell 1000"
+    ],
+    "CCL": [
+      "Russell 1000"
+    ],
+    "CRS": [
+      "Russell 1000"
+    ],
+    "CARR": [
+      "Russell 1000"
+    ],
+    "CVNA": [
+      "Russell 1000"
+    ],
+    "CASY": [
+      "Russell 1000"
+    ],
+    "CAT": [
+      "Russell 1000"
+    ],
+    "CAVA": [
+      "Russell 1000"
+    ],
+    "CBOE": [
+      "Russell 1000"
+    ],
+    "CBRE": [
+      "Russell 1000"
+    ],
+    "CCC": [
+      "Russell 1000"
+    ],
+    "CDW": [
+      "Russell 1000"
+    ],
+    "CE": [
+      "Russell 1000"
+    ],
+    "CELH": [
+      "Russell 1000"
+    ],
+    "COR": [
+      "Russell 1000"
+    ],
+    "CNC": [
+      "Russell 1000"
+    ],
+    "CNP": [
+      "Russell 1000"
+    ],
+    "CBC": [
+      "Russell 1000"
+    ],
+    "CF": [
+      "Russell 1000"
+    ],
+    "CRL": [
+      "Russell 1000"
+    ],
+    "SCHW": [
+      "Russell 1000"
+    ],
+    "CHTR": [
+      "Russell 1000"
+    ],
+    "CHE": [
+      "Russell 1000"
+    ],
+    "LNG": [
+      "Russell 1000"
+    ],
+    "CVX": [
+      "Russell 1000"
+    ],
+    "CHWY": [
+      "Russell 1000"
+    ],
+    "CHYM": [
+      "Russell 1000"
+    ],
+    "CMG": [
+      "Russell 1000"
+    ],
+    "CHH": [
+      "Russell 1000"
+    ],
+    "CHRD": [
+      "Russell 1000"
+    ],
+    "CB": [
+      "Russell 1000"
+    ],
+    "CHD": [
+      "Russell 1000"
+    ],
+    "CHDN": [
+      "Russell 1000"
+    ],
+    "CIEN": [
+      "Russell 1000"
+    ],
+    "CI": [
+      "Russell 1000"
+    ],
+    "CINF": [
+      "Russell 1000"
+    ],
+    "CTAS": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "CRCL": [
+      "Russell 1000"
+    ],
+    "CRUS": [
+      "Russell 1000"
+    ],
+    "CSCO": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "C": [
+      "Russell 1000"
+    ],
+    "CFG": [
+      "Russell 1000"
+    ],
+    "CLH": [
+      "Russell 1000"
+    ],
+    "CWEN": [
+      "Russell 1000"
+    ],
+    "CLF": [
+      "Russell 1000"
+    ],
+    "CLX": [
+      "Russell 1000"
+    ],
+    "NET": [
+      "Russell 1000"
+    ],
+    "CME": [
+      "Russell 1000"
+    ],
+    "CMS": [
+      "Russell 1000"
+    ],
+    "CNA": [
+      "Russell 1000"
+    ],
+    "CNH": [
+      "Russell 1000"
+    ],
+    "KO": [
+      "Russell 1000"
+    ],
+    "COKE": [
+      "Russell 1000"
+    ],
+    "CDE": [
+      "Russell 1000"
+    ],
+    "CGNX": [
+      "Russell 1000"
+    ],
+    "CTSH": [
+      "Russell 1000"
+    ],
+    "COHR": [
+      "Russell 1000"
+    ],
+    "COIN": [
+      "Russell 1000"
+    ],
+    "CL": [
+      "Russell 1000"
+    ],
+    "COLB": [
+      "Russell 1000"
+    ],
+    "COLM": [
+      "Russell 1000"
+    ],
+    "CMCSA": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "FIX": [
+      "Russell 1000"
+    ],
+    "CBSH": [
+      "Russell 1000"
+    ],
+    "CAG": [
+      "Russell 1000"
+    ],
+    "COP": [
+      "Russell 1000"
+    ],
+    "ED": [
+      "Russell 1000"
+    ],
+    "STZ": [
+      "Russell 1000"
+    ],
+    "CEG": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "COO": [
+      "Russell 1000"
+    ],
+    "CPRT": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "CORT": [
+      "Russell 1000"
+    ],
+    "CNM": [
+      "Russell 1000"
+    ],
+    "CRBG": [
+      "Russell 1000"
+    ],
+    "CRWV": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "GLW": [
+      "Russell 1000"
+    ],
+    "CPAY": [
+      "Russell 1000"
+    ],
+    "CTVA": [
+      "Russell 1000"
+    ],
+    "CSGP": [
+      "Russell 1000"
+    ],
+    "COST": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "CPNG": [
+      "Russell 1000"
+    ],
+    "CUZ": [
+      "Russell 1000"
+    ],
+    "CR": [
+      "Russell 1000"
+    ],
+    "CACC": [
+      "Russell 1000"
+    ],
+    "CRDO": [
+      "Russell 1000"
+    ],
+    "CRH": [
+      "Russell 1000"
+    ],
+    "CROX": [
+      "Russell 1000"
+    ],
+    "CRWD": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "CCI": [
+      "Russell 1000"
+    ],
+    "CCK": [
+      "Russell 1000"
+    ],
+    "CSX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "CUBE": [
+      "Russell 1000"
+    ],
+    "CMI": [
+      "Russell 1000"
+    ],
+    "CW": [
+      "Russell 1000"
+    ],
+    "CVS": [
+      "Russell 1000"
+    ],
+    "DHI": [
+      "Russell 1000"
+    ],
+    "DHR": [
+      "Russell 1000"
+    ],
+    "DRI": [
+      "Russell 1000"
+    ],
+    "DAR": [
+      "Russell 1000"
+    ],
+    "DDOG": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "DVA": [
+      "Russell 1000"
+    ],
+    "DECK": [
+      "Russell 1000"
+    ],
+    "DE": [
+      "Russell 1000"
+    ],
+    "DAL": [
+      "Russell 1000"
+    ],
+    "DELL": [
+      "Russell 1000"
+    ],
+    "DVN": [
+      "Russell 1000"
+    ],
+    "DXCM": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "FANG": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "DKS": [
+      "Russell 1000"
+    ],
+    "DLR": [
+      "Russell 1000"
+    ],
+    "DOCN": [
+      "Russell 1000"
+    ],
+    "DDS": [
+      "Russell 1000"
+    ],
+    "DOCU": [
+      "Russell 1000"
+    ],
+    "DLB": [
+      "Russell 1000"
+    ],
+    "DG": [
+      "Russell 1000"
+    ],
+    "DLTR": [
+      "Russell 1000"
+    ],
+    "D": [
+      "Russell 1000"
+    ],
+    "DPZ": [
+      "Russell 1000"
+    ],
+    "DCI": [
+      "Russell 1000"
+    ],
+    "DASH": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "DOV": [
+      "Russell 1000"
+    ],
+    "DOW": [
+      "Russell 1000"
+    ],
+    "DOCS": [
+      "Russell 1000"
+    ],
+    "DKNG": [
+      "Russell 1000"
+    ],
+    "DBX": [
+      "Russell 1000"
+    ],
+    "DTM": [
+      "Russell 1000"
+    ],
+    "DTE": [
+      "Russell 1000"
+    ],
+    "DUK": [
+      "Russell 1000"
+    ],
+    "DUOL": [
+      "Russell 1000"
+    ],
+    "DD": [
+      "Russell 1000"
+    ],
+    "BROS": [
+      "Russell 1000"
+    ],
+    "DY": [
+      "Russell 1000"
+    ],
+    "DT": [
+      "Russell 1000"
+    ],
+    "ELF": [
+      "Russell 1000"
+    ],
+    "EXP": [
+      "Russell 1000"
+    ],
+    "EWBC": [
+      "Russell 1000"
+    ],
+    "EGP": [
+      "Russell 1000"
+    ],
+    "EMN": [
+      "Russell 1000"
+    ],
+    "ETN": [
+      "Russell 1000"
+    ],
+    "EBAY": [
+      "Russell 1000"
+    ],
+    "ECHO": [
+      "Russell 1000"
+    ],
+    "ECL": [
+      "Russell 1000"
+    ],
+    "EIX": [
+      "Russell 1000"
+    ],
+    "EW": [
+      "Russell 1000"
+    ],
+    "ELAN": [
+      "Russell 1000"
+    ],
+    "ESTC": [
+      "Russell 1000"
+    ],
+    "ESI": [
+      "Russell 1000"
+    ],
+    "ELV": [
+      "Russell 1000"
+    ],
+    "EME": [
+      "Russell 1000"
+    ],
+    "EMR": [
+      "Russell 1000"
+    ],
+    "EHC": [
+      "Russell 1000"
+    ],
+    "ENPH": [
+      "Russell 1000"
+    ],
+    "ENSG": [
+      "Russell 1000"
+    ],
+    "ENTG": [
+      "Russell 1000"
+    ],
+    "ETR": [
+      "Russell 1000"
+    ],
+    "NVST": [
+      "Russell 1000"
+    ],
+    "EOG": [
+      "Russell 1000"
+    ],
+    "EPAM": [
+      "Russell 1000"
+    ],
+    "EPR": [
+      "Russell 1000"
+    ],
+    "EQT": [
+      "Russell 1000"
+    ],
+    "EFX": [
+      "Russell 1000"
+    ],
+    "EQIX": [
+      "Russell 1000"
+    ],
+    "EQH": [
+      "Russell 1000"
+    ],
+    "ELS": [
+      "Russell 1000"
+    ],
+    "ESAB": [
+      "Russell 1000"
+    ],
+    "WTRG": [
+      "Russell 1000"
+    ],
+    "ESS": [
+      "Russell 1000"
+    ],
+    "EL": [
+      "Russell 1000"
+    ],
+    "ETSY": [
+      "Russell 1000"
+    ],
+    "EEFT": [
+      "Russell 1000"
+    ],
+    "EVR": [
+      "Russell 1000"
+    ],
+    "EG": [
+      "Russell 1000"
+    ],
+    "EVRG": [
+      "Russell 1000"
+    ],
+    "P": [
+      "Russell 1000"
+    ],
+    "ES": [
+      "Russell 1000"
+    ],
+    "ECG": [
+      "Russell 1000"
+    ],
+    "EXEL": [
+      "Russell 1000"
+    ],
+    "EXC": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "EXLS": [
+      "Russell 1000"
+    ],
+    "EXE": [
+      "Russell 1000"
+    ],
+    "EXPE": [
+      "Russell 1000"
+    ],
+    "EXPD": [
+      "Russell 1000"
+    ],
+    "EXR": [
+      "Russell 1000"
+    ],
+    "XOM": [
+      "Russell 1000"
+    ],
+    "FFIV": [
+      "Russell 1000"
+    ],
+    "FN": [
+      "Russell 1000"
+    ],
+    "FDS": [
+      "Russell 1000"
+    ],
+    "FICO": [
+      "Russell 1000"
+    ],
+    "FAST": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "FRT": [
+      "Russell 1000"
+    ],
+    "FDX": [
+      "Russell 1000"
+    ],
+    "FDXF": [
+      "Russell 1000"
+    ],
+    "FERG": [
+      "Russell 1000"
+    ],
+    "FRMI": [
+      "Russell 1000"
+    ],
+    "FNF": [
+      "Russell 1000"
+    ],
+    "FIS": [
+      "Russell 1000"
+    ],
+    "FITB": [
+      "Russell 1000"
+    ],
+    "FIG": [
+      "Russell 1000"
+    ],
+    "FIGR": [
+      "Russell 1000"
+    ],
+    "FAF": [
+      "Russell 1000"
+    ],
+    "FCNCA": [
+      "Russell 1000"
+    ],
+    "FHB": [
+      "Russell 1000"
+    ],
+    "FHN": [
+      "Russell 1000"
+    ],
+    "FR": [
+      "Russell 1000"
+    ],
+    "FSLR": [
+      "Russell 1000"
+    ],
+    "FE": [
+      "Russell 1000"
+    ],
+    "FISV": [
+      "Russell 1000"
+    ],
+    "FIVE": [
+      "Russell 1000"
+    ],
+    "FLEX": [
+      "Russell 1000"
+    ],
+    "FND": [
+      "Russell 1000"
+    ],
+    "FLS": [
+      "Russell 1000"
+    ],
+    "FLUT": [
+      "Russell 1000"
+    ],
+    "FNB": [
+      "Russell 1000"
+    ],
+    "F": [
+      "Russell 1000"
+    ],
+    "FPS": [
+      "Russell 1000"
+    ],
+    "FORM": [
+      "Russell 1000"
+    ],
+    "FTNT": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "FTV": [
+      "Russell 1000"
+    ],
+    "FBIN": [
+      "Russell 1000"
+    ],
+    "FOXA": [
+      "Russell 1000"
+    ],
+    "FOX": [
+      "Russell 1000"
+    ],
+    "BEN": [
+      "Russell 1000"
+    ],
+    "FRHC": [
+      "Russell 1000"
+    ],
+    "FCX": [
+      "Russell 1000"
+    ],
+    "FRPT": [
+      "Russell 1000"
+    ],
+    "CFR": [
+      "Russell 1000"
+    ],
+    "FTAI": [
+      "Russell 1000"
+    ],
+    "FCN": [
+      "Russell 1000"
+    ],
+    "GLXY": [
+      "Russell 1000"
+    ],
+    "GME": [
+      "Russell 1000"
+    ],
+    "GLPI": [
+      "Russell 1000"
+    ],
+    "GAP": [
+      "Russell 1000"
+    ],
+    "GRMN": [
+      "Russell 1000"
+    ],
+    "IT": [
+      "Russell 1000"
+    ],
+    "GTES": [
+      "Russell 1000"
+    ],
+    "GE": [
+      "Russell 1000"
+    ],
+    "GEHC": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "GEV": [
+      "Russell 1000"
+    ],
+    "GEN": [
+      "Russell 1000"
+    ],
+    "GNRC": [
+      "Russell 1000"
+    ],
+    "GD": [
+      "Russell 1000"
+    ],
+    "GIS": [
+      "Russell 1000"
+    ],
+    "GM": [
+      "Russell 1000"
+    ],
+    "G": [
+      "Russell 1000"
+    ],
+    "GNTX": [
+      "Russell 1000"
+    ],
+    "GPC": [
+      "Russell 1000"
+    ],
+    "GFL": [
+      "Russell 1000"
+    ],
+    "GILD": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "GTLB": [
+      "Russell 1000"
+    ],
+    "GPN": [
+      "Russell 1000"
+    ],
+    "GFS": [
+      "Russell 1000"
+    ],
+    "GSAT": [
+      "Russell 1000"
+    ],
+    "GL": [
+      "Russell 1000"
+    ],
+    "GMED": [
+      "Russell 1000"
+    ],
+    "GDDY": [
+      "Russell 1000"
+    ],
+    "GS": [
+      "Russell 1000"
+    ],
+    "GGG": [
+      "Russell 1000"
+    ],
+    "LOPE": [
+      "Russell 1000"
+    ],
+    "GPK": [
+      "Russell 1000"
+    ],
+    "GH": [
+      "Russell 1000"
+    ],
+    "GWRE": [
+      "Russell 1000"
+    ],
+    "GXO": [
+      "Russell 1000"
+    ],
+    "HAL": [
+      "Russell 1000"
+    ],
+    "HALO": [
+      "Russell 1000"
+    ],
+    "HLNE": [
+      "Russell 1000"
+    ],
+    "THG": [
+      "Russell 1000"
+    ],
+    "HIG": [
+      "Russell 1000"
+    ],
+    "HAS": [
+      "Russell 1000"
+    ],
+    "HAYW": [
+      "Russell 1000"
+    ],
+    "HCA": [
+      "Russell 1000"
+    ],
+    "HR": [
+      "Russell 1000"
+    ],
+    "DOC": [
+      "Russell 1000"
+    ],
+    "HL": [
+      "Russell 1000"
+    ],
+    "HEI-A": [
+      "Russell 1000"
+    ],
+    "HEI": [
+      "Russell 1000"
+    ],
+    "JKHY": [
+      "Russell 1000"
+    ],
+    "HSY": [
+      "Russell 1000"
+    ],
+    "HPE": [
+      "Russell 1000"
+    ],
+    "HXL": [
+      "Russell 1000"
+    ],
+    "DINO": [
+      "Russell 1000"
+    ],
+    "HLT": [
+      "Russell 1000"
+    ],
+    "HD": [
+      "Russell 1000"
+    ],
+    "HONA": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "HON": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "HRL": [
+      "Russell 1000"
+    ],
+    "HST": [
+      "Russell 1000"
+    ],
+    "HLI": [
+      "Russell 1000"
+    ],
+    "HHH": [
+      "Russell 1000"
+    ],
+    "HWM": [
+      "Russell 1000"
+    ],
+    "HPQ": [
+      "Russell 1000"
+    ],
+    "HUBB": [
+      "Russell 1000"
+    ],
+    "HUBS": [
+      "Russell 1000"
+    ],
+    "HUM": [
+      "Russell 1000"
+    ],
+    "HBAN": [
+      "Russell 1000"
+    ],
+    "HII": [
+      "Russell 1000"
+    ],
+    "H": [
+      "Russell 1000"
+    ],
+    "IBM": [
+      "Russell 1000"
+    ],
+    "IDA": [
+      "Russell 1000"
+    ],
+    "IEX": [
+      "Russell 1000"
+    ],
+    "IDXX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "IESC": [
+      "Russell 1000"
+    ],
+    "ITW": [
+      "Russell 1000"
+    ],
+    "ILMN": [
+      "Russell 1000"
+    ],
+    "INCY": [
+      "Russell 1000"
+    ],
+    "IR": [
+      "Russell 1000"
+    ],
+    "INGM": [
+      "Russell 1000"
+    ],
+    "INGR": [
+      "Russell 1000"
+    ],
+    "INSM": [
+      "Russell 1000"
+    ],
+    "PODD": [
+      "Russell 1000"
+    ],
+    "INTC": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "IBKR": [
+      "Russell 1000"
+    ],
+    "ICE": [
+      "Russell 1000"
+    ],
+    "IFF": [
+      "Russell 1000"
+    ],
+    "IP": [
+      "Russell 1000"
+    ],
+    "INTU": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ISRG": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "IVZ": [
+      "Russell 1000"
+    ],
+    "INVH": [
+      "Russell 1000"
+    ],
+    "IONS": [
+      "Russell 1000"
+    ],
+    "IONQ": [
+      "Russell 1000"
+    ],
+    "IPGP": [
+      "Russell 1000"
+    ],
+    "IQV": [
+      "Russell 1000"
+    ],
+    "IREN": [
+      "Russell 1000"
+    ],
+    "IRDM": [
+      "Russell 1000"
+    ],
+    "IRM": [
+      "Russell 1000"
+    ],
+    "ITT": [
+      "Russell 1000"
+    ],
+    "JBHT": [
+      "Russell 1000"
+    ],
+    "JBL": [
+      "Russell 1000"
+    ],
+    "J": [
+      "Russell 1000"
+    ],
+    "JHX": [
+      "Russell 1000"
+    ],
+    "JAN": [
+      "Russell 1000"
+    ],
+    "JAZZ": [
+      "Russell 1000"
+    ],
+    "JBS": [
+      "Russell 1000"
+    ],
+    "JEF": [
+      "Russell 1000"
+    ],
+    "JNJ": [
+      "Russell 1000"
+    ],
+    "JCI": [
+      "Russell 1000"
+    ],
+    "JLL": [
+      "Russell 1000"
+    ],
+    "JPM": [
+      "Russell 1000"
+    ],
+    "KRMN": [
+      "Russell 1000"
+    ],
+    "KBR": [
+      "Russell 1000"
+    ],
+    "KVUE": [
+      "Russell 1000"
+    ],
+    "KDP": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "KEY": [
+      "Russell 1000"
+    ],
+    "KEYS": [
+      "Russell 1000"
+    ],
+    "KRC": [
+      "Russell 1000"
+    ],
+    "KMB": [
+      "Russell 1000"
+    ],
+    "KIM": [
+      "Russell 1000"
+    ],
+    "KMI": [
+      "Russell 1000"
+    ],
+    "KNSL": [
+      "Russell 1000"
+    ],
+    "KEX": [
+      "Russell 1000"
+    ],
+    "KKR": [
+      "Russell 1000"
+    ],
+    "KLAC": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "KVYO": [
+      "Russell 1000"
+    ],
+    "KNX": [
+      "Russell 1000"
+    ],
+    "KHC": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "KTOS": [
+      "Russell 1000"
+    ],
+    "KR": [
+      "Russell 1000"
+    ],
+    "KD": [
+      "Russell 1000"
+    ],
+    "LHX": [
+      "Russell 1000"
+    ],
+    "LH": [
+      "Russell 1000"
+    ],
+    "LRCX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "LAMR": [
+      "Russell 1000"
+    ],
+    "LW": [
+      "Russell 1000"
+    ],
+    "LSTR": [
+      "Russell 1000"
+    ],
+    "LVS": [
+      "Russell 1000"
+    ],
+    "LSCC": [
+      "Russell 1000"
+    ],
+    "LAZ": [
+      "Russell 1000"
+    ],
+    "LEA": [
+      "Russell 1000"
+    ],
+    "LDOS": [
+      "Russell 1000"
+    ],
+    "LEN": [
+      "Russell 1000"
+    ],
+    "LEN-B": [
+      "Russell 1000"
+    ],
+    "LII": [
+      "Russell 1000"
+    ],
+    "DRS": [
+      "Russell 1000"
+    ],
+    "LBRDA": [
+      "Russell 1000"
+    ],
+    "LBRDK": [
+      "Russell 1000"
+    ],
+    "LBTYA": [
+      "Russell 1000"
+    ],
+    "LBTYK": [
+      "Russell 1000"
+    ],
+    "FWONA": [
+      "Russell 1000"
+    ],
+    "FWONK": [
+      "Russell 1000"
+    ],
+    "LLYVA": [
+      "Russell 1000"
+    ],
+    "LLYVK": [
+      "Russell 1000"
+    ],
+    "LLY": [
+      "Russell 1000"
+    ],
+    "LECO": [
+      "Russell 1000"
+    ],
+    "LNC": [
+      "Russell 1000"
+    ],
+    "LIN": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "LINE": [
+      "Russell 1000"
+    ],
+    "LAD": [
+      "Russell 1000"
+    ],
+    "LFUS": [
+      "Russell 1000"
+    ],
+    "LYV": [
+      "Russell 1000"
+    ],
+    "LKQ": [
+      "Russell 1000"
+    ],
+    "LOAR": [
+      "Russell 1000"
+    ],
+    "LMT": [
+      "Russell 1000"
+    ],
+    "L": [
+      "Russell 1000"
+    ],
+    "LPX": [
+      "Russell 1000"
+    ],
+    "LOW": [
+      "Russell 1000"
+    ],
+    "LPLA": [
+      "Russell 1000"
+    ],
+    "LULU": [
+      "Russell 1000"
+    ],
+    "LITE": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "LYFT": [
+      "Russell 1000"
+    ],
+    "LYB": [
+      "Russell 1000"
+    ],
+    "MTB": [
+      "Russell 1000"
+    ],
+    "MTSI": [
+      "Russell 1000"
+    ],
+    "M": [
+      "Russell 1000"
+    ],
+    "MSGS": [
+      "Russell 1000"
+    ],
+    "MDGL": [
+      "Russell 1000"
+    ],
+    "MANH": [
+      "Russell 1000"
+    ],
+    "CART": [
+      "Russell 1000"
+    ],
+    "MPC": [
+      "Russell 1000"
+    ],
+    "MKL": [
+      "Russell 1000"
+    ],
+    "MKTX": [
+      "Russell 1000"
+    ],
+    "MAR": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MRSH": [
+      "Russell 1000"
+    ],
+    "MLM": [
+      "Russell 1000"
+    ],
+    "MRVL": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MAS": [
+      "Russell 1000"
+    ],
+    "MTZ": [
+      "Russell 1000"
+    ],
+    "MA": [
+      "Russell 1000"
+    ],
+    "MTDR": [
+      "Russell 1000"
+    ],
+    "MTCH": [
+      "Russell 1000"
+    ],
+    "MAT": [
+      "Russell 1000"
+    ],
+    "MKC": [
+      "Russell 1000"
+    ],
+    "MCD": [
+      "Russell 1000"
+    ],
+    "MCK": [
+      "Russell 1000"
+    ],
+    "MDU": [
+      "Russell 1000"
+    ],
+    "MPT": [
+      "Russell 1000"
+    ],
+    "MDLN": [
+      "Russell 1000"
+    ],
+    "MEDP": [
+      "Russell 1000"
+    ],
+    "MDT": [
+      "Russell 1000"
+    ],
+    "MRK": [
+      "Russell 1000"
+    ],
+    "META": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MET": [
+      "Russell 1000"
+    ],
+    "MTD": [
+      "Russell 1000"
+    ],
+    "MTG": [
+      "Russell 1000"
+    ],
+    "MGM": [
+      "Russell 1000"
+    ],
+    "MCHP": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MU": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MSFT": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MSTR": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MAA": [
+      "Russell 1000"
+    ],
+    "MFP": [
+      "Russell 1000"
+    ],
+    "MIDD": [
+      "Russell 1000"
+    ],
+    "TIGO": [
+      "Russell 1000"
+    ],
+    "MRP": [
+      "Russell 1000"
+    ],
+    "MKSI": [
+      "Russell 1000"
+    ],
+    "MBGL": [
+      "Russell 1000"
+    ],
+    "MRNA": [
+      "Russell 1000"
+    ],
+    "MOD": [
+      "Russell 1000"
+    ],
+    "MHK": [
+      "Russell 1000"
+    ],
+    "MOH": [
+      "Russell 1000"
+    ],
+    "TAP": [
+      "Russell 1000"
+    ],
+    "MDLZ": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MDB": [
+      "Russell 1000"
+    ],
+    "MPWR": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MNST": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "MCO": [
+      "Russell 1000"
+    ],
+    "MS": [
+      "Russell 1000"
+    ],
+    "MORN": [
+      "Russell 1000"
+    ],
+    "MOS": [
+      "Russell 1000"
+    ],
+    "MSI": [
+      "Russell 1000"
+    ],
+    "MP": [
+      "Russell 1000"
+    ],
+    "MSA": [
+      "Russell 1000"
+    ],
+    "MSM": [
+      "Russell 1000"
+    ],
+    "MSCI": [
+      "Russell 1000"
+    ],
+    "MLI": [
+      "Russell 1000"
+    ],
+    "MUSA": [
+      "Russell 1000"
+    ],
+    "NDAQ": [
+      "Russell 1000"
+    ],
+    "NTRA": [
+      "Russell 1000"
+    ],
+    "NFG": [
+      "Russell 1000"
+    ],
+    "NTAP": [
+      "Russell 1000"
+    ],
+    "NFLX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "NBIX": [
+      "Russell 1000"
+    ],
+    "NYT": [
+      "Russell 1000"
+    ],
+    "NEU": [
+      "Russell 1000"
+    ],
+    "NEM": [
+      "Russell 1000"
+    ],
+    "NWSA": [
+      "Russell 1000"
+    ],
+    "NWS": [
+      "Russell 1000"
+    ],
+    "NXST": [
+      "Russell 1000"
+    ],
+    "NEE": [
+      "Russell 1000"
+    ],
+    "NXT": [
+      "Russell 1000"
+    ],
+    "NIQ": [
+      "Russell 1000"
+    ],
+    "NKE": [
+      "Russell 1000"
+    ],
+    "NI": [
+      "Russell 1000"
+    ],
+    "NNN": [
+      "Russell 1000"
+    ],
+    "NDSN": [
+      "Russell 1000"
+    ],
+    "NSC": [
+      "Russell 1000"
+    ],
+    "NTRS": [
+      "Russell 1000"
+    ],
+    "NOC": [
+      "Russell 1000"
+    ],
+    "NCLH": [
+      "Russell 1000"
+    ],
+    "NOV": [
+      "Russell 1000"
+    ],
+    "NRG": [
+      "Russell 1000"
+    ],
+    "NU": [
+      "Russell 1000"
+    ],
+    "NUE": [
+      "Russell 1000"
+    ],
+    "NTNX": [
+      "Russell 1000"
+    ],
+    "NVT": [
+      "Russell 1000"
+    ],
+    "NVDA": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "NVR": [
+      "Russell 1000"
+    ],
+    "ORLY": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "OXY": [
+      "Russell 1000"
+    ],
+    "OGE": [
+      "Russell 1000"
+    ],
+    "OKLO": [
+      "Russell 1000"
+    ],
+    "OKTA": [
+      "Russell 1000"
+    ],
+    "ODFL": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ORI": [
+      "Russell 1000"
+    ],
+    "OLN": [
+      "Russell 1000"
+    ],
+    "OLLI": [
+      "Russell 1000"
+    ],
+    "OHI": [
+      "Russell 1000"
+    ],
+    "OMC": [
+      "Russell 1000"
+    ],
+    "ONON": [
+      "Russell 1000"
+    ],
+    "ON": [
+      "Russell 1000"
+    ],
+    "OMF": [
+      "Russell 1000"
+    ],
+    "OKE": [
+      "Russell 1000"
+    ],
+    "ONTO": [
+      "Russell 1000"
+    ],
+    "ORCL": [
+      "Russell 1000"
+    ],
+    "OGN": [
+      "Russell 1000"
+    ],
+    "OSK": [
+      "Russell 1000"
+    ],
+    "OTIS": [
+      "Russell 1000"
+    ],
+    "OVV": [
+      "Russell 1000"
+    ],
+    "OC": [
+      "Russell 1000"
+    ],
+    "PCAR": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "PKG": [
+      "Russell 1000"
+    ],
+    "PLTR": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "PANW": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "PH": [
+      "Russell 1000"
+    ],
+    "PSN": [
+      "Russell 1000"
+    ],
+    "PAYX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "PAYC": [
+      "Russell 1000"
+    ],
+    "PCTY": [
+      "Russell 1000"
+    ],
+    "PYPL": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "PEGA": [
+      "Russell 1000"
+    ],
+    "PAG": [
+      "Russell 1000"
+    ],
+    "PNR": [
+      "Russell 1000"
+    ],
+    "PEN": [
+      "Russell 1000"
+    ],
+    "PPLI": [
+      "Russell 1000"
+    ],
+    "PEP": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "PFGC": [
+      "Russell 1000"
+    ],
+    "PR": [
+      "Russell 1000"
+    ],
+    "PFE": [
+      "Russell 1000"
+    ],
+    "PCG": [
+      "Russell 1000"
+    ],
+    "PM": [
+      "Russell 1000"
+    ],
+    "PSX": [
+      "Russell 1000"
+    ],
+    "PPC": [
+      "Russell 1000"
+    ],
+    "PNFP": [
+      "Russell 1000"
+    ],
+    "PNW": [
+      "Russell 1000"
+    ],
+    "PINS": [
+      "Russell 1000"
+    ],
+    "PLNT": [
+      "Russell 1000"
+    ],
+    "PL": [
+      "Russell 1000"
+    ],
+    "PNC": [
+      "Russell 1000"
+    ],
+    "POOL": [
+      "Russell 1000"
+    ],
+    "BPOP": [
+      "Russell 1000"
+    ],
+    "POST": [
+      "Russell 1000"
+    ],
+    "POWL": [
+      "Russell 1000"
+    ],
+    "PPG": [
+      "Russell 1000"
+    ],
+    "PPL": [
+      "Russell 1000"
+    ],
+    "TROW": [
+      "Russell 1000"
+    ],
+    "PRI": [
+      "Russell 1000"
+    ],
+    "PRMB": [
+      "Russell 1000"
+    ],
+    "PRIM": [
+      "Russell 1000"
+    ],
+    "PFG": [
+      "Russell 1000"
+    ],
+    "PCOR": [
+      "Russell 1000"
+    ],
+    "PG": [
+      "Russell 1000"
+    ],
+    "PGR": [
+      "Russell 1000"
+    ],
+    "PLD": [
+      "Russell 1000"
+    ],
+    "PB": [
+      "Russell 1000"
+    ],
+    "PRU": [
+      "Russell 1000"
+    ],
+    "PTC": [
+      "Russell 1000"
+    ],
+    "PSA": [
+      "Russell 1000"
+    ],
+    "PEG": [
+      "Russell 1000"
+    ],
+    "PHM": [
+      "Russell 1000"
+    ],
+    "PVH": [
+      "Russell 1000"
+    ],
+    "QGEN": [
+      "Russell 1000"
+    ],
+    "Q": [
+      "Russell 1000"
+    ],
+    "QRVO": [
+      "Russell 1000"
+    ],
+    "QCOM": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "PWR": [
+      "Russell 1000"
+    ],
+    "QS": [
+      "Russell 1000"
+    ],
+    "DGX": [
+      "Russell 1000"
+    ],
+    "QXO": [
+      "Russell 1000"
+    ],
+    "RAL": [
+      "Russell 1000"
+    ],
+    "RL": [
+      "Russell 1000"
+    ],
+    "RMBS": [
+      "Russell 1000"
+    ],
+    "RRC": [
+      "Russell 1000"
+    ],
+    "RJF": [
+      "Russell 1000"
+    ],
+    "RYN": [
+      "Russell 1000"
+    ],
+    "RBA": [
+      "Russell 1000"
+    ],
+    "RBC": [
+      "Russell 1000"
+    ],
+    "O": [
+      "Russell 1000"
+    ],
+    "RDDT": [
+      "Russell 1000"
+    ],
+    "RRX": [
+      "Russell 1000"
+    ],
+    "REG": [
+      "Russell 1000"
+    ],
+    "REGN": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "RF": [
+      "Russell 1000"
+    ],
+    "RGA": [
+      "Russell 1000"
+    ],
+    "RS": [
+      "Russell 1000"
+    ],
+    "RNR": [
+      "Russell 1000"
+    ],
+    "RGEN": [
+      "Russell 1000"
+    ],
+    "RSG": [
+      "Russell 1000"
+    ],
+    "RMD": [
+      "Russell 1000"
+    ],
+    "QSR": [
+      "Russell 1000"
+    ],
+    "RVMD": [
+      "Russell 1000"
+    ],
+    "RVTY": [
+      "Russell 1000"
+    ],
+    "REXR": [
+      "Russell 1000"
+    ],
+    "REYN": [
+      "Russell 1000"
+    ],
+    "RNG": [
+      "Russell 1000"
+    ],
+    "RITM": [
+      "Russell 1000"
+    ],
+    "RIVN": [
+      "Russell 1000"
+    ],
+    "RLI": [
+      "Russell 1000"
+    ],
+    "RHI": [
+      "Russell 1000"
+    ],
+    "HOOD": [
+      "Russell 1000"
+    ],
+    "RBLX": [
+      "Russell 1000"
+    ],
+    "RKT": [
+      "Russell 1000"
+    ],
+    "RKLB": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ROK": [
+      "Russell 1000"
+    ],
+    "ROIV": [
+      "Russell 1000"
+    ],
+    "ROKU": [
+      "Russell 1000"
+    ],
+    "ROL": [
+      "Russell 1000"
+    ],
+    "ROP": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "ROST": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "RCL": [
+      "Russell 1000"
+    ],
+    "RGLD": [
+      "Russell 1000"
+    ],
+    "RPRX": [
+      "Russell 1000"
+    ],
+    "RPM": [
+      "Russell 1000"
+    ],
+    "RTX": [
+      "Russell 1000"
+    ],
+    "RBRK": [
+      "Russell 1000"
+    ],
+    "RYAN": [
+      "Russell 1000"
+    ],
+    "R": [
+      "Russell 1000"
+    ],
+    "SPGI": [
+      "Russell 1000"
+    ],
+    "SAIA": [
+      "Russell 1000"
+    ],
+    "SAIL": [
+      "Russell 1000"
+    ],
+    "SANM": [
+      "Russell 1000"
+    ],
+    "SAIC": [
+      "Russell 1000"
+    ],
+    "CRM": [
+      "Russell 1000"
+    ],
+    "SLM": [
+      "Russell 1000"
+    ],
+    "IOT": [
+      "Russell 1000"
+    ],
+    "SNDK": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "SBAC": [
+      "Russell 1000"
+    ],
+    "HSIC": [
+      "Russell 1000"
+    ],
+    "SLB": [
+      "Russell 1000"
+    ],
+    "SNDR": [
+      "Russell 1000"
+    ],
+    "SMG": [
+      "Russell 1000"
+    ],
+    "SEB": [
+      "Russell 1000"
+    ],
+    "SEIC": [
+      "Russell 1000"
+    ],
+    "SRE": [
+      "Russell 1000"
+    ],
+    "SMTC": [
+      "Russell 1000"
+    ],
+    "ST": [
+      "Russell 1000"
+    ],
+    "S": [
+      "Russell 1000"
+    ],
+    "SCI": [
+      "Russell 1000"
+    ],
+    "NOW": [
+      "Russell 1000"
+    ],
+    "SN": [
+      "Russell 1000"
+    ],
+    "SHW": [
+      "Russell 1000"
+    ],
+    "FOUR": [
+      "Russell 1000"
+    ],
+    "SLGN": [
+      "Russell 1000"
+    ],
+    "SPG": [
+      "Russell 1000"
+    ],
+    "SSD": [
+      "Russell 1000"
+    ],
+    "SIRI": [
+      "Russell 1000"
+    ],
+    "SITE": [
+      "Russell 1000"
+    ],
+    "SITM": [
+      "Russell 1000"
+    ],
+    "SWKS": [
+      "Russell 1000"
+    ],
+    "SFD": [
+      "Russell 1000"
+    ],
+    "SJM": [
+      "Russell 1000"
+    ],
+    "SW": [
+      "Russell 1000"
+    ],
+    "SNA": [
+      "Russell 1000"
+    ],
+    "SNOW": [
+      "Russell 1000"
+    ],
+    "SOFI": [
+      "Russell 1000"
+    ],
+    "SOLS": [
+      "Russell 1000"
+    ],
+    "MWH": [
+      "Russell 1000"
+    ],
+    "SOLV": [
+      "Russell 1000"
+    ],
+    "SGI": [
+      "Russell 1000"
+    ],
+    "SON": [
+      "Russell 1000"
+    ],
+    "SHC": [
+      "Russell 1000"
+    ],
+    "SO": [
+      "Russell 1000"
+    ],
+    "SCCO": [
+      "Russell 1000"
+    ],
+    "SSB": [
+      "Russell 1000"
+    ],
+    "LUV": [
+      "Russell 1000"
+    ],
+    "SPCX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "SPOT": [
+      "Russell 1000"
+    ],
+    "SFM": [
+      "Russell 1000"
+    ],
+    "SPXC": [
+      "Russell 1000"
+    ],
+    "SSNC": [
+      "Russell 1000"
+    ],
+    "STAG": [
+      "Russell 1000"
+    ],
+    "SARO": [
+      "Russell 1000"
+    ],
+    "SWK": [
+      "Russell 1000"
+    ],
+    "SBUX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "STWD": [
+      "Russell 1000"
+    ],
+    "STT": [
+      "Russell 1000"
+    ],
+    "STLD": [
+      "Russell 1000"
+    ],
+    "STE": [
+      "Russell 1000"
+    ],
+    "STRL": [
+      "Russell 1000"
+    ],
+    "SF": [
+      "Russell 1000"
+    ],
+    "SYK": [
+      "Russell 1000"
+    ],
+    "SMMT": [
+      "Russell 1000"
+    ],
+    "SUI": [
+      "Russell 1000"
+    ],
+    "SUNB": [
+      "Russell 1000"
+    ],
+    "SMCI": [
+      "Russell 1000"
+    ],
+    "SYF": [
+      "Russell 1000"
+    ],
+    "SNPS": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "SYY": [
+      "Russell 1000"
+    ],
+    "TMUS": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "TTWO": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "TLN": [
+      "Russell 1000"
+    ],
+    "TPR": [
+      "Russell 1000"
+    ],
+    "TRGP": [
+      "Russell 1000"
+    ],
+    "TGT": [
+      "Russell 1000"
+    ],
+    "SNX": [
+      "Russell 1000"
+    ],
+    "FTI": [
+      "Russell 1000"
+    ],
+    "TDY": [
+      "Russell 1000"
+    ],
+    "TFX": [
+      "Russell 1000"
+    ],
+    "TEM": [
+      "Russell 1000"
+    ],
+    "THC": [
+      "Russell 1000"
+    ],
+    "TER": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "WULF": [
+      "Russell 1000"
+    ],
+    "TSLA": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "TTEK": [
+      "Russell 1000"
+    ],
+    "TXN": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "TPL": [
+      "Russell 1000"
+    ],
+    "TXRH": [
+      "Russell 1000"
+    ],
+    "TXT": [
+      "Russell 1000"
+    ],
+    "TMO": [
+      "Russell 1000"
+    ],
+    "TFSL": [
+      "Russell 1000"
+    ],
+    "THO": [
+      "Russell 1000"
+    ],
+    "TKR": [
+      "Russell 1000"
+    ],
+    "TJX": [
+      "Russell 1000"
+    ],
+    "TKO": [
+      "Russell 1000"
+    ],
+    "TOST": [
+      "Russell 1000"
+    ],
+    "TOL": [
+      "Russell 1000"
+    ],
+    "TTC": [
+      "Russell 1000"
+    ],
+    "TPG": [
+      "Russell 1000"
+    ],
+    "TSCO": [
+      "Russell 1000"
+    ],
+    "TTD": [
+      "Russell 1000"
+    ],
+    "TW": [
+      "Russell 1000"
+    ],
+    "TT": [
+      "Russell 1000"
+    ],
+    "TDG": [
+      "Russell 1000"
+    ],
+    "TRU": [
+      "Russell 1000"
+    ],
+    "TNL": [
+      "Russell 1000"
+    ],
+    "TRV": [
+      "Russell 1000"
+    ],
+    "TREX": [
+      "Russell 1000"
+    ],
+    "TRMB": [
+      "Russell 1000"
+    ],
+    "TFC": [
+      "Russell 1000"
+    ],
+    "TTMI": [
+      "Russell 1000"
+    ],
+    "TWLO": [
+      "Russell 1000"
+    ],
+    "TYL": [
+      "Russell 1000"
+    ],
+    "TSN": [
+      "Russell 1000"
+    ],
+    "UHAL": [
+      "Russell 1000"
+    ],
+    "UHAL-B": [
+      "Russell 1000"
+    ],
+    "USB": [
+      "Russell 1000"
+    ],
+    "UBER": [
+      "Russell 1000"
+    ],
+    "UI": [
+      "Russell 1000"
+    ],
+    "UDR": [
+      "Russell 1000"
+    ],
+    "UGI": [
+      "Russell 1000"
+    ],
+    "PATH": [
+      "Russell 1000"
+    ],
+    "ULS": [
+      "Russell 1000"
+    ],
+    "ULTA": [
+      "Russell 1000"
+    ],
+    "UNP": [
+      "Russell 1000"
+    ],
+    "UAL": [
+      "Russell 1000"
+    ],
+    "UPS": [
+      "Russell 1000"
+    ],
+    "URI": [
+      "Russell 1000"
+    ],
+    "UTHR": [
+      "Russell 1000"
+    ],
+    "UWMC": [
+      "Russell 1000"
+    ],
+    "UNH": [
+      "Russell 1000"
+    ],
+    "U": [
+      "Russell 1000"
+    ],
+    "OLED": [
+      "Russell 1000"
+    ],
+    "UHS": [
+      "Russell 1000"
+    ],
+    "UNM": [
+      "Russell 1000"
+    ],
+    "USFD": [
+      "Russell 1000"
+    ],
+    "MTN": [
+      "Russell 1000"
+    ],
+    "VLO": [
+      "Russell 1000"
+    ],
+    "VMI": [
+      "Russell 1000"
+    ],
+    "VVV": [
+      "Russell 1000"
+    ],
+    "VEEV": [
+      "Russell 1000"
+    ],
+    "VTR": [
+      "Russell 1000"
+    ],
+    "VLTO": [
+      "Russell 1000"
+    ],
+    "VRSN": [
+      "Russell 1000"
+    ],
+    "VRSK": [
+      "Russell 1000"
+    ],
+    "VZ": [
+      "Russell 1000"
+    ],
+    "VSNT": [
+      "Russell 1000"
+    ],
+    "VRTX": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "VRT": [
+      "Russell 1000"
+    ],
+    "VFC": [
+      "Russell 1000"
+    ],
+    "VTRS": [
+      "Russell 1000"
+    ],
+    "VIAV": [
+      "Russell 1000"
+    ],
+    "VICI": [
+      "Russell 1000"
+    ],
+    "VICR": [
+      "Russell 1000"
+    ],
+    "VIK": [
+      "Russell 1000"
+    ],
+    "VKTX": [
+      "Russell 1000"
+    ],
+    "VNOM": [
+      "Russell 1000"
+    ],
+    "VIRT": [
+      "Russell 1000"
+    ],
+    "V": [
+      "Russell 1000"
+    ],
+    "VST": [
+      "Russell 1000"
+    ],
+    "VMRK": [
+      "Russell 1000"
+    ],
+    "VNT": [
+      "Russell 1000"
+    ],
+    "VNO": [
+      "Russell 1000"
+    ],
+    "VOYA": [
+      "Russell 1000"
+    ],
+    "VMC": [
+      "Russell 1000"
+    ],
+    "WPC": [
+      "Russell 1000"
+    ],
+    "WRB": [
+      "Russell 1000"
+    ],
+    "GWW": [
+      "Russell 1000"
+    ],
+    "WAB": [
+      "Russell 1000"
+    ],
+    "WMT": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "DIS": [
+      "Russell 1000"
+    ],
+    "WBD": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "WM": [
+      "Russell 1000"
+    ],
+    "WAT": [
+      "Russell 1000"
+    ],
+    "WSO": [
+      "Russell 1000"
+    ],
+    "WTS": [
+      "Russell 1000"
+    ],
+    "W": [
+      "Russell 1000"
+    ],
+    "WFRD": [
+      "Russell 1000"
+    ],
+    "WBS": [
+      "Russell 1000"
+    ],
+    "WEC": [
+      "Russell 1000"
+    ],
+    "WFC": [
+      "Russell 1000"
+    ],
+    "WELL": [
+      "Russell 1000"
+    ],
+    "WCC": [
+      "Russell 1000"
+    ],
+    "WST": [
+      "Russell 1000"
+    ],
+    "WAL": [
+      "Russell 1000"
+    ],
+    "WDC": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "WU": [
+      "Russell 1000"
+    ],
+    "WLK": [
+      "Russell 1000"
+    ],
+    "WEX": [
+      "Russell 1000"
+    ],
+    "WY": [
+      "Russell 1000"
+    ],
+    "WHR": [
+      "Russell 1000"
+    ],
+    "WTM": [
+      "Russell 1000"
+    ],
+    "WMB": [
+      "Russell 1000"
+    ],
+    "WSM": [
+      "Russell 1000"
+    ],
+    "WTW": [
+      "Russell 1000"
+    ],
+    "WSC": [
+      "Russell 1000"
+    ],
+    "WING": [
+      "Russell 1000"
+    ],
+    "WTFC": [
+      "Russell 1000"
+    ],
+    "WWD": [
+      "Russell 1000"
+    ],
+    "WDAY": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "WH": [
+      "Russell 1000"
+    ],
+    "WYNN": [
+      "Russell 1000"
+    ],
+    "XE": [
+      "Russell 1000"
+    ],
+    "XEL": [
+      "Russell 1000",
+      "Nasdaq 100"
+    ],
+    "XP": [
+      "Russell 1000"
+    ],
+    "XPO": [
+      "Russell 1000"
+    ],
+    "XYL": [
+      "Russell 1000"
+    ],
+    "YETI": [
+      "Russell 1000"
+    ],
+    "YUM": [
+      "Russell 1000"
+    ],
+    "ZBRA": [
+      "Russell 1000"
+    ],
+    "ZG": [
+      "Russell 1000"
+    ],
+    "Z": [
+      "Russell 1000"
+    ],
+    "ZBH": [
+      "Russell 1000"
+    ],
+    "ZION": [
+      "Russell 1000"
+    ],
+    "ZTS": [
+      "Russell 1000"
+    ],
+    "ZM": [
+      "Russell 1000"
+    ],
+    "GTM": [
+      "Russell 1000"
+    ],
+    "ZS": [
+      "Russell 1000"
+    ],
+    "ARM": [
+      "Nasdaq 100"
+    ],
+    "ASML": [
+      "Nasdaq 100"
+    ],
+    "CCEP": [
+      "Nasdaq 100"
+    ],
+    "FER": [
+      "Nasdaq 100"
+    ],
+    "MELI": [
+      "Nasdaq 100"
+    ],
+    "NBIS": [
+      "Nasdaq 100"
+    ],
+    "NXPI": [
+      "Nasdaq 100"
+    ],
+    "PDD": [
+      "Nasdaq 100"
+    ],
+    "STX": [
+      "Nasdaq 100"
+    ],
+    "SHOP": [
+      "Nasdaq 100"
+    ],
+    "TRI": [
+      "Nasdaq 100"
+    ]
+  }
+}

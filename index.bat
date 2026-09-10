@@ -1,0 +1,6 @@
+@echo off
+echo Installing requirements...
+pip install -r requirements.txt
+echo Starting Streamlit app and opening in Chrome...
+start chrome http://localhost:8501
+start /B streamlit run pro_dashboard.py
