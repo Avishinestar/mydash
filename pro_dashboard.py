@@ -852,7 +852,7 @@ def get_nifty500_weekly_rsi_scan():
     return top_candidates
 
 # ─────────────────────────────────────────────────────────────────────────────
-# DCF Intrinsic Value Scanner — Nifty 500
+# DCF Intrinsic Value Scanner — Top 2000 Market Cap Companies
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _dcf(fcf, growth, terminal, discount, years=10):
@@ -935,7 +935,7 @@ def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, ev_ebitda, pfcf, eps_
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_dcf_valuation_stocks():
     """
-    Scans Nifty 50 for stocks near their DCF intrinsic value (AlphaSpread methodology).
+    Scans Top 2000 market cap companies for stocks near their DCF intrinsic value (AlphaSpread methodology).
     Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS → Revenue → 7% default.
     Three scenarios: Base (10% WACC, 3% terminal), Best (9% WACC, 3.5% terminal, 1.5× growth),
     Worst (11% WACC, 2.5% terminal, 0.5× growth).
@@ -949,7 +949,7 @@ def get_dcf_valuation_stocks():
         for t in constituents:
             stock_sector[t] = sec
 
-    tickers = NIFTY_50
+    tickers = get_top2000_tickers()
 
     def fetch_one(ticker):
         try:
@@ -3032,9 +3032,9 @@ def run_dashboard():
 
     # --- TAB 3: Fundamental Scanners ---
     with tab3:
-        st.header("DCF Intrinsic Value Scanner — Nifty 50")
+        st.header("DCF Intrinsic Value Scanner — Top 2000 Market Cap Companies")
         st.caption(
-            "Screens the Nifty 500 universe for stocks whose current market price is within "
+            "Screens the Top 2000 market cap universe for stocks whose current market price is within "
             "**–35% to +15%** of their Base-Case DCF intrinsic value (AlphaSpread methodology). "
             "Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS growth → Revenue growth → 7% default. "
             "Three scenarios per stock: "
@@ -3044,13 +3044,14 @@ def run_dashboard():
             "**EV/EBITDA** measures enterprise value vs operating earnings. "
             "**P/FCF** = Market Cap ÷ Free Cash Flow (lower = cheaper on cash basis). "
             "Results sorted by largest discount to intrinsic value first. "
-            "*1-hour cache · first run takes ~60–90 s.*"
+            "*1-hour cache.*"
         )
 
         st.session_state['dcf_loaded'] = True
 
         if True:
-            dcf_data = get_dcf_valuation_stocks()
+            with _spinner("Calculating DCF intrinsic valuations across Top 2000 market cap universe..."):
+                dcf_data = get_dcf_valuation_stocks()
             if dcf_data:
                 df_dcf = pd.DataFrame(dcf_data)
                 cols_order = [
@@ -3063,7 +3064,7 @@ def run_dashboard():
                     "book value (₹)", "remarks",
                 ]
                 cols_order = [c for c in cols_order if c in df_dcf.columns]
-                st.success(f"Found **{len(df_dcf)}** Nifty 50 stocks near DCF intrinsic value.")
+                st.success(f"Found **{len(df_dcf)}** stocks near DCF intrinsic value (from Top 2000 universe).")
                 st.dataframe(
                     _color_pct(df_dcf[cols_order]),
                     use_container_width=True,
