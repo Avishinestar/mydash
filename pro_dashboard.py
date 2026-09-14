@@ -3177,39 +3177,39 @@ def run_dashboard():
             with _spinner("Scanning ~500 NSE stocks for breadth indicators..."):
                 breadth = get_market_breadth()
 
-        total = breadth.get("total", 0)
-        if total > 0:
-            adv  = breadth["advances"]
-            dec  = breadth["declines"]
-            unch = breadth["unchanged"]
-            ad_ratio = round(adv / dec, 2) if dec > 0 else None
+            total = breadth.get("total", 0)
+            if total > 0:
+                adv  = breadth["advances"]
+                dec  = breadth["declines"]
+                unch = breadth["unchanged"]
+                ad_ratio = round(adv / dec, 2) if dec > 0 else None
 
-            c1, c2, c3, c4, c5, c6 = st.columns(6)
-            c1.metric("Stocks Scanned",    total)
-            c2.metric("Advances",          adv,  f"{adv/total*100:.1f}%")
-            c3.metric("Declines",          dec,  f"-{dec/total*100:.1f}%")
-            c4.metric("A/D Ratio",         str(ad_ratio) if ad_ratio else "N/A")
-            c5.metric("% Above 200-DMA",   f"{breadth['above_200dma']/total*100:.1f}%")
-            c6.metric("% Above 50-DMA",    f"{breadth['above_50dma']/total*100:.1f}%")
+                c1, c2, c3, c4, c5, c6 = st.columns(6)
+                c1.metric("Stocks Scanned",    total)
+                c2.metric("Advances",          adv,  f"{adv/total*100:.1f}%")
+                c3.metric("Declines",          dec,  f"-{dec/total*100:.1f}%")
+                c4.metric("A/D Ratio",         str(ad_ratio) if ad_ratio else "N/A")
+                c5.metric("% Above 200-DMA",   f"{breadth['above_200dma']/total*100:.1f}%")
+                c6.metric("% Above 50-DMA",    f"{breadth['above_50dma']/total*100:.1f}%")
 
-            st.divider()
-            col_h, col_l = st.columns(2)
-            with col_h:
-                st.subheader(f"Near 52-Week Highs  ({breadth['new_52w_highs']} stocks)")
-                if breadth["high_stocks"]:
-                    st.dataframe(pd.DataFrame({"stock": breadth["high_stocks"]}),
-                                 use_container_width=True, hide_index=True)
-                else:
-                    st.info("No stocks within 1.5% of 52W high.")
-            with col_l:
-                st.subheader(f"Near 52-Week Lows  ({breadth['new_52w_lows']} stocks)")
-                if breadth["low_stocks"]:
-                    st.dataframe(pd.DataFrame({"stock": breadth["low_stocks"]}),
-                                 use_container_width=True, hide_index=True)
-                else:
-                    st.info("No stocks within 1.5% of 52W low.")
-        else:
-            st.error("Market breadth data unavailable.")
+                st.divider()
+                col_h, col_l = st.columns(2)
+                with col_h:
+                    st.subheader(f"Near 52-Week Highs  ({breadth['new_52w_highs']} stocks)")
+                    if breadth["high_stocks"]:
+                        st.dataframe(pd.DataFrame({"stock": breadth["high_stocks"]}),
+                                     use_container_width=True, hide_index=True)
+                    else:
+                        st.info("No stocks within 1.5% of 52W high.")
+                with col_l:
+                    st.subheader(f"Near 52-Week Lows  ({breadth['new_52w_lows']} stocks)")
+                    if breadth["low_stocks"]:
+                        st.dataframe(pd.DataFrame({"stock": breadth["low_stocks"]}),
+                                     use_container_width=True, hide_index=True)
+                    else:
+                        st.info("No stocks within 1.5% of 52W low.")
+            else:
+                st.error("Market breadth data unavailable.")
 
     # --- TAB 7: Commodities & Currencies ---
     with tab7:
