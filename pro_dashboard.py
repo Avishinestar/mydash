@@ -6,6 +6,20 @@ import feedparser
 import io
 import warnings
 from contextlib import nullcontext as _spinner
+
+# Safe fallback for st.fragment in environments with Streamlit < 1.37.0
+st_fragment = getattr(st, "fragment", lambda *a, **k: (lambda f: f))
+
+try:
+    st.set_page_config(
+        page_title="Advanced Investor Dashboard",
+        page_icon="📈",
+        layout="wide",
+        initial_sidebar_state="collapsed"
+    )
+except Exception:
+    pass
+
 try:
     from nsepython import nse_eq_symbols, nse_marketStatus
     _NSE_AVAILABLE = True
@@ -101,8 +115,6 @@ def get_usa_tickers_data():
             "nasdaq_100": ndx_core,
             "index_map": {t: ["Nasdaq 100", "Russell 1000"] for t in ndx_core}
         }
-
-st.set_page_config(page_title="Advanced Investor Dashboard", layout="wide")
 
 NIFTY_50 = [
     # Top 10 by weight
@@ -933,9 +945,9 @@ def _dcf_remarks(symbol, price, base_iv, pct_off, pe, peg, ev_ebitda, pfcf, eps_
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def get_dcf_valuation_stocks():
+def get_dcf_valuation_stocks(universe="NIFTY 50"):
     """
-    Scans Top 2000 market cap companies for stocks near their DCF intrinsic value (AlphaSpread methodology).
+    Scans selected universe for stocks near their DCF intrinsic value (AlphaSpread methodology).
     Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS → Revenue → 7% default.
     Three scenarios: Base (10% WACC, 3% terminal), Best (9% WACC, 3.5% terminal, 1.5× growth),
     Worst (11% WACC, 2.5% terminal, 0.5× growth).
@@ -949,7 +961,14 @@ def get_dcf_valuation_stocks():
         for t in constituents:
             stock_sector[t] = sec
 
-    tickers = get_top2000_tickers()
+    u_str = str(universe).lower()
+    if "2000" in u_str:
+        tickers = get_top2000_tickers()
+    elif "sector" in u_str:
+        all_constituents = [t for sec in SECTOR_CONSTITUENTS.values() for t in sec]
+        tickers = list(dict.fromkeys(all_constituents))
+    else:
+        tickers = NIFTY_50
 
     def fetch_one(ticker):
         try:
@@ -2984,9 +3003,14 @@ def run_dashboard():
 
     # --- TAB 2: Technical Scanners ---
     with tab2:
-        st.session_state['scanners_loaded'] = True
+        col_scan_btn, _ = st.columns([2, 8])
+        with col_scan_btn:
+            if st.button("▶ Run Technical Scans", key="run_scanners", type="primary"):
+                st.session_state['scanners_loaded'] = True
 
-        if True:
+        if not st.session_state.get('scanners_loaded'):
+            st.info("Click **▶ Run Technical Scans** above to load breakout candidates, RSI oversold, and volume pressure data.")
+        else:
             _section("Range Breakout Scanner", "🔍", "Scans sector constituents + Nifty 50 · Ranked by proximity score + volume surge")
             breakout_data = get_range_breakout_stocks()
             if breakout_data:
@@ -3032,9 +3056,9 @@ def run_dashboard():
 
     # --- TAB 3: Fundamental Scanners ---
     with tab3:
-        st.header("DCF Intrinsic Value Scanner — Top 2000 Market Cap Companies")
+        st.header("DCF Intrinsic Value Scanner")
         st.caption(
-            "Screens the Top 2000 market cap universe for stocks whose current market price is within "
+            "Screens stocks whose current market price is within "
             "**–35% to +15%** of their Base-Case DCF intrinsic value (AlphaSpread methodology). "
             "Growth driver: 5Y FCF CAGR → 3Y FCF CAGR → 1Y EPS growth → Revenue growth → 7% default. "
             "Three scenarios per stock: "
@@ -3047,11 +3071,27 @@ def run_dashboard():
             "*1-hour cache.*"
         )
 
-        st.session_state['dcf_loaded'] = True
+        col_uni, col_run = st.columns([4, 2])
+        with col_uni:
+            dcf_universe = st.selectbox(
+                "Select Universe:",
+                ["NIFTY 50 (Fast · ~15s)", "Sector Constituents (~160 stocks · ~45s)", "Top 2000 Universe (Deep scan · several minutes)"],
+                index=0,
+                key="dcf_universe_choice"
+            )
+        with col_run:
+            st.write("")
+            st.write("")
+            if st.button("▶ Run DCF Scanner", key="run_dcf", type="primary"):
+                st.session_state['dcf_loaded'] = True
+                st.session_state['dcf_selected_universe'] = dcf_universe
 
-        if True:
-            with _spinner("Calculating DCF intrinsic valuations across Top 2000 market cap universe..."):
-                dcf_data = get_dcf_valuation_stocks()
+        if not st.session_state.get('dcf_loaded'):
+            st.info("Select a universe and click **▶ Run DCF Scanner** above to calculate intrinsic valuations.")
+        else:
+            selected_univ = st.session_state.get('dcf_selected_universe', dcf_universe)
+            with _spinner(f"Calculating DCF intrinsic valuations across {selected_univ}..."):
+                dcf_data = get_dcf_valuation_stocks(selected_univ)
             if dcf_data:
                 df_dcf = pd.DataFrame(dcf_data)
                 cols_order = [
@@ -3064,14 +3104,14 @@ def run_dashboard():
                     "book value (₹)", "remarks",
                 ]
                 cols_order = [c for c in cols_order if c in df_dcf.columns]
-                st.success(f"Found **{len(df_dcf)}** stocks near DCF intrinsic value (from Top 2000 universe).")
+                st.success(f"Found **{len(df_dcf)}** stocks near DCF intrinsic value ({selected_univ}).")
                 st.dataframe(
                     _color_pct(df_dcf[cols_order]),
                     use_container_width=True,
                     hide_index=True,
                 )
             else:
-                st.warning("No stocks matched the DCF filter — data may still be loading or all stocks are outside the filter range. Try refreshing.")
+                st.warning("No stocks matched the DCF filter — try refreshing or selecting a different universe.")
 
     # --- TAB 4: News & Macro ---
     with tab4:
@@ -3126,10 +3166,16 @@ def run_dashboard():
         st.header("Market Breadth — Nifty 500 Universe")
         st.caption("Scans ~500 NSE stocks. 30-min cache. 52W high/low = within 1.5% of the 52-week extreme.")
 
-        st.session_state['breadth_loaded'] = True
+        col_b_btn, _ = st.columns([2, 8])
+        with col_b_btn:
+            if st.button("▶ Load Market Breadth", key="run_breadth", type="primary"):
+                st.session_state['breadth_loaded'] = True
 
-        if True:
-            breadth = get_market_breadth()
+        if not st.session_state.get('breadth_loaded'):
+            st.info("Click **▶ Load Market Breadth** above to scan ~500 NSE stocks for breadth indicators.")
+        else:
+            with _spinner("Scanning ~500 NSE stocks for breadth indicators..."):
+                breadth = get_market_breadth()
 
         total = breadth.get("total", 0)
         if total > 0:
@@ -3309,10 +3355,16 @@ def run_dashboard():
         st.caption("Upcoming quarterly results & board meetings. NSE calendar is authoritative but requires an Indian IP; "
                    "falls back to Yahoo Finance estimates automatically.")
 
-        st.session_state['earnings_loaded'] = True
+        col_e_btn, _ = st.columns([2, 8])
+        with col_e_btn:
+            if st.button("▶ Load Earnings Calendar", key="run_earnings", type="primary"):
+                st.session_state['earnings_loaded'] = True
 
-        if True:
-            earnings = get_earnings_calendar()
+        if not st.session_state.get('earnings_loaded'):
+            st.info("Click **▶ Load Earnings Calendar** above to fetch upcoming quarterly results and board meetings.")
+        else:
+            with _spinner("Fetching earnings calendar..."):
+                earnings = get_earnings_calendar()
             if earnings.get("source"):
                 st.caption(f"Source: **{earnings['source']}**")
             if earnings.get("data"):
@@ -3330,7 +3382,7 @@ def run_dashboard():
         st.header("🚀 Dhamala: 3%+ Top 2000 Movers & Latest News")
         st.write("Fetching Top 2000 stocks up 3% or more today, grouped by market cap...")
         
-        @st.fragment(run_every="30m")
+        @st_fragment(run_every="30m")
         def render_dhamala_fragment():
             with _spinner("Analyzing Top 2000 stocks and fetching news from TradingView..."):
                 tickers = get_top2000_tickers()
@@ -3400,7 +3452,15 @@ def run_dashboard():
                                 st.write("- *No recent TradingView news found.*")
                             st.divider()
 
-        render_dhamala_fragment()
+        col_dh_btn, _ = st.columns([2, 8])
+        with col_dh_btn:
+            if st.button("▶ Scan Dhamala Movers", key="run_dhamala", type="primary"):
+                st.session_state['dhamala_loaded'] = True
+
+        if not st.session_state.get('dhamala_loaded'):
+            st.info("Click **▶ Scan Dhamala Movers** above to scan Top 2000 stocks for 3%+ gainers today.")
+        else:
+            render_dhamala_fragment()
 
 
     # --- TAB USA: Russell 1000 & Nasdaq 100 Movers ---
@@ -3408,7 +3468,7 @@ def run_dashboard():
         st.header("🇺🇸 USA: Russell 1000 & Nasdaq 100 (3%+ Movers)")
         st.write("Tracking Russell 1000 and Nasdaq 100 indices and screening stocks up 3% or more today with TradingView news, RSI & DMA levels.")
         
-        @st.fragment(run_every="30m")
+        @st_fragment(run_every="30m")
         def render_usa_fragment():
             # 1. Index Tracking Header Cards
             indices_data = get_usa_indices_data()
@@ -3479,70 +3539,78 @@ def run_dashboard():
             else:
                 selected_tickers = all_tickers
 
-            with _spinner("Analyzing US stocks (Russell 1000 & Nasdaq 100) and fetching news from TradingView..."):
-                usa_results = get_usa_dhamala_stocks(selected_tickers, index_map)
-                
-                if not usa_results:
-                    st.info("No stocks were up 3% or more today in the selected US universe, or market data is unavailable.")
-                else:
-                    usa_large = [r for r in usa_results if r['category'] == 'Large Cap']
-                    usa_mid   = [r for r in usa_results if r['category'] == 'Mid Cap']
-                    usa_small = [r for r in usa_results if r['category'] == 'Small Cap']
-                    
-                    st.write(f"**Found {len(usa_results)} stocks up 3% or more today.** (Universe: {len(selected_tickers)} stocks)")
-                    tab_u_large, tab_u_mid, tab_u_small = st.tabs([
-                        f"Large Cap ({len(usa_large)})",
-                        f"Mid Cap ({len(usa_mid)})",
-                        f"Small Cap ({len(usa_small)})"
-                    ])
-                    
-                    def render_usa_cards(stock_list, cap_label):
-                        if not stock_list:
-                            st.write(f"No {cap_label} stocks up 3% or more today.")
-                            return
-                        for res in stock_list:
-                            sym = res['symbol']
-                            ex = res.get('exchange', 'NASDAQ')
-                            st.subheader(f"📈 {sym} — Up {res['change_pct']:.2f}% (${res.get('curr_price', 0):.2f})")
-                            
-                            tv_link = f"https://www.tradingview.com/chart/?symbol={ex}:{sym}"
-                            finviz_link = f"https://finviz.com/quote.ashx?t={sym}"
-                            yahoo_link = f"https://finance.yahoo.com/quote/{sym}"
-                            indices_badges = " &bull; ".join(res.get("indices", []))
-                            
-                            st.markdown(f"**Tracked In:** `{indices_badges}` &nbsp;|&nbsp; [View on TradingView]({tv_link}) | [View on Finviz]({finviz_link}) | [View on Yahoo Finance]({yahoo_link})")
-                            
-                            # Technical Indicators & Levels Display
-                            tech_info_parts = []
-                            if res.get('rsi_d') is not None:
-                                tech_info_parts.append(f"**Daily RSI (14):** `{res['rsi_d']}`")
-                            if res.get('rsi_w') is not None:
-                                tech_info_parts.append(f"**Weekly RSI (14):** `{res['rsi_w']}`")
-                            if res.get('dma_50') is not None:
-                                tech_info_parts.append(f"**50-DMA:** `${res['dma_50']}`")
-                            if res.get('dma_200') is not None:
-                                tech_info_parts.append(f"**200-DMA:** `${res['dma_200']}`")
-                                
-                            if tech_info_parts:
-                                st.markdown(" &nbsp;&bull;&nbsp; ".join(tech_info_parts))
-                                
-                            if res.get('tech_flag_str'):
-                                st.markdown(f"<span style='background-color:red;color:white;padding:2px 6px;border-radius:4px;font-size:0.85em;font-weight:bold;'>⚠️ {res['tech_flag_str']}</span>", unsafe_allow_html=True)
-                                
-                            if res.get('news'):
-                                st.markdown("**Latest TradingView News:**")
-                                for n in res['news']:
-                                    st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
-                            else:
-                                st.write("- *No recent TradingView news found.*")
-                            st.divider()
+            col_usa_btn, _ = st.columns([2, 8])
+            with col_usa_btn:
+                if st.button("▶ Scan US 3%+ Movers", key="run_usa_scan", type="primary"):
+                    st.session_state['usa_loaded'] = True
 
-                    with tab_u_large:
-                        render_usa_cards(usa_large, "Large Cap")
-                    with tab_u_mid:
-                        render_usa_cards(usa_mid, "Mid Cap")
-                    with tab_u_small:
-                        render_usa_cards(usa_small, "Small Cap")
+            if not st.session_state.get('usa_loaded'):
+                st.info(f"Click **▶ Scan US 3%+ Movers** above to screen {len(selected_tickers)} stocks.")
+            else:
+                with _spinner("Analyzing US stocks (Russell 1000 & Nasdaq 100) and fetching news from TradingView..."):
+                    usa_results = get_usa_dhamala_stocks(selected_tickers, index_map)
+                    
+                    if not usa_results:
+                        st.info("No stocks were up 3% or more today in the selected US universe, or market data is unavailable.")
+                    else:
+                        usa_large = [r for r in usa_results if r['category'] == 'Large Cap']
+                        usa_mid   = [r for r in usa_results if r['category'] == 'Mid Cap']
+                        usa_small = [r for r in usa_results if r['category'] == 'Small Cap']
+                        
+                        st.write(f"**Found {len(usa_results)} stocks up 3% or more today.** (Universe: {len(selected_tickers)} stocks)")
+                        tab_u_large, tab_u_mid, tab_u_small = st.tabs([
+                            f"Large Cap ({len(usa_large)})",
+                            f"Mid Cap ({len(usa_mid)})",
+                            f"Small Cap ({len(usa_small)})"
+                        ])
+                        
+                        def render_usa_cards(stock_list, cap_label):
+                            if not stock_list:
+                                st.write(f"No {cap_label} stocks up 3% or more today.")
+                                return
+                            for res in stock_list:
+                                sym = res['symbol']
+                                ex = res.get('exchange', 'NASDAQ')
+                                st.subheader(f"📈 {sym} — Up {res['change_pct']:.2f}% (${res.get('curr_price', 0):.2f})")
+                                
+                                tv_link = f"https://www.tradingview.com/chart/?symbol={ex}:{sym}"
+                                finviz_link = f"https://finviz.com/quote.ashx?t={sym}"
+                                yahoo_link = f"https://finance.yahoo.com/quote/{sym}"
+                                indices_badges = " &bull; ".join(res.get("indices", []))
+                                
+                                st.markdown(f"**Tracked In:** `{indices_badges}` &nbsp;|&nbsp; [View on TradingView]({tv_link}) | [View on Finviz]({finviz_link}) | [View on Yahoo Finance]({yahoo_link})")
+                                
+                                # Technical Indicators & Levels Display
+                                tech_info_parts = []
+                                if res.get('rsi_d') is not None:
+                                    tech_info_parts.append(f"**Daily RSI (14):** `{res['rsi_d']}`")
+                                if res.get('rsi_w') is not None:
+                                    tech_info_parts.append(f"**Weekly RSI (14):** `{res['rsi_w']}`")
+                                if res.get('dma_50') is not None:
+                                    tech_info_parts.append(f"**50-DMA:** `${res['dma_50']}`")
+                                if res.get('dma_200') is not None:
+                                    tech_info_parts.append(f"**200-DMA:** `${res['dma_200']}`")
+                                    
+                                if tech_info_parts:
+                                    st.markdown(" &nbsp;&bull;&nbsp; ".join(tech_info_parts))
+                                    
+                                if res.get('tech_flag_str'):
+                                    st.markdown(f"<span style='background-color:red;color:white;padding:2px 6px;border-radius:4px;font-size:0.85em;font-weight:bold;'>⚠️ {res['tech_flag_str']}</span>", unsafe_allow_html=True)
+                                    
+                                if res.get('news'):
+                                    st.markdown("**Latest TradingView News:**")
+                                    for n in res['news']:
+                                        st.markdown(f"- [{n['title']}]({n['link']}) ({n['published']})")
+                                else:
+                                    st.write("- *No recent TradingView news found.*")
+                                st.divider()
+
+                        with tab_u_large:
+                            render_usa_cards(usa_large, "Large Cap")
+                        with tab_u_mid:
+                            render_usa_cards(usa_mid, "Mid Cap")
+                        with tab_u_small:
+                            render_usa_cards(usa_small, "Small Cap")
 
         render_usa_fragment()
 
