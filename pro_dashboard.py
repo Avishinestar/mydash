@@ -130,7 +130,7 @@ NIFTY_50 = [
     "NESTLEIND.NS", "ETERNAL.NS", "ASIANPAINT.NS", "WIPRO.NS", "HINDALCO.NS",
     "EICHERMOT.NS", "SBILIFE.NS", "GRASIM.NS", "SHRIRAMFIN.NS", "INDIGO.NS",
     # 41–50
-    "JIOFIN.NS", "TECHM.NS", "HDFCLIFE.NS", "TRENT.NS", "TATAMOTORS.NS",
+    "JIOFIN.NS", "TECHM.NS", "HDFCLIFE.NS", "TRENT.NS", "TMPV.NS",
     "APOLLOHOSP.NS", "DRREDDY.NS", "TATACONSUM.NS", "CIPLA.NS", "MAXHEALTH.NS",
 ]
 
@@ -263,15 +263,15 @@ NIFTY_500 = [
 
 SECTOR_CONSTITUENTS = {
     "BANK": ["HDFCBANK.NS", "SBIN.NS", "ICICIBANK.NS", "AXISBANK.NS", "KOTAKBANK.NS", "INDUSINDBK.NS", "BANKBARODA.NS", "PNB.NS", "FEDERALBNK.NS", "AUBANK.NS"],
-    "IT": ["TCS.NS", "INFY.NS", "HCLTECH.NS", "WIPRO.NS", "TECHM.NS", "LTIM.NS", "PERSISTENT.NS", "OFSS.NS", "MPHASIS.NS", "COFORGE.NS"],
-    "AUTO": ["MARUTI.NS", "TATAMOTORS.NS", "M&M.NS", "BAJAJ-AUTO.NS", "HEROMOTOCO.NS", "EICHERMOT.NS", "TVSMOTOR.NS", "ASHOKLEY.NS", "MOTHERSON.NS", "BOSCHLTD.NS"],
+    "IT": ["TCS.NS", "INFY.NS", "HCLTECH.NS", "WIPRO.NS", "TECHM.NS", "LTTS.NS", "PERSISTENT.NS", "OFSS.NS", "MPHASIS.NS", "COFORGE.NS"],
+    "AUTO": ["MARUTI.NS", "TMPV.NS", "M&M.NS", "BAJAJ-AUTO.NS", "HEROMOTOCO.NS", "EICHERMOT.NS", "TVSMOTOR.NS", "ASHOKLEY.NS", "MOTHERSON.NS", "BOSCHLTD.NS"],
     "FMCG": ["ITC.NS", "HINDUNILVR.NS", "NESTLEIND.NS", "BRITANNIA.NS", "TATACONSUM.NS", "GODREJCP.NS", "DABUR.NS", "MARICO.NS", "VBL.NS", "COLPAL.NS"],
     "PHARMA": ["SUNPHARMA.NS", "CIPLA.NS", "DRREDDY.NS", "DIVISLAB.NS", "LUPIN.NS", "AUROPHARMA.NS", "TORNTPHARM.NS", "ZYDUSLIFE.NS", "ALKEM.NS", "BIOCON.NS"],
     "METAL": ["TATASTEEL.NS", "JSWSTEEL.NS", "HINDALCO.NS", "VEDL.NS", "COALINDIA.NS", "NMDC.NS", "SAIL.NS", "JINDALSTEL.NS", "NATIONALUM.NS", "RATNAMANI.NS"],
     "ENERGY": ["RELIANCE.NS", "ONGC.NS", "NTPC.NS", "POWERGRID.NS", "IOC.NS", "BPCL.NS", "GAIL.NS", "HINDPETRO.NS", "TATAPOWER.NS", "PETRONET.NS"],
     "FINANCIAL SERVICES": ["BAJFINANCE.NS", "BAJAJFINSV.NS", "CHOLAFIN.NS", "MUTHOOTFIN.NS", "RECLTD.NS", "PFC.NS", "HDFCAMC.NS", "SBICARD.NS", "ABCAPITAL.NS", "SHRIRAMFIN.NS"],
     "REALTY": ["DLF.NS", "LODHA.NS", "GODREJPROP.NS", "OBEROIRLTY.NS", "PRESTIGE.NS", "PHOENIXLTD.NS", "BRIGADE.NS", "SOBHA.NS", "MAHLIFE.NS", "SUNTECK.NS"],
-    "MEDIA": ["PVRINOX.NS", "SUNTV.NS", "NETWORK18.NS", "NETWORK18.NS", "NAVNETEDUL.NS", "NDTV.NS", "HATHWAY.NS", "DISHTV.NS", "NAZARA.NS", "SAREGAMA.NS"],
+    "MEDIA": ["PVRINOX.NS", "SUNTV.NS", "ZEEL.NS", "NETWORK18.NS", "NAVNETEDUL.NS", "NDTV.NS", "HATHWAY.NS", "DISHTV.NS", "NAZARA.NS", "SAREGAMA.NS"],
     "PSU BANK": ["SBIN.NS", "BANKBARODA.NS", "PNB.NS", "CANBK.NS", "UNIONBANK.NS", "INDIANB.NS", "BANKINDIA.NS", "CENTRALBK.NS", "MAHABANK.NS", "UCOBANK.NS"],
     "INFRASTRUCTURE": ["LT.NS", "GRASIM.NS", "ULTRACEMCO.NS", "ADANIPORTS.NS", "AMBUJACEM.NS", "SHREECEM.NS", "ACC.NS", "GMRAIRPORT.NS", "IRB.NS", "HCC.NS"],
     "COMMODITIES": ["TATACHEM.NS", "UPL.NS", "PIIND.NS", "COROMANDEL.NS", "SRF.NS", "AARTIIND.NS", "DEEPAKNTR.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "VEDL.NS"],
@@ -399,75 +399,86 @@ def get_volume_split_stocks():
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_sector_data():
-    import time as _time
     tickers = list(SECTORS.values())
-    name_by_ticker = {v: k for k, v in SECTORS.items()}
     data = {}
 
-    # ── Step 1: one batch download (single HTTP round-trip, reduces rate-limit hits) ──
+    # ── Step 1: batch download index tickers + representative constituent tickers ──
+    download_tickers = set(tickers)
+    for s_name, syms in SECTOR_CONSTITUENTS.items():
+        download_tickers.update(syms[:8])
+
     batch_df = pd.DataFrame()
     for attempt in range(2):
         try:
-            batch_df = yf.download(tickers, period="1y", interval="1d", progress=False, threads=2)
+            batch_df = yf.download(list(download_tickers), period="1y", interval="1d", progress=False, threads=4)
             if not batch_df.empty:
                 break
         except Exception:
             pass
 
-    # ── Step 2: extract per-ticker series; fall back to individual fetch if missing ──
-    # First, get the common trading days from NIFTY 50 to align dates
-    valid_dates = None
-    if not batch_df.empty and isinstance(batch_df.columns, pd.MultiIndex):
-        try:
-            valid_dates = batch_df.xs('^NSEI', axis=1, level=1).dropna(subset=["Close"]).index
-        except:
-            pass
-
-    for ticker, name in name_by_ticker.items():
-        df_t = pd.DataFrame()
-        try:
-            if not batch_df.empty and isinstance(batch_df.columns, pd.MultiIndex):
-                if ticker in batch_df.columns.get_level_values(1):
-                    df_t = batch_df.xs(ticker, axis=1, level=1)
-                    if valid_dates is not None:
-                        df_t = df_t.reindex(valid_dates)
-                    df_t = df_t.dropna(subset=["Close"])
-        except Exception:
-            pass
-
-        # Individual fallback if batch missed this ticker
-        if len(df_t) < 64:
+    # Extract Close series dataframe
+    close_df = pd.DataFrame()
+    if not batch_df.empty:
+        if isinstance(batch_df.columns, pd.MultiIndex):
             try:
-                df_t = yf.Ticker(ticker).history(period="1y")
-                if valid_dates is not None:
-                    # Align to valid_dates if available, to avoid missing dates inflating returns
-                    df_t = df_t.reindex(valid_dates)
-                df_t = df_t.dropna(subset=["Close"])
+                close_df = batch_df["Close"]
             except Exception:
                 pass
+        else:
+            close_df = batch_df
 
-        if len(df_t) < 64:
-            continue
+    # Common trading days from NIFTY 50 to align dates
+    valid_dates = None
+    if "^NSEI" in close_df.columns:
+        valid_dates = close_df["^NSEI"].dropna().index
+    elif not close_df.empty:
+        valid_dates = close_df.dropna(how="all").index
 
-        try:
-            # Check if the last date in df_t matches the last valid date to avoid stale data
-            is_stale = False
-            if valid_dates is not None and len(valid_dates) > 0:
-                if df_t.index[-1] != valid_dates[-1]:
-                    is_stale = True
+    def _calc_metrics(s_series):
+        if valid_dates is not None:
+            s_series = s_series.reindex(valid_dates)
+        s_series = s_series.dropna()
+        if len(s_series) < 64:
+            return None
+        is_stale = False
+        if valid_dates is not None and len(valid_dates) > 0:
+            if s_series.index[-1] != valid_dates[-1]:
+                is_stale = True
+        return {
+            "Daily":     float((s_series.iloc[-1] / s_series.iloc[-2])  - 1) * 100 if not is_stale and len(s_series) >= 2 else 0.0,
+            "Weekly":    float((s_series.iloc[-1] / s_series.iloc[-6])  - 1) * 100 if len(s_series) >= 6 else 0.0,
+            "Monthly":   float((s_series.iloc[-1] / s_series.iloc[-22]) - 1) * 100 if len(s_series) >= 22 else 0.0,
+            "Quarterly": float((s_series.iloc[-1] / s_series.iloc[-64]) - 1) * 100 if len(s_series) >= 64 else 0.0,
+            "Yearly":    float((s_series.iloc[-1] / s_series.iloc[0])   - 1) * 100 if len(s_series) > 0 else 0.0,
+        }
 
+    # Evaluate each sector
+    for name, ticker in SECTORS.items():
+        # First attempt: official index ticker if it has deep data (e.g. ^NSEI, ^NSEBANK, ^CNXIT, ^CNXPHARMA)
+        if ticker in close_df.columns:
+            m = _calc_metrics(close_df[ticker])
+            if m is not None:
+                data[name] = {k: round(v, 2) for k, v in m.items()}
+                continue
+
+        # Fallback: compute sector performance from its constituent stocks
+        constituents = SECTOR_CONSTITUENTS.get(name, [])
+        m_list = []
+        for c_t in constituents:
+            if c_t in close_df.columns:
+                c_m = _calc_metrics(close_df[c_t])
+                if c_m is not None:
+                    m_list.append(c_m)
+
+        if m_list:
             data[name] = {
-                "Daily":     float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-2])  - 1) * 100 if not is_stale and len(df_t) >= 2 else 0.0,
-                "Weekly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-6])  - 1) * 100 if len(df_t) >= 6 else 0.0,
-                "Monthly":   float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-22]) - 1) * 100 if len(df_t) >= 22 else 0.0,
-                "Quarterly": float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[-64]) - 1) * 100 if len(df_t) >= 64 else 0.0,
-                "Yearly":    float((df_t['Close'].iloc[-1] / df_t['Close'].iloc[0])   - 1) * 100 if len(df_t) > 0 else 0.0,
+                "Daily":     round(sum(x["Daily"] for x in m_list) / len(m_list), 2),
+                "Weekly":    round(sum(x["Weekly"] for x in m_list) / len(m_list), 2),
+                "Monthly":   round(sum(x["Monthly"] for x in m_list) / len(m_list), 2),
+                "Quarterly": round(sum(x["Quarterly"] for x in m_list) / len(m_list), 2),
+                "Yearly":    round(sum(x["Yearly"] for x in m_list) / len(m_list), 2),
             }
-        except Exception:
-            pass
 
-    if "NIFTY 50" not in data:
-        pass # Don't clear cache inside cached function
     return data
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -2849,7 +2860,7 @@ def run_dashboard():
                 
                 alpha_cols = ["Sector", "Daily Alpha", "Weekly Alpha", "Monthly Alpha", "Quarterly Alpha", "Yearly Alpha"]
                 out_week   = df_sectors[df_sectors["Weekly Alpha"] > 0].sort_values("Weekly Alpha", ascending=False)
-                under_week = df_sectors[df_sectors["Weekly Alpha"] < 0].sort_values("Weekly Alpha")
+                under_week = df_sectors[df_sectors["Weekly Alpha"] <= 0].sort_values("Weekly Alpha")
 
                 col1, col2 = st.columns(2)
                 with col1:
@@ -2863,7 +2874,7 @@ def run_dashboard():
                         st.dataframe(_color_pct(out_week[alpha_cols]), use_container_width=True, hide_index=True)
 
                 with col2:
-                    _section("Sector Underperformance", "🔴", "Weekly Alpha < 0 vs Nifty 50")
+                    _section("Sector Underperformance", "🔴", "Weekly Alpha <= 0 vs Nifty 50")
                     if under_week.empty:
                         st.info("All sectors outperforming Nifty 50 this week — broad-based rally.")
                     else:
