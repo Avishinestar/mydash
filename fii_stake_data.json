@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-13 09:50 UTC",
+  "fetched_at": "2026-10-14 08:05 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -40,53 +40,51 @@
     },
     {
       "sr. no.": 6,
-      "company": "ITC",
-      "current FII %": 34.23,
-      "prev quarter %": 34.83,
-      "change (pp)": "-0.6"
-    },
-    {
-      "sr. no.": 7,
       "company": "ICICIBANK",
       "current FII %": 33.79,
       "prev quarter %": 34.48,
       "change (pp)": "-0.69"
     },
     {
+      "sr. no.": 7,
+      "company": "ITC",
+      "current FII %": 33.22,
+      "prev quarter %": 34.23,
+      "change (pp)": "-1.01"
+    },
+    {
       "sr. no.": 8,
+      "company": "HEROMOTOCO",
+      "current FII %": 31.09,
+      "prev quarter %": 31.15,
+      "change (pp)": "-0.06"
+    },
+    {
+      "sr. no.": 9,
       "company": "INDUSINDBK",
       "current FII %": 29.17,
       "prev quarter %": 28.57,
       "change (pp)": "+0.6"
     },
     {
-      "sr. no.": 9,
+      "sr. no.": 10,
       "company": "FEDERALBNK",
       "current FII %": 27.71,
       "prev quarter %": 26.05,
       "change (pp)": "+1.66"
-    },
-    {
-      "sr. no.": 10,
-      "company": "INFY",
-      "current FII %": 27.09,
-      "prev quarter %": 28.45,
-      "change (pp)": "-1.36"
     }
   ],
   "failed_symbols": [
     "TATAMOTORS",
     "LTIM",
-    "CYIENT",
     "BIRLASOFT",
     "TANLA",
-    "HEROMOTOCO",
     "EICHERMOT",
+    "TVSMOTOR",
     "ASHOKLEY",
-    "MOTHERSON",
     "BOSCHLTD",
+    "APOLLOTYRE",
     "MRF",
-    "BALKRISIND",
     "EXIDEIND",
     "AMARARAJA",
     "CIPLA",
@@ -95,18 +93,16 @@
     "AUROPHARMA",
     "TORNTPHARM",
     "ZYDUSLIFE",
-    "ALKEM",
     "BIOCON",
     "IPCA",
     "GLENMARK",
     "LAURUSLABS",
     "BRITANNIA",
-    "TATACONSUM",
+    "GODREJCP",
     "DABUR",
-    "MARICO",
     "VBL",
+    "COLPAL",
     "EMAMILTD",
-    "RADICO",
     "TATASTEEL",
     "JSWSTEEL",
     "HINDALCO",
@@ -159,8 +155,8 @@
     "ZOMATO",
     "JUBLFOOD",
     "NAUKRI",
-    "POLICYBZR",
     "HAL",
+    "POLICYBZR",
     "BEL",
     "BHEL",
     "IGL",
