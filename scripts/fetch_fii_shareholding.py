@@ -60,8 +60,11 @@ NIFTY_500_SYMBOLS = [
 
 # NSE symbol → Screener.in slug where they differ
 SCREENER_SYMBOL_MAP = {
-    "M&M":       "M&M",       # handled via URL encoding
+    "M&M":        "M&M",        # handled via URL encoding
     "BAJAJ-AUTO": "BAJAJ-AUTO",
+    "TATAMOTORS": "TMCV",
+    "LTIM":       "540005",
+    "AMARARAJA":  "ARE&M",
 }
 
 HEADERS = {
@@ -111,24 +114,29 @@ def fetch_fii(nse_symbol):
     for variant in ["consolidated", ""]:
         path = f"{variant}/" if variant else ""
         url = f"https://www.screener.in/company/{slug}/{path}"
-        try:
-            resp = session.get(url, timeout=20)
-            if resp.status_code == 404:
-                continue
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, "lxml")
-            section = soup.find("section", {"id": "shareholding"})
-            if not section:
-                continue
-            table = section.find("table")
-            if not table:
-                continue
-            latest, prev = parse_fii_from_table(table)
-            if latest is not None:
-                time.sleep(0.4)   # polite delay per successful fetch
-                return latest, prev
-        except requests.RequestException as e:
-            print(f"    {nse_symbol} [{variant or 'standalone'}] request error: {e}")
+        for attempt in range(2):
+            try:
+                resp = session.get(url, timeout=20)
+                if resp.status_code == 429:
+                    time.sleep(3.0)
+                    continue
+                if resp.status_code == 404:
+                    break
+                resp.raise_for_status()
+                soup = BeautifulSoup(resp.text, "lxml")
+                section = soup.find("section", {"id": "shareholding"})
+                if not section:
+                    break
+                table = section.find("table")
+                if not table:
+                    break
+                latest, prev = parse_fii_from_table(table)
+                if latest is not None:
+                    time.sleep(0.5)   # polite delay per successful fetch
+                    return latest, prev
+            except requests.RequestException as e:
+                print(f"    {nse_symbol} [{variant or 'standalone'}] request error: {e}")
+                time.sleep(1.0)
     return None, None
 
 
