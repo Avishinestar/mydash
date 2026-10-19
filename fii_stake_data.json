@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-16 07:29 UTC",
+  "fetched_at": "2026-10-19 08:03 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -13,9 +13,9 @@
     {
       "sr. no.": 2,
       "company": "UPL",
-      "current FII %": 42.39,
-      "prev quarter %": 41.78,
-      "change (pp)": "+0.61"
+      "current FII %": 42.36,
+      "prev quarter %": 42.39,
+      "change (pp)": "-0.03"
     },
     {
       "sr. no.": 3,
@@ -47,17 +47,17 @@
     },
     {
       "sr. no.": 7,
-      "company": "M&M",
-      "current FII %": 34.89,
-      "prev quarter %": 36.23,
-      "change (pp)": "-1.34"
-    },
-    {
-      "sr. no.": 8,
       "company": "ICICIBANK",
       "current FII %": 34.68,
       "prev quarter %": 33.79,
       "change (pp)": "+0.89"
+    },
+    {
+      "sr. no.": 8,
+      "company": "M&M",
+      "current FII %": 33.34,
+      "prev quarter %": 34.89,
+      "change (pp)": "-1.55"
     },
     {
       "sr. no.": 9,
@@ -77,10 +77,11 @@
   "failed_symbols": [
     "BIRLASOFT",
     "IPCA",
+    "DABUR",
     "JSPL",
-    "JSWSTEEL",
+    "SHREECEM",
     "MACROTECH",
-    "DEEPAKNTR",
-    "ZOMATO"
+    "ZOMATO",
+    "AARTIIND"
   ]
 }
