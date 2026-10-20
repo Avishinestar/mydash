@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-19 08:03 UTC",
+  "fetched_at": "2026-10-20 07:53 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -41,9 +41,9 @@
     {
       "sr. no.": 6,
       "company": "IDFCFIRSTB",
-      "current FII %": 36.1,
-      "prev quarter %": 36.52,
-      "change (pp)": "-0.42"
+      "current FII %": 36.67,
+      "prev quarter %": 36.1,
+      "change (pp)": "+0.57"
     },
     {
       "sr. no.": 7,
@@ -68,20 +68,19 @@
     },
     {
       "sr. no.": 10,
-      "company": "HINDALCO",
-      "current FII %": 31.41,
-      "prev quarter %": 29.96,
-      "change (pp)": "+1.45"
+      "company": "HEROMOTOCO",
+      "current FII %": 32.22,
+      "prev quarter %": 31.09,
+      "change (pp)": "+1.13"
     }
   ],
   "failed_symbols": [
     "BIRLASOFT",
     "IPCA",
-    "DABUR",
+    "GLENMARK",
     "JSPL",
-    "SHREECEM",
     "MACROTECH",
-    "ZOMATO",
-    "AARTIIND"
+    "DEEPAKNTR",
+    "ZOMATO"
   ]
 }
