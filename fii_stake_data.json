@@ -1,14 +1,14 @@
 {
-  "fetched_at": "2026-10-20 07:53 UTC",
+  "fetched_at": "2026-10-21 07:57 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
     {
       "sr. no.": 1,
       "company": "SHRIRAMFIN",
-      "current FII %": 54.75,
-      "prev quarter %": 45.15,
-      "change (pp)": "+9.6"
+      "current FII %": 55.65,
+      "prev quarter %": 54.75,
+      "change (pp)": "+0.9"
     },
     {
       "sr. no.": 2,
@@ -76,11 +76,12 @@
   ],
   "failed_symbols": [
     "BIRLASOFT",
+    "APOLLOTYRE",
     "IPCA",
-    "GLENMARK",
     "JSPL",
+    "TORNTPOWER",
     "MACROTECH",
-    "DEEPAKNTR",
+    "SRF",
     "ZOMATO"
   ]
 }
