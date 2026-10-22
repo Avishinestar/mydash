@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-21 07:57 UTC",
+  "fetched_at": "2026-10-22 07:54 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -33,55 +33,55 @@
     },
     {
       "sr. no.": 5,
-      "company": "POLICYBZR",
-      "current FII %": 37.29,
-      "prev quarter %": 39.94,
-      "change (pp)": "-2.65"
-    },
-    {
-      "sr. no.": 6,
       "company": "IDFCFIRSTB",
       "current FII %": 36.67,
       "prev quarter %": 36.1,
       "change (pp)": "+0.57"
     },
     {
-      "sr. no.": 7,
+      "sr. no.": 6,
       "company": "ICICIBANK",
       "current FII %": 34.68,
       "prev quarter %": 33.79,
       "change (pp)": "+0.89"
     },
     {
-      "sr. no.": 8,
+      "sr. no.": 7,
       "company": "M&M",
       "current FII %": 33.34,
       "prev quarter %": 34.89,
       "change (pp)": "-1.55"
     },
     {
-      "sr. no.": 9,
+      "sr. no.": 8,
       "company": "ITC",
       "current FII %": 33.22,
       "prev quarter %": 34.23,
       "change (pp)": "-1.01"
     },
     {
-      "sr. no.": 10,
+      "sr. no.": 9,
       "company": "HEROMOTOCO",
       "current FII %": 32.22,
       "prev quarter %": 31.09,
       "change (pp)": "+1.13"
+    },
+    {
+      "sr. no.": 10,
+      "company": "LAURUSLABS",
+      "current FII %": 30.84,
+      "prev quarter %": 28.0,
+      "change (pp)": "+2.84"
     }
   ],
   "failed_symbols": [
     "BIRLASOFT",
-    "APOLLOTYRE",
+    "TVSMOTOR",
+    "CIPLA",
     "IPCA",
     "JSPL",
-    "TORNTPOWER",
+    "AMBUJACEM",
     "MACROTECH",
-    "SRF",
     "ZOMATO"
   ]
 }
