@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-22 07:54 UTC",
+  "fetched_at": "2026-10-23 07:53 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -77,10 +77,11 @@
   "failed_symbols": [
     "BIRLASOFT",
     "TVSMOTOR",
-    "CIPLA",
     "IPCA",
+    "GLENMARK",
     "JSPL",
-    "AMBUJACEM",
+    "GAIL",
+    "SHREECEM",
     "MACROTECH",
     "ZOMATO"
   ]
