@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-23 07:53 UTC",
+  "fetched_at": "2026-10-26 08:04 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -61,27 +61,26 @@
     },
     {
       "sr. no.": 9,
-      "company": "HEROMOTOCO",
-      "current FII %": 32.22,
-      "prev quarter %": 31.09,
-      "change (pp)": "+1.13"
-    },
-    {
-      "sr. no.": 10,
       "company": "LAURUSLABS",
       "current FII %": 30.84,
       "prev quarter %": 28.0,
       "change (pp)": "+2.84"
+    },
+    {
+      "sr. no.": 10,
+      "company": "INDUSINDBK",
+      "current FII %": 30.47,
+      "prev quarter %": 29.17,
+      "change (pp)": "+1.3"
     }
   ],
   "failed_symbols": [
     "BIRLASOFT",
+    "HEROMOTOCO",
     "TVSMOTOR",
     "IPCA",
-    "GLENMARK",
     "JSPL",
-    "GAIL",
-    "SHREECEM",
+    "ADANIPOWER",
     "MACROTECH",
     "ZOMATO"
   ]
