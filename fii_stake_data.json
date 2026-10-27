@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-26 08:04 UTC",
+  "fetched_at": "2026-10-27 08:18 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -12,52 +12,52 @@
     },
     {
       "sr. no.": 2,
-      "company": "UPL",
-      "current FII %": 42.36,
-      "prev quarter %": 42.39,
-      "change (pp)": "-0.03"
-    },
-    {
-      "sr. no.": 3,
       "company": "HDFCBANK",
       "current FII %": 39.39,
       "prev quarter %": 41.82,
       "change (pp)": "-2.43"
     },
     {
-      "sr. no.": 4,
+      "sr. no.": 3,
       "company": "AXISBANK",
       "current FII %": 38.05,
       "prev quarter %": 39.91,
       "change (pp)": "-1.86"
     },
     {
-      "sr. no.": 5,
+      "sr. no.": 4,
       "company": "IDFCFIRSTB",
       "current FII %": 36.67,
       "prev quarter %": 36.1,
       "change (pp)": "+0.57"
     },
     {
-      "sr. no.": 6,
+      "sr. no.": 5,
       "company": "ICICIBANK",
       "current FII %": 34.68,
       "prev quarter %": 33.79,
       "change (pp)": "+0.89"
     },
     {
-      "sr. no.": 7,
+      "sr. no.": 6,
       "company": "M&M",
       "current FII %": 33.34,
       "prev quarter %": 34.89,
       "change (pp)": "-1.55"
     },
     {
-      "sr. no.": 8,
+      "sr. no.": 7,
       "company": "ITC",
       "current FII %": 33.22,
       "prev quarter %": 34.23,
       "change (pp)": "-1.01"
+    },
+    {
+      "sr. no.": 8,
+      "company": "HEROMOTOCO",
+      "current FII %": 32.22,
+      "prev quarter %": 31.09,
+      "change (pp)": "+1.13"
     },
     {
       "sr. no.": 9,
@@ -76,12 +76,12 @@
   ],
   "failed_symbols": [
     "BIRLASOFT",
-    "HEROMOTOCO",
-    "TVSMOTOR",
+    "EXIDEIND",
     "IPCA",
     "JSPL",
-    "ADANIPOWER",
+    "TATAPOWER",
     "MACROTECH",
+    "UPL",
     "ZOMATO"
   ]
 }
