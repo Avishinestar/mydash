@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-30 08:55 UTC",
+  "fetched_at": "2026-11-02 09:52 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -76,13 +76,15 @@
   ],
   "failed_symbols": [
     "BIRLASOFT",
-    "APOLLOTYRE",
+    "TANLA",
+    "MOTHERSON",
     "IPCA",
     "ALKEM",
+    "GODREJCP",
     "JSPL",
-    "SAIL",
-    "ADANIPORTS",
     "MACROTECH",
+    "DEEPAKNTR",
+    "NAVINFLUOR",
     "ZOMATO"
   ]
 }
