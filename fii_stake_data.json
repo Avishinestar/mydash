@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-11-03 09:56 UTC",
+  "fetched_at": "2026-11-04 09:44 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -76,14 +76,15 @@
   ],
   "failed_symbols": [
     "BIRLASOFT",
-    "MOTHERSON",
-    "BALKRISIND",
     "IPCA",
-    "EMAMILTD",
+    "COLPAL",
     "JSPL",
-    "ADANIGREEN",
+    "HINDPETRO",
+    "GRASIM",
+    "SHREECEM",
     "MACROTECH",
-    "THERMAX",
-    "ZOMATO"
+    "NAVINFLUOR",
+    "ZOMATO",
+    "PAGEIND"
   ]
 }
