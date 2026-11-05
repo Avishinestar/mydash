@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-11-04 09:44 UTC",
+  "fetched_at": "2026-11-05 09:47 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -68,23 +68,21 @@
     },
     {
       "sr. no.": 10,
-      "company": "LAURUSLABS",
-      "current FII %": 30.84,
-      "prev quarter %": 28.0,
-      "change (pp)": "+2.84"
+      "company": "INDUSINDBK",
+      "current FII %": 30.47,
+      "prev quarter %": 29.17,
+      "change (pp)": "+1.3"
     }
   ],
   "failed_symbols": [
     "BIRLASOFT",
     "IPCA",
-    "COLPAL",
+    "LAURUSLABS",
     "JSPL",
-    "HINDPETRO",
-    "GRASIM",
-    "SHREECEM",
+    "VEDL",
+    "ADANIPORTS",
     "MACROTECH",
-    "NAVINFLUOR",
-    "ZOMATO",
-    "PAGEIND"
+    "SRF",
+    "ZOMATO"
   ]
 }
