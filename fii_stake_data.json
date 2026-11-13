@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-11-12 10:09 UTC",
+  "fetched_at": "2026-11-13 09:54 UTC",
   "source": "screener.in",
   "universe": "148 Nifty 500 stocks",
   "data": [
@@ -76,13 +76,13 @@
   ],
   "failed_symbols": [
     "BIRLASOFT",
-    "TVSMOTOR",
-    "ZYDUSLIFE",
+    "CIPLA",
     "IPCA",
     "JSPL",
-    "IOC",
-    "AMBUJACEM",
+    "EMAMILTD",
+    "SJVN",
     "MACROTECH",
-    "ZOMATO"
+    "ZOMATO",
+    "DIXON"
   ]
 }
