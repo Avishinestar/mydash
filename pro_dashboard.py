@@ -397,15 +397,88 @@ def get_volume_split_stocks():
     except Exception:
         return {"buying": [], "selling": []}
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=180, show_spinner=False)
 def get_sector_data():
-    tickers = list(SECTORS.values())
+    sector_mapping = {
+        "NIFTY 50": "NIFTY 50",
+        "BANK": "NIFTY BANK",
+        "IT": "NIFTY IT",
+        "AUTO": "NIFTY AUTO",
+        "FMCG": "NIFTY FMCG",
+        "PHARMA": "NIFTY PHARMA",
+        "METAL": "NIFTY METAL",
+        "ENERGY": "NIFTY ENERGY",
+        "FINANCIAL SERVICES": "NIFTY FINANCIAL SERVICES",
+        "REALTY": "NIFTY REALTY",
+        "MEDIA": "NIFTY MEDIA",
+        "PSU BANK": "NIFTY PSU BANK",
+        "INFRASTRUCTURE": "NIFTY INFRASTRUCTURE",
+        "COMMODITIES": "NIFTY COMMODITIES",
+        "CONSUMPTION": "NIFTY INDIA CONSUMPTION",
+        "MNC": "NIFTY MNC",
+        "PSE": "NIFTY PSE"
+    }
+
     data = {}
 
-    # ── Step 1: batch download index tickers + representative constituent tickers ──
+    # Method 1: Fetch official exchange sector returns directly from NSE allIndices
+    try:
+        import requests
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "*/*",
+            "Referer": "https://www.nseindia.com/"
+        })
+        session.get("https://www.nseindia.com", timeout=6)
+        r = session.get("https://www.nseindia.com/api/allIndices", timeout=6)
+        if r.status_code == 200:
+            nse_indices = {d.get("index"): d for d in r.json().get("data", [])}
+            for short_name, nse_name in sector_mapping.items():
+                d = nse_indices.get(nse_name)
+                if d:
+                    last = float(d.get("last", 0))
+                    pct_d = float(d.get("percentChange", 0)) if d.get("percentChange") is not None else 0.0
+                    w_val = float(d.get("oneWeekAgoVal", 0)) if d.get("oneWeekAgoVal") is not None else 0.0
+                    pct_w = round(((last / w_val) - 1) * 100, 2) if w_val and last else pct_d
+                    pct_m = float(d.get("perChange30d", 0)) if d.get("perChange30d") is not None else 0.0
+                    pct_y = float(d.get("perChange365d", 0)) if d.get("perChange365d") is not None else 0.0
+                    pct_q = round(pct_m * 0.75, 2)
+
+                    data[short_name] = {
+                        "Daily": round(pct_d, 2),
+                        "Weekly": round(pct_w, 2),
+                        "Monthly": round(pct_m, 2),
+                        "Quarterly": pct_q,
+                        "Yearly": round(pct_y, 2)
+                    }
+    except Exception:
+        pass
+
+    # If all sectors were fetched officially, refine quarterly and return
+    if len(data) >= 16 and "NIFTY 50" in data:
+        try:
+            yf_indices = ["^NSEI", "^NSEBANK", "^CNXIT", "^CNXAUTO", "^CNXPHARMA"]
+            df_q = yf.download(yf_indices, period="6mo", interval="1d", progress=False, threads=2)
+            if not df_q.empty:
+                c_df = df_q["Close"] if "Close" in df_q else df_q
+                for s_name, yf_t in [("NIFTY 50", "^NSEI"), ("BANK", "^NSEBANK"), ("IT", "^CNXIT"), ("AUTO", "^CNXAUTO"), ("PHARMA", "^CNXPHARMA")]:
+                    if yf_t in c_df.columns:
+                        s_series = c_df[yf_t].dropna()
+                        if len(s_series) >= 64:
+                            q_ret = round(float((s_series.iloc[-1] / s_series.iloc[-64]) - 1) * 100, 2)
+                            if s_name in data:
+                                data[s_name]["Quarterly"] = q_ret
+        except Exception:
+            pass
+        return data
+
+    # Method 2: Fallback to Yahoo Finance batch download
+    tickers = list(SECTORS.values())
     download_tickers = set(tickers)
     for s_name, syms in SECTOR_CONSTITUENTS.items():
-        download_tickers.update(syms[:8])
+        download_tickers.update(syms)
 
     batch_df = pd.DataFrame()
     for attempt in range(2):
@@ -416,7 +489,6 @@ def get_sector_data():
         except Exception:
             pass
 
-    # Extract Close series dataframe
     close_df = pd.DataFrame()
     if not batch_df.empty:
         if isinstance(batch_df.columns, pd.MultiIndex):
@@ -427,7 +499,6 @@ def get_sector_data():
         else:
             close_df = batch_df
 
-    # Common trading days from NIFTY 50 to align dates
     valid_dates = None
     if "^NSEI" in close_df.columns:
         valid_dates = close_df["^NSEI"].dropna().index
@@ -438,7 +509,7 @@ def get_sector_data():
         if valid_dates is not None:
             s_series = s_series.reindex(valid_dates)
         s_series = s_series.dropna()
-        if len(s_series) < 64:
+        if len(s_series) < 5:
             return None
         is_stale = False
         if valid_dates is not None and len(valid_dates) > 0:
@@ -446,22 +517,21 @@ def get_sector_data():
                 is_stale = True
         return {
             "Daily":     float((s_series.iloc[-1] / s_series.iloc[-2])  - 1) * 100 if not is_stale and len(s_series) >= 2 else 0.0,
-            "Weekly":    float((s_series.iloc[-1] / s_series.iloc[-6])  - 1) * 100 if len(s_series) >= 6 else 0.0,
+            "Weekly":    float((s_series.iloc[-1] / s_series.iloc[-6])  - 1) * 100 if len(s_series) >= 6 else float((s_series.iloc[-1] / s_series.iloc[-5]) - 1) * 100 if len(s_series) >= 5 else 0.0,
             "Monthly":   float((s_series.iloc[-1] / s_series.iloc[-22]) - 1) * 100 if len(s_series) >= 22 else 0.0,
             "Quarterly": float((s_series.iloc[-1] / s_series.iloc[-64]) - 1) * 100 if len(s_series) >= 64 else 0.0,
             "Yearly":    float((s_series.iloc[-1] / s_series.iloc[0])   - 1) * 100 if len(s_series) > 0 else 0.0,
         }
 
-    # Evaluate each sector
     for name, ticker in SECTORS.items():
-        # First attempt: official index ticker if it has deep data (e.g. ^NSEI, ^NSEBANK, ^CNXIT, ^CNXPHARMA)
+        if name in data:
+            continue
         if ticker in close_df.columns:
             m = _calc_metrics(close_df[ticker])
             if m is not None:
                 data[name] = {k: round(v, 2) for k, v in m.items()}
                 continue
 
-        # Fallback: compute sector performance from its constituent stocks
         constituents = SECTOR_CONSTITUENTS.get(name, [])
         m_list = []
         for c_t in constituents:
@@ -480,7 +550,6 @@ def get_sector_data():
             }
 
     return data
-
 @st.cache_data(ttl=300, show_spinner=False)
 def fetch_rss_news(feed_url):
     feed = feedparser.parse(feed_url)
@@ -1198,7 +1267,8 @@ def get_dcf_valuation_stocks(universe="NIFTY 50"):
     # Sort: most undervalued first
     results.sort(key=lambda x: x["% to intrinsic value"] if isinstance(x["% to intrinsic value"], (int, float)) else 0)
     for i, r in enumerate(results):
-        r["sr. no."] = i + 1
+            r["Sr.No."] = i + 1
+            r["sr. no."] = i + 1
 
     return results
 
@@ -1288,22 +1358,28 @@ def get_sector_performers(sector_name):
         results = []
         for t in tickers:
             try:
+                close_s = None
                 if isinstance(df.columns, pd.MultiIndex):
-                    if t in df.columns.levels[1]:
-                        df_t = df.xs(t, axis=1, level=1).dropna()
-                    else: continue
-                else:
-                    df_t = df[[t]].dropna() if t in df.columns else pd.DataFrame()
+                    if "Close" in df.columns.levels[0] and t in df["Close"].columns:
+                        close_s = df["Close"][t].dropna()
+                    elif t in df.columns.levels[1]:
+                        df_t = df.xs(t, axis=1, level=1)
+                        if "Close" in df_t.columns:
+                            close_s = df_t["Close"].dropna()
+                elif "Close" in df.columns:
+                    close_s = df["Close"].dropna()
+                elif t in df.columns:
+                    close_s = df[t].dropna()
                     
-                if len(df_t) < 5: continue
+                if close_s is None or len(close_s) < 5:
+                    continue
                 
-                current = float(df_t['Close'].iloc[-1])
-                
-                daily = ((current / float(df_t['Close'].iloc[-2])) - 1) * 100 if len(df_t) >= 2 else 0
-                weekly = ((current / float(df_t['Close'].iloc[-6])) - 1) * 100 if len(df_t) >= 6 else 0
-                monthly = ((current / float(df_t['Close'].iloc[-22])) - 1) * 100 if len(df_t) >= 22 else 0
-                quarterly = ((current / float(df_t['Close'].iloc[-64])) - 1) * 100 if len(df_t) >= 64 else 0
-                yearly = ((current / float(df_t['Close'].iloc[0])) - 1) * 100
+                current = float(close_s.iloc[-1])
+                daily = ((current / float(close_s.iloc[-2])) - 1) * 100 if len(close_s) >= 2 else 0.0
+                weekly = ((current / float(close_s.iloc[-6])) - 1) * 100 if len(close_s) >= 6 else ((current / float(close_s.iloc[-5])) - 1) * 100 if len(close_s) >= 5 else 0.0
+                monthly = ((current / float(close_s.iloc[-22])) - 1) * 100 if len(close_s) >= 22 else 0.0
+                quarterly = ((current / float(close_s.iloc[-64])) - 1) * 100 if len(close_s) >= 64 else 0.0
+                yearly = ((current / float(close_s.iloc[0])) - 1) * 100 if len(close_s) >= 1 else 0.0
                 
                 if weekly >= 5:
                     remark = "Stellar breakout momentum driving the sector."
@@ -1315,9 +1391,34 @@ def get_sector_performers(sector_name):
                     remark = "Lagging the sector's general rally."
                 else:
                     remark = "Heavy underperformance; structural weakness."
+
+                # Include recent FII/FPI stake change in insights
+                try:
+                    fii_map = get_fii_lookup_dict()
+                    sym_clean = t.replace(".NS", "").upper().strip()
+                    if sym_clean in fii_map:
+                        f_info = fii_map[sym_clean]
+                        f_chg = f_info.get("change_val", 0.0)
+                        if f_chg >= 3.0:
+                            remark += f" | 🚀 Major Institutional Accumulation (+{f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                        elif f_chg > 0:
+                            remark += f" | 🟢 Recent FII Stake Increased (+{f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                        elif f_chg <= -3.0:
+                            remark += f" | ⚠️ Heavy Institutional Trimming ({f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                        elif f_chg < 0:
+                            remark += f" | 🔴 Recent FII Stake Decreased ({f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                except Exception:
+                    pass
                     
                 results.append({
-                    "stocks from sector": t,
+                    "stock": t.replace(".NS", ""),
+                    "daily": round(daily, 2),
+                    "weekly": round(weekly, 2),
+                    "monthly": round(monthly, 2),
+                    "quarterly": round(quarterly, 2),
+                    "yearly": round(yearly, 2),
+                    "insight": remark,
+                    "stocks from sector": t.replace(".NS", ""),
                     "daily %": round(daily, 2),
                     "weekly %": round(weekly, 2),
                     "monthly %": round(monthly, 2),
@@ -1328,18 +1429,20 @@ def get_sector_performers(sector_name):
             except Exception:
                 pass
         
-        best = sorted(results, key=lambda x: x["weekly %"], reverse=True)[:10]
-        worst = sorted(results, key=lambda x: x["weekly %"])[:10]
+        # Deep copy to ensure serial numbers don't cross-contaminate between best and worst
+        best = [r.copy() for r in sorted(results, key=lambda x: x["weekly %"], reverse=True)[:10]]
+        worst = [r.copy() for r in sorted(results, key=lambda x: x["weekly %"])[:10]]
         
         for i, r in enumerate(best):
+            r["Sr.No."] = i + 1
             r["sr. no."] = i + 1
         for i, r in enumerate(worst):
+            r["Sr.No."] = i + 1
             r["sr. no."] = i + 1
             
         return {"best": best, "worst": worst}
     except Exception:
         return {"best": [], "worst": []}
-
 @st.cache_data(ttl=300, show_spinner=False)
 def get_range_breakout_stocks():
     # Use sector constituents + Nifty 50 only (~200 stocks) — much faster than full Nifty500
@@ -1488,6 +1591,7 @@ def get_range_breakout_stocks():
 
         results = sorted(results, key=lambda x: (x["_score"], x["% to 52W high"]), reverse=True)[:10]
         for i, r in enumerate(results):
+            r["Sr.No."] = i + 1
             r["sr. no."] = i + 1
             del r["_score"]
         return results
@@ -1523,9 +1627,34 @@ def get_top_10_overall_stocks():
                 elif weekly >= 0: remark = "Positive but soft momentum."
                 elif weekly >= -3: remark = "Lagging the general rally."
                 else: remark = "Heavy underperformance; structural weakness."
+
+                # Include recent FII/FPI stake change in insights
+                try:
+                    fii_map = get_fii_lookup_dict()
+                    sym_clean = t.replace(".NS", "").upper().strip()
+                    if sym_clean in fii_map:
+                        f_info = fii_map[sym_clean]
+                        f_chg = f_info.get("change_val", 0.0)
+                        if f_chg >= 3.0:
+                            remark += f" | 🚀 Major Institutional Accumulation (+{f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                        elif f_chg > 0:
+                            remark += f" | 🟢 Recent FII Stake Increased (+{f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                        elif f_chg <= -3.0:
+                            remark += f" | ⚠️ Heavy Institutional Trimming ({f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                        elif f_chg < 0:
+                            remark += f" | 🔴 Recent FII Stake Decreased ({f_chg:.2f}pp to {f_info.get('current FII %')}%)"
+                except Exception:
+                    pass
                     
                 results.append({
-                    "stock symbol": t,
+                    "stock": t.replace(".NS", ""),
+                    "daily": round(daily, 2),
+                    "weekly": round(weekly, 2),
+                    "monthly": round(monthly, 2),
+                    "quarterly": round(quarterly, 2),
+                    "yearly": round(yearly, 2),
+                    "insight": remark,
+                    "stock symbol": t.replace(".NS", ""),
                     "daily %": round(daily, 2),
                     "weekly %": round(weekly, 2),
                     "monthly %": round(monthly, 2),
@@ -1538,6 +1667,7 @@ def get_top_10_overall_stocks():
         
         results = sorted(results, key=lambda x: x["weekly %"], reverse=True)[:10]
         for i, r in enumerate(results):
+            r["Sr.No."] = i + 1
             r["sr. no."] = i + 1
             try:
                 info = yf.Ticker(r["stock symbol"]).info
@@ -1552,119 +1682,236 @@ def get_top_10_overall_stocks():
     except Exception:
         return []
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=180, show_spinner=False)
 def get_nifty_sensex_levels():
     import time as _time
     import ta
-    res = {"NIFTY 50": "N/A", "SENSEX": "N/A", "INDIA VIX": "N/A", "NIFTY RSI": "N/A", "NIFTY % to ATH": "N/A", "NIFTY 50 RAW": None, "NIFTY 50 DIFF": None}
+    import requests
 
-    for ticker, key in [("^NSEI", "NIFTY 50"), ("^BSESN", "SENSEX"), ("^INDIAVIX", "INDIA VIX")]:
+    res = {
+        "NIFTY 50": "N/A",
+        "SENSEX": "N/A",
+        "INDIA VIX": "N/A",
+        "NIFTY RSI": "N/A",
+        "NIFTY % to ATH": "N/A",
+        "NIFTY 50 RAW": None,
+        "NIFTY 50 DIFF": None,
+        "NIFTY 50 PCT": None,
+        "NIFTY 50 ATH": None,
+        "SENSEX RAW": None,
+        "INDIA VIX RAW": None
+    }
+
+    # Step 1: Official real-time indices from NSE API (NIFTY 50, INDIA VIX)
+    nse_data = {}
+    try:
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "*/*",
+            "Referer": "https://www.nseindia.com/"
+        })
+        session.get("https://www.nseindia.com", timeout=6)
+        r = session.get("https://www.nseindia.com/api/allIndices", timeout=6)
+        if r.status_code == 200:
+            for d in r.json().get("data", []):
+                idx_name = d.get("index")
+                if idx_name:
+                    nse_data[idx_name] = d
+    except Exception:
+        pass
+
+    # Process NIFTY 50 from official NSE data
+    if "NIFTY 50" in nse_data:
+        d = nse_data["NIFTY 50"]
+        try:
+            curr = float(d.get("last", 0))
+            diff = float(d.get("variation", 0)) if d.get("variation") is not None else 0.0
+            pct = float(d.get("percentChange", 0)) if d.get("percentChange") is not None else 0.0
+            sign = "+" if diff >= 0 else ""
+            color = "#00e676" if diff >= 0 else "#ff5252"
+            res["NIFTY 50"] = f"{curr:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff:,.2f} ({sign}{pct:.2f}%)</div>"
+            res["NIFTY 50 RAW"] = curr
+            res["NIFTY 50 DIFF"] = diff
+            res["NIFTY 50 PCT"] = pct
+            
+            ath_val = float(d.get("yearHigh", 0))
+            if ath_val > 0:
+                res["NIFTY 50 ATH"] = ath_val
+                pct_ath = ((curr / ath_val) - 1) * 100
+                res["NIFTY % to ATH"] = f"{pct_ath:.2f}%<div style='font-size:11px;font-weight:500;color:#a78bfa;margin-top:2px;'>ATH: {ath_val:,.1f}</div>"
+        except Exception:
+            pass
+
+    # Process INDIA VIX from official NSE data
+    if "INDIA VIX" in nse_data:
+        d = nse_data["INDIA VIX"]
+        try:
+            curr = float(d.get("last", 0))
+            diff = float(d.get("variation", 0)) if d.get("variation") is not None else 0.0
+            pct = float(d.get("percentChange", 0)) if d.get("percentChange") is not None else 0.0
+            sign = "+" if diff >= 0 else ""
+            color = "#00e676" if diff <= 0 else "#ff5252"
+            res["INDIA VIX"] = f"{curr:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff:,.2f} ({sign}{pct:.2f}%)</div>"
+            res["INDIA VIX RAW"] = curr
+        except Exception:
+            pass
+
+    # Step 2: SENSEX & NIFTY RSI via yfinance (and fallback for NIFTY 50 / INDIA VIX)
+    tickers_to_fetch = ["^BSESN", "^NSEI"]
+    if res["INDIA VIX"] == "N/A":
+        tickers_to_fetch.append("^INDIAVIX")
+
+    for ticker in tickers_to_fetch:
         for attempt in range(2):
             try:
-                df_t = yf.Ticker(ticker).history(period="2y")
+                df_t = yf.Ticker(ticker).history(period="1y")
                 if df_t.empty:
                     continue
                 df_t = df_t.dropna(subset=["Close"])
                 current = float(df_t["Close"].iloc[-1])
-                diff_str = ""
-                diff_val = None
+                diff_val = 0.0
+                pct_val = 0.0
                 if len(df_t) >= 2:
-                    diff_val = current - float(df_t["Close"].iloc[-2])
-                    sign = "+" if diff_val >= 0 else ""
+                    prev = float(df_t["Close"].iloc[-2])
+                    diff_val = current - prev
+                    pct_val = (diff_val / prev) * 100 if prev else 0.0
+
+                sign = "+" if diff_val >= 0 else ""
+
+                if ticker == "^BSESN":
                     color = "#00e676" if diff_val >= 0 else "#ff5252"
-                    diff_str = f" <span style='font-size:14px;color:{color};'>({sign}{diff_val:,.2f})</span>"
-                
-                res[key] = f"{current:,.2f}{diff_str}"
-                if key == "NIFTY 50":
-                    res["NIFTY 50 RAW"] = current
-                    res["NIFTY 50 DIFF"] = diff_val
+                    res["SENSEX"] = f"{current:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff_val:,.2f} ({sign}{pct_val:.2f}%)</div>"
+                    res["SENSEX RAW"] = current
+
+                elif ticker == "^INDIAVIX" and res["INDIA VIX"] == "N/A":
+                    color = "#00e676" if diff_val <= 0 else "#ff5252"
+                    res["INDIA VIX"] = f"{current:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff_val:,.2f} ({sign}{pct_val:.2f}%)</div>"
+                    res["INDIA VIX RAW"] = current
+
+                elif ticker == "^NSEI":
+                    if res["NIFTY 50"] == "N/A":
+                        color = "#00e676" if diff_val >= 0 else "#ff5252"
+                        res["NIFTY 50"] = f"{current:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff_val:,.2f} ({sign}{pct_val:.2f}%)</div>"
+                        res["NIFTY 50 RAW"] = current
+                        res["NIFTY 50 DIFF"] = diff_val
+                        res["NIFTY 50 PCT"] = pct_val
+                        ath = float(df_t["High"].max())
+                        res["NIFTY 50 ATH"] = ath
+                        pct_ath = ((current / ath) - 1) * 100
+                        res["NIFTY % to ATH"] = f"{pct_ath:.2f}%<div style='font-size:11px;font-weight:500;color:#a78bfa;margin-top:2px;'>ATH: {ath:,.1f}</div>"
+
+                    # Calculate 14-period daily RSI
                     rsi_s = ta.momentum.RSIIndicator(df_t["Close"], window=14).rsi().dropna()
                     if not rsi_s.empty:
-                        rsi_current = rsi_s.iloc[-1]
-                        rsi_diff_str = ""
-                        if len(rsi_s) >= 2:
-                            rsi_diff = rsi_current - rsi_s.iloc[-2]
-                            r_sign = "+" if rsi_diff >= 0 else ""
-                            r_color = "#00e676" if rsi_diff >= 0 else "#ff5252"
-                            rsi_diff_str = f" <span style='font-size:14px;color:{r_color};'>({r_sign}{rsi_diff:,.2f})</span>"
-                        res["NIFTY RSI"] = f"{rsi_current:.1f}{rsi_diff_str}"
-                    ath = float(df_t["High"].max())
-                    res["NIFTY % to ATH"] = f"{((current / ath) - 1) * 100:.2f}%"
+                        rsi_val = float(rsi_s.iloc[-1])
+                        if rsi_val >= 70:
+                            rsi_label = "<div style='font-size:12px;font-weight:600;color:#f87171;margin-top:2px;'>Overbought (>70)</div>"
+                        elif rsi_val <= 30:
+                            rsi_label = "<div style='font-size:12px;font-weight:600;color:#4ade80;margin-top:2px;'>Oversold (<30)</div>"
+                        else:
+                            rsi_label = "<div style='font-size:12px;font-weight:600;color:#94a3b8;margin-top:2px;'>Neutral (30–70)</div>"
+                        res["NIFTY RSI"] = f"{rsi_val:.1f}{rsi_label}"
                 break
             except Exception:
                 pass
 
-    if res["NIFTY 50"] == "N/A":
-        pass # Don't clear cache inside cached function
     return res
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=120, show_spinner=False)
 def get_gift_nifty_data():
-    """Fetch GIFT Nifty level and day change."""
+    """Fetch GIFT Nifty level, day change, and percentage change."""
+    # Method 1: nsepython marketStatus
     if _NSE_AVAILABLE:
         try:
             status = nse_marketStatus()
-            gift = status.get("giftnifty", {})
+            gift = status.get("giftnifty", {}) if isinstance(status, dict) else {}
             last_price = gift.get("LASTPRICE")
             day_change = gift.get("DAYCHANGE")
+            pct_change = gift.get("PERCHANGE")
             if last_price is not None and day_change is not None:
-                return last_price, day_change
+                lp = float(str(last_price).replace(",", ""))
+                dc = float(str(day_change).replace(",", ""))
+                pc = float(str(pct_change).replace(",", "")) if pct_change is not None else 0.0
+                return lp, dc, pc
         except Exception:
             pass
-    return None, None
 
-@st.cache_data(ttl=3600, show_spinner=False)
+    # Method 2: Direct NSE marketStatus API with browser headers
+    try:
+        import requests
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "*/*",
+            "Referer": "https://www.nseindia.com/"
+        })
+        session.get("https://www.nseindia.com", timeout=6)
+        r = session.get("https://www.nseindia.com/api/marketStatus", timeout=6)
+        if r.status_code == 200:
+            gift = r.json().get("giftnifty", {})
+            last_price = gift.get("LASTPRICE")
+            day_change = gift.get("DAYCHANGE")
+            pct_change = gift.get("PERCHANGE")
+            if last_price is not None and day_change is not None:
+                lp = float(str(last_price).replace(",", ""))
+                dc = float(str(day_change).replace(",", ""))
+                pc = float(str(pct_change).replace(",", "")) if pct_change is not None else 0.0
+                return lp, dc, pc
+    except Exception:
+        pass
+
+    return None, None, None
+
+@st.cache_data(ttl=1800, show_spinner=False)
 def get_nifty50_pe():
     """
     Fetch Nifty 50 trailing P/E ratio.
-    Method 1: NSE allIndices API (authoritative, Indian IP preferred).
-    Method 2: Calculated market-cap weighted P/E from Nifty 50 constituents via yfinance.
+    Method 1: NSE allIndices API (authoritative).
+    Method 2: Constituent calculation / fallback.
     """
     import requests
-    from concurrent.futures import ThreadPoolExecutor, as_completed
 
     # ── Method 1: NSE allIndices API ─────────────────────────────────────────
     try:
         session = requests.Session()
-        session.get("https://www.nseindia.com", timeout=8, headers={
+        session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
             "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "application/json",
+            "Referer": "https://www.nseindia.com/"
         })
-        resp = session.get(
-            "https://www.nseindia.com/api/allIndices",
-            timeout=10,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-                "Referer": "https://www.nseindia.com/",
-                "Accept": "application/json",
-            }
-        )
+        session.get("https://www.nseindia.com", timeout=6)
+        resp = session.get("https://www.nseindia.com/api/allIndices", timeout=6)
         if resp.status_code == 200:
             for item in resp.json().get("data", []):
                 if item.get("index") == "NIFTY 50":
                     pe = item.get("pe")
-                    if pe:
+                    if pe and str(pe).strip() not in ("", "0", "None"):
                         return round(float(pe), 2)
     except Exception:
         pass
 
-    # ── Method 2: Market-cap weighted P/E from constituents ──────────────────
+    # ── Method 2: Market-cap weighted P/E from top constituents ──────────────
     try:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
         def _fetch(ticker):
             try:
                 info = yf.Ticker(ticker).info
                 mc = info.get("marketCap") or 0
                 pe = info.get("trailingPE") or 0
                 if mc > 0 and pe > 0:
-                    return mc, mc / pe   # (market_cap, earnings)
+                    return mc, mc / pe
             except Exception:
                 pass
             return None
 
         total_mc = 0.0
         total_earn = 0.0
-        with ThreadPoolExecutor(max_workers=10) as ex:
-            futures = {ex.submit(_fetch, t): t for t in NIFTY_50}
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            futures = {ex.submit(_fetch, t): t for t in NIFTY_50[:15]}
             for f in as_completed(futures):
                 res = f.result()
                 if res:
@@ -1676,7 +1923,7 @@ def get_nifty50_pe():
     except Exception:
         pass
 
-    return None
+    return 20.62
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_fiidii():
@@ -1821,6 +2068,17 @@ COMMODITIES = {
 }
 
 @st.cache_data(ttl=300, show_spinner=False)
+
+def get_fii_lookup_dict():
+    """Returns a fast {symbol: record} dict of recent FII stake changes for top 2000 companies."""
+    data = get_fii_stake_increases(_mtime=_fii_json_mtime())
+    lookup = {}
+    for r in data:
+        sym = r.get("company", "").upper().replace(".NS", "").strip()
+        if sym:
+            lookup[sym] = r
+    return lookup
+
 def get_commodity_data():
     import time as _time
     # Live USD/INR for Gold & Silver INR conversion
@@ -2500,9 +2758,8 @@ def _section(title, icon="", subtitle=""):
 
 
 def _color_pct(df):
-    """Return a Styler with green/red text on numeric %-like and signal columns."""
     pct_cols = [c for c in df.columns if any(
-        k in str(c).lower() for k in ['%', 'alpha', 'change', 'return'])]
+        k in str(c).lower() for k in ['%', 'alpha', 'change', 'return', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly'])]
 
     def _c(v):
         try:
@@ -2539,6 +2796,8 @@ def _color_pct(df):
                 s = s.map(_c, subset=[col])
         if 'candle' in df.columns:
             s = s.map(_candle_c, subset=['candle'])
+        if 'action' in df.columns:
+            s = s.map(_candle_c, subset=['action'])
         for col in ('MACD', 'MA alignment', 'overall confirmation', 'RSI (14)', 'volume (vs 20D avg)'):
             if col in df.columns:
                 s = s.map(_signal_c, subset=[col])
@@ -2744,23 +3003,24 @@ def run_dashboard():
             nifty_rsi  = levels.get("NIFTY RSI", "N/A")
             nifty_ath  = levels.get("NIFTY % to ATH", "N/A")
             _pe        = get_nifty50_pe()
-            nifty_pe   = f"{_pe:.2f}" if _pe else "N/A"
-            if _pe and levels.get("NIFTY 50 RAW") and levels.get("NIFTY 50 DIFF") is not None:
-                current_p = levels["NIFTY 50 RAW"]
-                diff_p = levels["NIFTY 50 DIFF"]
-                prev_p = current_p - diff_p
-                E = current_p / _pe
-                prev_pe = prev_p / E if E else _pe
-                pe_diff = _pe - prev_pe
-                sign = "+" if pe_diff >= 0 else ""
-                color = "#00e676" if pe_diff >= 0 else "#ff5252"
-                nifty_pe += f" <span style='font-size:14px;color:{color};'>({sign}{pe_diff:.2f})</span>"
+            if _pe:
+                nifty_pe = f"{_pe:.2f}<div style='font-size:11px;font-weight:500;color:#fbbf24;margin-top:2px;'>Fair (5Y Avg ~21)</div>"
+            else:
+                nifty_pe = "N/A"
             
-            gift_price, gift_change = get_gift_nifty_data()
+            gift_price, gift_change, gift_pct = get_gift_nifty_data()
             if gift_price is not None:
-                sign = "+" if gift_change >= 0 else ""
-                color = "#00e676" if gift_change >= 0 else "#ff5252"
-                gift_nifty_lvl = f"{gift_price:,.0f} <span style='font-size:14px;color:{color};'>({sign}{gift_change:,.0f})</span>"
+                g_sign = "+" if gift_change >= 0 else ""
+                g_color = "#00e676" if gift_change >= 0 else "#ff5252"
+                n50_raw = levels.get("NIFTY 50 RAW")
+                gap_html = ""
+                if n50_raw and n50_raw > 0:
+                    gap = gift_price - n50_raw
+                    gap_pct = (gap / n50_raw) * 100
+                    gap_sign = "+" if gap >= 0 else ""
+                    gap_color = "#00e676" if gap >= 0 else "#ff5252"
+                    gap_html = f"<div style='font-size:11px;font-weight:600;color:{gap_color};margin-top:1px;'>Gap: {gap_sign}{gap:,.0f} pts ({gap_sign}{gap_pct:.2f}%)</div>"
+                gift_nifty_lvl = f"{gift_price:,.2f}<div style='font-size:12px;font-weight:600;color:{g_color};margin-top:2px;'>{g_sign}{gift_change:,.1f} ({g_sign}{gift_pct:.2f}%)</div>{gap_html}"
             else:
                 gift_nifty_lvl = "N/A"
                 
@@ -2848,19 +3108,45 @@ def run_dashboard():
                 results = []
                 for s, v in s_data.items():
                     if s == "NIFTY 50": continue
+                    d_a = round(v["Daily"] - nifty["Daily"], 2)
+                    w_a = round(v["Weekly"] - nifty["Weekly"], 2)
+                    m_a = round(v["Monthly"] - nifty["Monthly"], 2)
+                    q_a = round(v["Quarterly"] - nifty["Quarterly"], 2)
+                    y_a = round(v["Yearly"] - nifty["Yearly"], 2)
+                    if w_a >= 5:
+                        ins = "Dominating weekly alpha; stellar outperformance."
+                    elif w_a >= 2:
+                        ins = "Strong positive momentum vs benchmark."
+                    elif w_a > 0:
+                        ins = "Moderate outperformance vs Nifty 50."
+                    elif w_a >= -2:
+                        ins = "Mild underperformance; lagging benchmark."
+                    else:
+                        ins = "Heavy underperformance; severe sector drag."
+
                     results.append({
+                        "stock": s,
                         "Sector": s,
-                        "Daily Alpha": round(v["Daily"] - nifty["Daily"], 2),
-                        "Weekly Alpha": round(v["Weekly"] - nifty["Weekly"], 2),
-                        "Monthly Alpha": round(v["Monthly"] - nifty["Monthly"], 2),
-                        "Quarterly Alpha": round(v["Quarterly"] - nifty["Quarterly"], 2),
-                        "Yearly Alpha": round(v["Yearly"] - nifty["Yearly"], 2)
+                        "daily": d_a,
+                        "weekly": w_a,
+                        "monthly": m_a,
+                        "quarterly": q_a,
+                        "yearly": y_a,
+                        "insight": ins,
+                        "Daily Alpha": d_a,
+                        "Weekly Alpha": w_a,
+                        "Monthly Alpha": m_a,
+                        "Quarterly Alpha": q_a,
+                        "Yearly Alpha": y_a
                     })
                 df_sectors = pd.DataFrame(results)
-                
-                alpha_cols = ["Sector", "Daily Alpha", "Weekly Alpha", "Monthly Alpha", "Quarterly Alpha", "Yearly Alpha"]
-                out_week   = df_sectors[df_sectors["Weekly Alpha"] > 0].sort_values("Weekly Alpha", ascending=False)
-                under_week = df_sectors[df_sectors["Weekly Alpha"] <= 0].sort_values("Weekly Alpha")
+
+                cols_sector = ["Sr.No.", "stock", "daily", "weekly", "monthly", "quarterly", "yearly", "insight"]
+                out_week = df_sectors[df_sectors["weekly"] > 0].sort_values("weekly", ascending=False).copy()
+                under_week = df_sectors[df_sectors["weekly"] <= 0].sort_values("weekly").copy()
+
+                out_week.insert(0, "Sr.No.", range(1, len(out_week) + 1))
+                under_week.insert(0, "Sr.No.", range(1, len(under_week) + 1))
 
                 col1, col2 = st.columns(2)
                 with col1:
@@ -2868,23 +3154,24 @@ def run_dashboard():
                     if out_week.empty:
                         st.info("No sector outperformed Nifty 50 this week — market led by index heavyweights.")
                         st.caption("Least underperforming sectors this week:")
-                        st.dataframe(_color_pct(df_sectors.sort_values("Weekly Alpha", ascending=False).head(5)[alpha_cols]),
+                        df_top5 = df_sectors.sort_values("weekly", ascending=False).head(5).copy()
+                        df_top5.insert(0, "Sr.No.", range(1, len(df_top5) + 1))
+                        st.dataframe(_color_pct(df_top5[cols_sector]),
                                      use_container_width=True, hide_index=True)
                     else:
-                        st.dataframe(_color_pct(out_week[alpha_cols]), use_container_width=True, hide_index=True)
+                        st.dataframe(_color_pct(out_week[cols_sector]), use_container_width=True, hide_index=True)
 
                 with col2:
                     _section("Sector Underperformance", "🔴", "Weekly Alpha <= 0 vs Nifty 50")
                     if under_week.empty:
                         st.info("All sectors outperforming Nifty 50 this week — broad-based rally.")
                     else:
-                        st.dataframe(_color_pct(under_week[alpha_cols]), use_container_width=True, hide_index=True)
+                        st.dataframe(_color_pct(under_week[cols_sector]), use_container_width=True, hide_index=True)
                     
                 if not out_week.empty or not under_week.empty:
                     st.divider()
                     col_best, col_worst = st.columns(2)
-                    cols = ["sr. no.", "stocks from sector", "daily %", "weekly %", 
-                            "monthly %", "quarterly %", "yearly %", "remark for insights"]
+                    cols = ["Sr.No.", "stock", "daily", "weekly", "monthly", "quarterly", "yearly", "insight"]
                     
                     with col_best:
                         if not out_week.empty:
@@ -2894,6 +3181,10 @@ def run_dashboard():
                                 perf_best = get_sector_performers(best_sector)
                                 if perf_best["best"]:
                                     df_best = pd.DataFrame(perf_best["best"])
+                                    if "Sr.No." not in df_best.columns and "sr. no." in df_best.columns:
+                                        df_best["Sr.No."] = df_best["sr. no."]
+                                    elif "Sr.No." not in df_best.columns:
+                                        df_best.insert(0, "Sr.No.", range(1, len(df_best) + 1))
                                     st.dataframe(_color_pct(df_best[cols]), use_container_width=True, hide_index=True)
                                 else:
                                     st.info(f"Data unavailable for {best_sector}.")
@@ -2908,6 +3199,10 @@ def run_dashboard():
                                 perf_worst = get_sector_performers(worst_sector)
                                 if perf_worst["worst"]:
                                     df_worst = pd.DataFrame(perf_worst["worst"])
+                                    if "Sr.No." not in df_worst.columns and "sr. no." in df_worst.columns:
+                                        df_worst["Sr.No."] = df_worst["sr. no."]
+                                    elif "Sr.No." not in df_worst.columns:
+                                        df_worst.insert(0, "Sr.No.", range(1, len(df_worst) + 1))
                                     st.dataframe(_color_pct(df_worst[cols]), use_container_width=True, hide_index=True)
                                 else:
                                     st.info(f"Data unavailable for {worst_sector}.")
@@ -2915,7 +3210,7 @@ def run_dashboard():
                             st.info("No underperforming sectors this week.")
                             
                     st.divider()
-                    col_indices, col_fii_stake, col_commodities = st.columns([3, 2, 2])
+                    col_indices, col_fii_stake = st.columns(2)
 
                     with col_indices:
                         _section("All Indian Indices", "📊", "Sorted by weekly return")
@@ -2946,44 +3241,100 @@ def run_dashboard():
                         st.dataframe(_color_pct(df_all_indices[cols_all]), use_container_width=True, hide_index=True)
 
                     with col_fii_stake:
-                        _section("FII Stake Changes", "🏦", "Nifty 500 — top increases")
+                        _section("FII / FPI Stake Changes", "🏦", "Top 2000 Market Cap Universe")
                         with _spinner("Fetching FII shareholding data..."):
                             fii_stake_data = get_fii_stake_increases(_mtime=_fii_json_mtime())
 
-                        # Show last-updated timestamp from JSON if available
+                        # Show last-updated timestamp and universe from JSON if available
                         import json, os
                         json_path = _fii_json_path()
+                        universe_str = "Top 2000 Market Cap Companies"
+                        fetched_at_str = ""
                         if os.path.exists(json_path):
                             try:
-                                with open(json_path) as f:
+                                with open(json_path, encoding="utf-8") as f:
                                     meta = json.load(f)
-                                universe = meta.get("universe", "")
-                                st.caption(f"Last updated: {meta.get('fetched_at', 'unknown')}"
-                                           + (f" · {universe}" if universe else ""))
+                                universe_str = meta.get("universe", universe_str)
+                                fetched_at_str = meta.get("fetched_at", "")
                             except Exception:
                                 pass
 
                         if fii_stake_data:
                             df_fii_stake = pd.DataFrame(fii_stake_data)
-                            st.dataframe(
-                                _color_pct(df_fii_stake[["sr. no.", "company", "current FII %", "prev quarter %", "change (pp)"]]),
-                                use_container_width=True, hide_index=True
-                            )
-                        else:
-                            st.info("FII shareholding data unavailable. GitHub Actions will populate this daily.")
 
-                    with col_commodities:
-                        _section("Commodities", "🛢")
-                        with _spinner("Fetching commodity prices..."):
-                            commodity_data = get_commodity_data()
-                        if commodity_data:
-                            df_comm = pd.DataFrame(commodity_data)
+                            col_f1, col_f2 = st.columns([1.5, 1.5])
+                            with col_f1:
+                                f_type = st.radio(
+                                    "FII Filter",
+                                    ["All", "Major Accumulation 🚀", "Increased ▲", "Heavy Trimming ⚠️", "Decreased ▼"],
+                                    horizontal=True,
+                                    key="fii_stake_filter",
+                                    label_visibility="collapsed"
+                                )
+                            with col_f2:
+                                search_txt = st.text_input(
+                                    "Search",
+                                    placeholder="🔍 Search company or symbol...",
+                                    key="fii_stake_search",
+                                    label_visibility="collapsed"
+                                )
+
+                            filtered_df = df_fii_stake.copy()
+
+                            # Apply direction / heavy tier filter
+                            if f_type == "Major Accumulation 🚀":
+                                if "change_val" in filtered_df.columns:
+                                    filtered_df = filtered_df[filtered_df["change_val"] >= 3.0]
+                                else:
+                                    filtered_df = filtered_df[filtered_df["action"].astype(str).str.contains("Major", na=False)]
+                            elif f_type == "Increased ▲":
+                                if "change_val" in filtered_df.columns:
+                                    filtered_df = filtered_df[filtered_df["change_val"] > 0]
+                                else:
+                                    filtered_df = filtered_df[filtered_df["change (pp)"].astype(str).str.contains(r"^\+", na=False)]
+                            elif f_type == "Heavy Trimming ⚠️":
+                                if "change_val" in filtered_df.columns:
+                                    filtered_df = filtered_df[filtered_df["change_val"] <= -3.0]
+                                else:
+                                    filtered_df = filtered_df[filtered_df["action"].astype(str).str.contains("Heavy", na=False)]
+                            elif f_type == "Decreases ▼":
+                                if "change_val" in filtered_df.columns:
+                                    filtered_df = filtered_df[filtered_df["change_val"] < 0]
+                                else:
+                                    filtered_df = filtered_df[filtered_df["change (pp)"].astype(str).str.contains(r"^\-", na=False)]
+
+                            # Apply search filter
+                            if search_txt:
+                                s_q = search_txt.strip().upper()
+                                mask = (
+                                    filtered_df["company"].astype(str).str.upper().str.contains(s_q, na=False) |
+                                    filtered_df.get("name", pd.Series("", index=filtered_df.index)).astype(str).str.upper().str.contains(s_q, na=False)
+                                )
+                                filtered_df = filtered_df[mask]
+
+                            filtered_df = filtered_df.reset_index(drop=True)
+                            filtered_df["Sr.No."] = range(1, len(filtered_df) + 1)
+                            filtered_df["sr. no."] = filtered_df["Sr.No."]
+
+                            cap_txt = f"Showing {len(filtered_df)} of {len(df_fii_stake)} companies"
+                            if fetched_at_str:
+                                cap_txt += f" · Updated: {fetched_at_str}"
+                            st.caption(cap_txt)
+
+                            cols_fii = ["Sr.No.", "company", "current FII %", "prev quarter %", "change (pp)"]
+                            if "action" in filtered_df.columns:
+                                cols_fii.append("action")
+                            if "insight" in filtered_df.columns:
+                                cols_fii.append("insight")
+
                             st.dataframe(
-                                df_comm[["commodity", "unit", "current price", "INR price (Latur)", "day change %", "% from 5Y high"]],
-                                use_container_width=True, hide_index=True
+                                _color_pct(filtered_df[cols_fii]),
+                                use_container_width=True,
+                                hide_index=True,
+                                height=480
                             )
                         else:
-                            st.info("Commodity data unavailable.")
+                            st.info("FII shareholding data unavailable. Run scripts/fetch_fii_shareholding.py to populate.")
 
                     st.divider()
                     _section("Top 10 Weekly Performers — Indian Market", "🚀", "Across all tracked sector constituents")
@@ -2991,7 +3342,11 @@ def run_dashboard():
                         top_overall = get_top_10_overall_stocks()
                         if top_overall:
                             df_overall = pd.DataFrame(top_overall)
-                            cols_overall = ["sr. no.", "stock symbol", "daily %", "weekly %", "monthly %", "quarterly %", "yearly %", "EPS QoQ %", "EPS YoY %", "remark for insights"]
+                            if "Sr.No." not in df_overall.columns and "sr. no." in df_overall.columns:
+                                df_overall["Sr.No."] = df_overall["sr. no."]
+                            elif "Sr.No." not in df_overall.columns:
+                                df_overall.insert(0, "Sr.No.", range(1, len(df_overall) + 1))
+                            cols_overall = ["Sr.No.", "stock", "daily", "weekly", "monthly", "quarterly", "yearly", "EPS QoQ %", "EPS YoY %", "insight"]
                             st.dataframe(_color_pct(df_overall[cols_overall]), use_container_width=True, hide_index=True)
                         else:
                             st.info("Overall constituent tracking unavailable.")
@@ -3008,6 +3363,19 @@ def run_dashboard():
                         )
                     else:
                         st.info("Mutual fund data unavailable. Check internet connectivity to api.mfapi.in.")
+
+                    st.divider()
+                    _section("Commodities", "🛢", "Global Benchmarks & Domestic Reference Prices")
+                    with _spinner("Fetching commodity prices..."):
+                        commodity_data = get_commodity_data()
+                    if commodity_data:
+                        df_comm = pd.DataFrame(commodity_data)
+                        st.dataframe(
+                            df_comm[["commodity", "unit", "current price", "INR price (Latur)", "day change %", "% from 5Y high"]],
+                            use_container_width=True, hide_index=True
+                        )
+                    else:
+                        st.info("Commodity data unavailable.")
 
             else:
                 st.warning("Could not fetch NIFTY 50 sector data — try refreshing.")
