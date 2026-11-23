@@ -717,6 +717,284 @@ def get_usa_indices_data():
             pass
     return result
 
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_us_market_levels():
+    """Fetch live data and technicals for S&P 500, Nasdaq, Dow Jones, US VIX, S&P RSI, % from ATH, and 10Y Treasury."""
+    res = {
+        "S&P 500": "N/A",
+        "NASDAQ": "N/A",
+        "DOW JONES": "N/A",
+        "US VIX": "N/A",
+        "S&P RSI": "N/A",
+        "S&P % to ATH": "N/A",
+        "10Y YIELD": "N/A"
+    }
+    try:
+        tickers = ['^GSPC', '^IXIC', '^DJI', '^VIX', '^TNX']
+        df = yf.download(tickers, period='1y', interval='1d', progress=False)
+        if not df.empty and 'Close' in df:
+            # 1. S&P 500
+            if '^GSPC' in df['Close']:
+                close = df['Close']['^GSPC'].dropna()
+                if len(close) >= 2:
+                    curr = float(close.iloc[-1])
+                    prev = float(close.iloc[-2])
+                    diff = curr - prev
+                    pct = (diff / prev) * 100.0
+                    sign = "+" if diff >= 0 else ""
+                    color = "#00e676" if diff >= 0 else "#ff5252"
+                    res["S&P 500"] = f"{curr:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff:,.2f} ({sign}{pct:.2f}%)</div>"
+                    
+                    # ATH
+                    ath = float(close.max())
+                    dist = ((curr - ath) / ath) * 100.0
+                    d_color = "#00e676" if dist >= -2.0 else ("#fbbf24" if dist >= -6.0 else "#ff5252")
+                    res["S&P % to ATH"] = f"{dist:.2f}%<div style='font-size:11px;font-weight:600;color:{d_color};margin-top:2px;'>ATH: {ath:,.0f}</div>"
+                    
+                    # RSI
+                    if len(close) >= 14:
+                        rsi_series = ta.momentum.RSIIndicator(close=close, window=14).rsi().dropna()
+                        if not rsi_series.empty:
+                            rsi = float(rsi_series.iloc[-1])
+                            r_status = "Overbought" if rsi >= 70 else ("Oversold" if rsi <= 30 else "Neutral")
+                            r_color = "#ff5252" if rsi >= 70 else ("#00e676" if rsi <= 30 else "#93c5fd")
+                            res["S&P RSI"] = f"{rsi:.1f}<div style='font-size:11px;font-weight:600;color:{r_color};margin-top:2px;'>{r_status}</div>"
+
+            # 2. NASDAQ
+            if '^IXIC' in df['Close']:
+                close = df['Close']['^IXIC'].dropna()
+                if len(close) >= 2:
+                    curr = float(close.iloc[-1])
+                    prev = float(close.iloc[-2])
+                    diff = curr - prev
+                    pct = (diff / prev) * 100.0
+                    sign = "+" if diff >= 0 else ""
+                    color = "#00e676" if diff >= 0 else "#ff5252"
+                    res["NASDAQ"] = f"{curr:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff:,.2f} ({sign}{pct:.2f}%)</div>"
+
+            # 3. DOW JONES
+            if '^DJI' in df['Close']:
+                close = df['Close']['^DJI'].dropna()
+                if len(close) >= 2:
+                    curr = float(close.iloc[-1])
+                    prev = float(close.iloc[-2])
+                    diff = curr - prev
+                    pct = (diff / prev) * 100.0
+                    sign = "+" if diff >= 0 else ""
+                    color = "#00e676" if diff >= 0 else "#ff5252"
+                    res["DOW JONES"] = f"{curr:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff:,.2f} ({sign}{pct:.2f}%)</div>"
+
+            # 4. US VIX
+            if '^VIX' in df['Close']:
+                close = df['Close']['^VIX'].dropna()
+                if len(close) >= 2:
+                    curr = float(close.iloc[-1])
+                    prev = float(close.iloc[-2])
+                    diff = curr - prev
+                    pct = (diff / prev) * 100.0
+                    sign = "+" if diff >= 0 else ""
+                    color = "#00e676" if diff <= 0 else "#ff5252"
+                    res["US VIX"] = f"{curr:,.2f}<div style='font-size:12px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff:,.2f} ({sign}{pct:.2f}%)</div>"
+
+            # 5. 10Y YIELD
+            if '^TNX' in df['Close']:
+                close = df['Close']['^TNX'].dropna()
+                if len(close) >= 2:
+                    curr = float(close.iloc[-1])
+                    prev = float(close.iloc[-2])
+                    diff = curr - prev
+                    sign = "+" if diff >= 0 else ""
+                    color = "#fbbf24" if diff >= 0 else "#38bdf8"
+                    res["10Y YIELD"] = f"{curr:.3f}%<div style='font-size:11px;font-weight:600;color:{color};margin-top:2px;'>{sign}{diff*100:+.1f} bps</div>"
+    except Exception:
+        pass
+    return res
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_us_futures_data():
+    """Fetch live data for Dow Futures (YM=F) and Nasdaq Futures (NQ=F)."""
+    res = {"DOW": None, "NASDAQ": None}
+    try:
+        df = yf.download(['YM=F', 'NQ=F'], period='5d', interval='1d', progress=False)
+        if not df.empty and 'Close' in df:
+            for sym, key in [('YM=F', 'DOW'), ('NQ=F', 'NASDAQ')]:
+                try:
+                    if sym in df['Close']:
+                        close = df['Close'][sym].dropna()
+                        if len(close) >= 2:
+                            curr = float(close.iloc[-1])
+                            prev = float(close.iloc[-2])
+                            diff = curr - prev
+                            pct = (diff / prev) * 100.0
+                            res[key] = {
+                                "price": curr,
+                                "change": diff,
+                                "pct": pct
+                            }
+                except Exception:
+                    pass
+    except Exception:
+        pass
+    return res
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def get_cme_fedwatch_data():
+    """Calculate CME FedWatch probabilities (Ease %, No Change %, Hike %) using Fed Funds futures."""
+    effr = 3.88
+    target_low = 3.75
+    target_high = 4.00
+    try:
+        dff_df = pd.read_csv('https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF', timeout=4)
+        if not dff_df.empty:
+            v = float(dff_df.iloc[-1]['DFF'])
+            if 0.5 < v < 20.0:
+                effr = v
+        u_df = pd.read_csv('https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFEDTARU', timeout=4)
+        if not u_df.empty:
+            target_high = float(u_df.iloc[-1]['DFEDTARU'])
+        l_df = pd.read_csv('https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFEDTARL', timeout=4)
+        if not l_df.empty:
+            target_low = float(l_df.iloc[-1]['DFEDTARL'])
+    except Exception:
+        pass
+
+    fut_price = 95.940
+    try:
+        zqz = yf.Ticker('ZQZ26.CBT')
+        p = zqz.info.get('regularMarketPrice')
+        if not p or p < 80:
+            h = zqz.history(period='5d')
+            if not h.empty:
+                p = float(h['Close'].iloc[-1])
+        if p and p > 80:
+            fut_price = float(p)
+        else:
+            zq = yf.Ticker('ZQ=F')
+            p2 = zq.info.get('regularMarketPrice')
+            if p2 and p2 > 80:
+                fut_price = float(p2)
+    except Exception:
+        pass
+
+    r_implied = 100.0 - fut_price
+    # Day-weighted formula for FOMC December meeting (meeting on day 9 of 31 days)
+    r_end = (31.0 * r_implied - 9.0 * effr) / 22.0
+    delta = r_end - effr
+
+    import math
+    sigma = 0.11
+    w_ease = math.exp(-0.5 * ((delta - (-0.25)) / sigma) ** 2)
+    w_hold = math.exp(-0.5 * ((delta - 0.0) / sigma) ** 2)
+    w_hike = math.exp(-0.5 * ((delta - 0.25) / sigma) ** 2)
+    total = w_ease + w_hold + w_hike
+
+    ease_pct = round((w_ease / total) * 100.0, 1)
+    no_change_pct = round((w_hold / total) * 100.0, 1)
+    hike_pct = round(100.0 - ease_pct - no_change_pct, 1)
+    if hike_pct < 0:
+        hike_pct = 0.0
+
+    outcomes = [
+        {"name": "Ease", "val": ease_pct, "label": "Rate Cut (-25 bps)"},
+        {"name": "No Change", "val": no_change_pct, "label": f"Hold ({target_low:.2f}% - {target_high:.2f}%)"},
+        {"name": "Hike", "val": hike_pct, "label": "Rate Hike (+25 bps)"}
+    ]
+    biggest = max(outcomes, key=lambda x: x["val"])
+
+    return {
+        "ease_pct": ease_pct,
+        "no_change_pct": no_change_pct,
+        "hike_pct": hike_pct,
+        "biggest": biggest["name"],
+        "biggest_val": biggest["val"],
+        "biggest_label": biggest["label"],
+        "target_range": f"{target_low:.2f}% - {target_high:.2f}%",
+        "effr": f"{effr:.2f}%",
+        "implied_rate": f"{r_implied:.2f}%",
+        "meeting": "Dec 9, 2026"
+    }
+
+
+def render_us_futures_fedwatch_blocks():
+    """Render top metric blocks for Dow Future, Nasdaq Future, and CME FedWatch Tool."""
+    us_fut = get_us_futures_data()
+    fedwatch = get_cme_fedwatch_data()
+
+    dow_f = us_fut.get("DOW")
+    if dow_f:
+        d_sign = "+" if dow_f["change"] >= 0 else ""
+        d_col = "#00e676" if dow_f["change"] >= 0 else "#ff5252"
+        dow_val_html = f"{dow_f['price']:,.2f}<div style='font-size:12px;font-weight:600;color:{d_col};margin-top:2px;'>{d_sign}{dow_f['change']:,.2f} ({d_sign}{dow_f['pct']:.2f}%)</div>"
+    else:
+        dow_val_html = "N/A"
+
+    nq_f = us_fut.get("NASDAQ")
+    if nq_f:
+        n_sign = "+" if nq_f["change"] >= 0 else ""
+        n_col = "#00e676" if nq_f["change"] >= 0 else "#ff5252"
+        nq_val_html = f"{nq_f['price']:,.2f}<div style='font-size:12px;font-weight:600;color:{n_col};margin-top:2px;'>{n_sign}{nq_f['change']:,.2f} ({n_sign}{nq_f['pct']:.2f}%)</div>"
+    else:
+        nq_val_html = "N/A"
+
+    ease_val = fedwatch.get("ease_pct", 0.0)
+    no_chg_val = fedwatch.get("no_change_pct", 0.0)
+    hike_val = fedwatch.get("hike_pct", 0.0)
+    biggest = fedwatch.get("biggest", "No Change")
+    target_range = fedwatch.get("target_range", "3.75% - 4.00%")
+    effr = fedwatch.get("effr", "3.88%")
+    meeting = fedwatch.get("meeting", "Dec 9, 2026")
+
+    # Biggest highlight badge & glowing border for the dominant CME FedWatch outcome
+    is_ease_big = (biggest == "Ease")
+    ease_border = "2px solid #10b981;box-shadow:0 0 16px rgba(16,185,129,0.4);" if is_ease_big else "1px solid rgba(16,185,129,0.25);"
+    ease_badge = '<div style="display:inline-block;background:#10b981;color:#000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;margin-bottom:3px;letter-spacing:0.5px;">👑 BIGGEST VALUE</div>' if is_ease_big else ''
+
+    is_nc_big = (biggest == "No Change")
+    nc_border = "2px solid #f59e0b;box-shadow:0 0 16px rgba(245,158,11,0.4);" if is_nc_big else "1px solid rgba(245,158,11,0.25);"
+    nc_badge = '<div style="display:inline-block;background:#f59e0b;color:#000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;margin-bottom:3px;letter-spacing:0.5px;">👑 BIGGEST VALUE</div>' if is_nc_big else ''
+
+    is_hike_big = (biggest == "Hike")
+    hike_border = "2px solid #ef4444;box-shadow:0 0 16px rgba(239,68,68,0.4);" if is_hike_big else "1px solid rgba(239,68,68,0.25);"
+    hike_badge = '<div style="display:inline-block;background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;margin-bottom:3px;letter-spacing:0.5px;">👑 BIGGEST VALUE</div>' if is_hike_big else ''
+
+    st.html(f"""
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px;">
+        <div style="background:rgba(30,58,138,0.18);border:1px solid rgba(59,130,246,0.35);border-radius:14px;padding:16px 12px;text-align:center;">
+            <div style="font-size:11px;color:#60a5fa;font-weight:700;letter-spacing:1px;margin-bottom:5px;">🇺🇸 DOW FUTURE</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;">{dow_val_html}</div>
+        </div>
+        <div style="background:rgba(88,28,135,0.18);border:1px solid rgba(168,85,247,0.35);border-radius:14px;padding:16px 12px;text-align:center;">
+            <div style="font-size:11px;color:#c084fc;font-weight:700;letter-spacing:1px;margin-bottom:5px;">🌐 NASDAQ FUTURE</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;">{nq_val_html}</div>
+        </div>
+        <div style="background:rgba(16,185,129,0.12);border:{ease_border};border-radius:14px;padding:16px 12px;text-align:center;position:relative;">
+            {ease_badge}
+            <div style="font-size:11px;color:#34d399;font-weight:700;letter-spacing:1px;margin-bottom:5px;">FEDWATCH: EASE %</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;">{ease_val:.1f}%</div>
+            <div style="font-size:11px;font-weight:600;color:#34d399;margin-top:2px;">Rate Cut (-25 bps)</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.12);border:{nc_border};border-radius:14px;padding:16px 12px;text-align:center;position:relative;">
+            {nc_badge}
+            <div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;margin-bottom:5px;">FEDWATCH: NO CHANGE %</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;">{no_chg_val:.1f}%</div>
+            <div style="font-size:11px;font-weight:600;color:#fbbf24;margin-top:2px;">Hold ({target_range})</div>
+        </div>
+        <div style="background:rgba(239,68,68,0.12);border:{hike_border};border-radius:14px;padding:16px 12px;text-align:center;position:relative;">
+            {hike_badge}
+            <div style="font-size:11px;color:#f87171;font-weight:700;letter-spacing:1px;margin-bottom:5px;">FEDWATCH: HIKE %</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;">{hike_val:.1f}%</div>
+            <div style="font-size:11px;font-weight:600;color:#f87171;margin-top:2px;">Rate Hike (+25 bps)</div>
+        </div>
+    </div>
+    <div style="font-size:11px;color:#94a3b8;margin-top:-4px;margin-bottom:16px;text-align:right;">
+        🏛️ <b>CME FedWatch Tool</b> &nbsp;|&nbsp; Target Range: <b>{target_range}</b> &nbsp;|&nbsp; Current EFFR: <b>{effr}</b> &nbsp;|&nbsp; Next FOMC Decision: <b>{meeting}</b>
+    </div>
+    """)
+
+
 @st.cache_data(ttl=1790, show_spinner=False)
 def get_usa_dhamala_stocks(tickers, index_map=None):
     """Screen Russell 1000 & Nasdaq 100 stocks up 3%+ today with RSI, DMA & TradingView news."""
@@ -2994,6 +3272,14 @@ def run_dashboard():
         nifty_lvl  = "—"; sensex_lvl = "—"; vix_lvl = "—"
         nifty_rsi  = "—"; nifty_ath  = "—"; nifty_pe = "—"; gift_nifty_lvl = "—"
         fii_val    = None; dii_val    = None
+        us_sp_lvl  = "—"; us_nasdaq_lvl = "—"; us_dow_lvl = "—"; us_vix_lvl = "—"
+        us_rsi_lvl = "—"; us_ath_lvl = "—"; us_tnx_lvl = "—"
+        fw_biggest_val = 0.0
+        fw_card_bg = "rgba(244,63,94,.08)"
+        fw_card_border = "rgba(244,63,94,.25)"
+        fw_card_tc = "#fb7185"
+        fw_card_tag = "—"
+        fw_card_tag_color = "#94a3b8"
 
         if st.session_state.get('sectors_loaded'):
             levels     = get_nifty_sensex_levels()
@@ -3028,6 +3314,39 @@ def run_dashboard():
             fii_val    = fiidii.get("FII")
             dii_val    = fiidii.get("DII")
 
+            us_levels     = get_us_market_levels()
+            us_sp_lvl     = us_levels.get("S&P 500", "N/A")
+            us_nasdaq_lvl = us_levels.get("NASDAQ", "N/A")
+            us_dow_lvl    = us_levels.get("DOW JONES", "N/A")
+            us_vix_lvl    = us_levels.get("US VIX", "N/A")
+            us_rsi_lvl    = us_levels.get("S&P RSI", "N/A")
+            us_ath_lvl    = us_levels.get("S&P % to ATH", "N/A")
+            us_tnx_lvl    = us_levels.get("10Y YIELD", "N/A")
+
+            fedwatch_sec     = get_cme_fedwatch_data()
+            fw_biggest       = fedwatch_sec.get("biggest", "Hike")
+            fw_biggest_val   = fedwatch_sec.get("biggest_val", 0.0)
+            fw_target        = fedwatch_sec.get("target_range", "3.75% - 4.00%")
+
+            if fw_biggest == "Hike":
+                fw_card_bg = "rgba(244,63,94,.10)"
+                fw_card_border = "rgba(244,63,94,.35)"
+                fw_card_tc = "#fb7185"
+                fw_card_tag = "👑 Rate Hike (+25 bps)"
+                fw_card_tag_color = "#f87171"
+            elif fw_biggest == "Ease":
+                fw_card_bg = "rgba(16,185,129,.10)"
+                fw_card_border = "rgba(16,185,129,.35)"
+                fw_card_tc = "#34d399"
+                fw_card_tag = "👑 Rate Cut (-25 bps)"
+                fw_card_tag_color = "#34d399"
+            else:
+                fw_card_bg = "rgba(245,158,11,.10)"
+                fw_card_border = "rgba(245,158,11,.35)"
+                fw_card_tc = "#fbbf24"
+                fw_card_tag = f"👑 Pause ({fw_target})"
+                fw_card_tag_color = "#fbbf24"
+
         fii_pos    = fii_val is not None and fii_val >= 0
         dii_pos    = dii_val is not None and dii_val >= 0
         fii_arrow  = "▲ Inflow"  if fii_pos else "▼ Outflow"
@@ -3044,7 +3363,7 @@ def run_dashboard():
         dii_tc     = "#00e676" if dii_pos else "#ff5252"
 
         st.markdown(f"""
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:12px;">
             <div style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);
                         border-radius:14px;padding:14px 10px;text-align:center;">
                 <div style="font-size:11px;color:#ffd700;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NIFTY 50</div>
@@ -3079,6 +3398,44 @@ def run_dashboard():
                         border-radius:14px;padding:14px 10px;text-align:center;">
                 <div style="font-size:11px;color:#ec4899;font-weight:700;letter-spacing:1px;margin-bottom:5px;">GIFT NIFTY</div>
                 <div style="font-size:22px;font-weight:800;color:#fff;">{gift_nifty_lvl}</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px;">
+            <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#10b981;font-weight:700;letter-spacing:1px;margin-bottom:5px;">S&P 500</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{us_sp_lvl}</div>
+            </div>
+            <div style="background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#38bdf8;font-weight:700;letter-spacing:1px;margin-bottom:5px;">NASDAQ</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{us_nasdaq_lvl}</div>
+            </div>
+            <div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#c084fc;font-weight:700;letter-spacing:1px;margin-bottom:5px;">DOW JONES</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{us_dow_lvl}</div>
+            </div>
+            <div style="background:{fw_card_bg};border:1px solid {fw_card_border};
+                        border-radius:14px;padding:14px 10px;text-align:center;position:relative;">
+                <div style="font-size:11px;color:{fw_card_tc};font-weight:700;letter-spacing:1px;margin-bottom:5px;">CME FEDWATCH</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{fw_biggest_val:.1f}%</div>
+                <div style="font-size:11px;font-weight:700;color:{fw_card_tag_color};margin-top:2px;">{fw_card_tag}</div>
+            </div>
+            <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#a5b4fc;font-weight:700;letter-spacing:1px;margin-bottom:5px;">S&P RSI</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{us_rsi_lvl}</div>
+            </div>
+            <div style="background:rgba(217,70,239,.08);border:1px solid rgba(217,70,239,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#e879f9;font-weight:700;letter-spacing:1px;margin-bottom:5px;">% FROM ATH (US)</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{us_ath_lvl}</div>
+            </div>
+            <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
+                        border-radius:14px;padding:14px 10px;text-align:center;">
+                <div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;margin-bottom:5px;">10Y TREASURY</div>
+                <div style="font-size:22px;font-weight:800;color:#fff;">{us_tnx_lvl}</div>
             </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;">
@@ -3758,6 +4115,7 @@ def run_dashboard():
 
     # --- TAB 10: Dhamala ---
     with tab10:
+        render_us_futures_fedwatch_blocks()
         st.header("🚀 Dhamala: 3%+ Top 2000 Movers & Latest News")
         st.write("Fetching Top 2000 stocks up 3% or more today, grouped by market cap...")
         
